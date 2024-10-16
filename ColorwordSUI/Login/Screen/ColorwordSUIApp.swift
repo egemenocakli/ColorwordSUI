@@ -11,7 +11,7 @@ import SwiftUI
 struct ColorwordSUIApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            LoginScreen()
         }
     }
 }
