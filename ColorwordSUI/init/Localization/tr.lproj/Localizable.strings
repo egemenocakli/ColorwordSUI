@@ -1,0 +1,13 @@
+/* 
+  Localizable.strings
+  ColorwordSUI
+
+  Created by Emre Ocaklı on 17.10.2024.
+  
+*/
+"login_password" = "Parola";
+"login_button" = "Giriş Yap";
+"sign_up_button" = "Kayıt Ol";
+"email" = "Email";
+
+

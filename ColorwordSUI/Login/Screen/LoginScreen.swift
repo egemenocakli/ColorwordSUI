@@ -13,93 +13,117 @@ struct LoginScreen: View {
     @State var email: String = ""
     @State var password: String = ""
 
+    @StateObject private var languageManager = LanguageManager()
+
+
     var body: some View {
         
         
         GeometryReader { geometry in
             ZStack {
-                // Background gradient
-                            LinearGradient(gradient: Gradient(colors: [
-                                Color(red: 0.0, green: 0.1, blue: 0.2), // Alttaki koyu mavi
-                                Color.black // Üstte siyah
-                            ]), startPoint: .bottom, endPoint: .top)
-                            .edgesIgnoringSafeArea(.all)
+                Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                 
                 VStack {
-                    Text("Colorword").frame(width: UIScreen.main.bounds.width, height: 100, alignment: .center).font(.system(size: 60))
+                    Text(Constants.appName).frame(width: UIScreen.main.bounds.width, height: Constants.PaddingSizeConstants.xlSize, alignment: .center).font(.system(size: Constants.SizeConstants.appNameFontSize))
                         .frame(height: geometry.size.height * 0.3)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Constants.ColorConstants.whiteFont)
                     
                     GeometryReader { geometry in
                         VStack {
-                            
-                            
                             VStack {
                                  ZStack(alignment: .leading) {
                                      if email.isEmpty {
-                                         Text("Email")
-                                             .foregroundColor(.gray)  // Placeholder rengini burada ayarlıyoruz
-                                             .padding(.leading, 40)
+                                         Text("email")
+                                             .foregroundColor(Constants.ColorConstants.placeHolderTextColor)
+                                             .padding(.leading, Constants.PaddingSizeConstants.lmSize)
                                      }
                                      TextField("", text: $email)
+                                         .keyboardType(.emailAddress)
+                                         .textInputAutocapitalization(.none)
                                          .padding()
-                                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.70), lineWidth: 2))
-                                         .padding(.all, 10)
-                                         .foregroundColor(.white)  // Asıl yazı rengi
+                                         .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
+                                         .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                                         .foregroundColor(.white)
+                                         
                                  }
-                             }
+                            }
                             
                             VStack {
                                  ZStack(alignment: .leading) {
                                      if password.isEmpty {
-                                         Text("Password")
-                                             .foregroundColor(.gray)  // Placeholder rengini burada ayarlıyoruz
-                                             .padding(.leading, 40)
+                                         Text("login_password")
+                                             .foregroundColor(Constants.ColorConstants.placeHolderTextColor)
+                                             .padding(.leading, Constants.PaddingSizeConstants.lmSize)
                                      }
                                      TextField("", text: $password)
+                                         .textInputAutocapitalization(.none)
                                          .padding()
-                                         .overlay(RoundedRectangle(cornerRadius: 10).stroke(Color.gray.opacity(0.70), lineWidth: 2))
-                                         .padding(.all, 10)
-                                         .foregroundColor(.white)  // Asıl yazı rengi
+                                         .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
+                                         .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                                         .foregroundColor(.white)
                                  }
-                             }
+                            }.padding(.bottom, Constants.PaddingSizeConstants.smallSize)
                          
                             
                             
                             Button(action: loginButton) {
-                                Text("Login")
-                                    .foregroundStyle(.white)
-                                    .frame(width: 100, height: 50)
-                                    .background(Color(red: 100/255, green: 13/255, blue: 95/255))
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Text("login_button")
+                                    .foregroundStyle(Constants.ColorConstants.whiteFont)
+                                    .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
+                                    .background(Constants.ColorConstants.loginButtonColor)
+                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                             }
                             .contentShape(Rectangle())
                             
                             Button(action: loginButton) {
-                                Text("Sign Up")
-                                    .foregroundStyle(.white)
-                                    .frame(width: 100, height: 50)
-                                    .background(Color.gray)
-                                    .clipShape(RoundedRectangle(cornerRadius: 12))
+                                Text("sign_up_button")
+                                    .foregroundStyle(Constants.ColorConstants.whiteFont)
+                                    .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
+                                    .background(Constants.ColorConstants.signUpButtonColor)
+                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                             }
                             .contentShape(Rectangle())
-                            .padding(.top, 10)
+                            .padding(.top, Constants.PaddingSizeConstants.xSmallSize)
                             
                             
                             
                             
                             
                         }
-                        .padding(.horizontal, 20)
+                        .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
                         .frame(height: geometry.size.height * 0.6)
                     }
+                    Button(action: {
+                                    
+                                    languageManager.currentLanguage = languageManager.currentLanguage == "en" ? "tr" : "en"
+                                }) {
+                                    Text(languageManager.currentLanguage == "en" ? "TR" : "EN")
+                                        .padding()
+                                        .background(Color.gray.opacity(0.3))
+                                        .foregroundColor(Constants.ColorConstants.whiteFont)
+                                        .cornerRadius(Constants.SizeRadiusConstants.xxSmall)
+                                }
+                            }
+                            .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                     
                 }
-            }
+                
+            
+            
         }
         
     }
 
+    func changeLanguage(to language: String) {
+        UserDefaults.standard.set([language], forKey: "AppleLanguages")
+        UserDefaults.standard.synchronize()
+        
+        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
+            scene.windows.first?.rootViewController = UIHostingController(rootView: LoginScreen())
+        }
+        
+        languageManager.currentLanguage = language
+    }
     
     func loginButton() {
         
