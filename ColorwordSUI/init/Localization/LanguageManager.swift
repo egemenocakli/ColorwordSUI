@@ -17,7 +17,14 @@ class LanguageManager: ObservableObject {
     }
     
     init() {
-        // Cihazın mevcut dilini al
-        currentLanguage = UserDefaults.standard.stringArray(forKey: "AppleLanguages")?.first ?? "en"
+        
+        let deviceLanguage = Locale.current.language.languageCode?.identifier ?? "en"
+        let supportedLanguages = ["en", "tr"]
+
+        if supportedLanguages.contains(deviceLanguage) {
+            currentLanguage = deviceLanguage
+        } else {
+            currentLanguage = "en"
+        }
     }
 }

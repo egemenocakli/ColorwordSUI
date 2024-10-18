@@ -7,51 +7,43 @@
 
 import SwiftUI
 
-
 struct LoginScreen: View {
     
-
-
-    @StateObject private var languageManager = LanguageManager()
+    @EnvironmentObject var languageManager: LanguageManager
     @StateObject var loginVM = LoginViewModel()
 
     var body: some View {
-        
-        GeometryReader { geometry in
+        NavigationStack {
             ZStack {
                 Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
-                
-                VStack {
-                    AppNameWidget(geometry: geometry)
-                    
-                    GeometryReader { geometry in
-                        VStack {
-                            TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
-
-                            LoginButtonWidget(action: loginButton)
-                            
-                            SignUpButtonWidget(action: signupButton)
-                         
-                        }
-                        .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
-                        .frame(height: geometry.size.height * 0.6)
-                    }
-                    LanguagePickerWidget(languageManager: languageManager)
+                GeometryReader { geometry in
+                    VStack {
+                        AppNameWidget(geometry: geometry)
+                        
+                        GeometryReader { geometry in
+                            VStack {
+                                TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
+                                
+                                LoginButtonWidget(action: loginButton)
+                                
+                                SignUpButtonWidget(action: signupButton)
+                                    
                             }
-                            .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+                            .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
+                            .frame(height: geometry.size.height * 0.6)
+                        }
+                        LanguagePickerWidget()
+                    }
+                    .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                 }
+            }
         }
-        
     }
-
     
-    func loginButton() {
-        
-    }
-    func signupButton() {
-        
-    }
+    func loginButton() { }
+    func signupButton() { }
 }
+
     
 #Preview {
     LoginScreen()

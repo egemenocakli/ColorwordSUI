@@ -18,13 +18,15 @@ struct SignUpButtonWidget: View{
     
     func signupButtonWidget() -> some View {
         Button(action: action) {
-            Text("sign_up_button")
-                .foregroundStyle(Constants.ColorConstants.whiteFont)
-                .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
-                .background(Constants.ColorConstants.signUpButtonColor)
-                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
+            NavigationLink(destination: SignupScreen()) {
+                Text("sign_up_button")
+                    .foregroundStyle(Constants.ColorConstants.whiteFont)
+                    .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
+                    .background(Constants.ColorConstants.signUpButtonColor)
+                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
+                }
+            .contentShape(Rectangle())
+            .padding(.top, Constants.PaddingSizeConstants.xSmallSize)
+            }
         }
-        .contentShape(Rectangle())
-        .padding(.top, Constants.PaddingSizeConstants.xSmallSize)
-    }
 }
