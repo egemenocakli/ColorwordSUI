@@ -6,6 +6,7 @@
 //
 
 import SwiftUI
+import FirebaseAuth
 
 struct LoginScreen: View {
     
@@ -40,7 +41,27 @@ struct LoginScreen: View {
         }
     }
     
-    func loginButton() { }
+    func loginButton() {
+        
+        //egocakli@gmail.com 123456
+
+//        Auth.auth().signIn(withEmail: "egemenocakli97@gmail.com", password: "") { result, error in
+//            if  error != nil {
+//                print(error?.localizedDescription ?? "")
+//            }else {
+//                print("giriş başarılı")
+//            }
+//        }
+        
+        
+//        Auth.auth().createUser(withEmail: "falancaadam3131@gmail.com", password: "123456") { result, error in
+//            if  error != nil {
+//                print(error?.localizedDescription ?? "")
+//            }else {
+//                print("kayıt başarılı")
+//            }
+//        }
+    }
     func signupButton() { }
 }
 

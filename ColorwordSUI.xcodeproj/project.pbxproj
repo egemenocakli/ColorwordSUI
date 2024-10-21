@@ -3,19 +3,55 @@
 	archiveVersion = 1;
 	classes = {
 	};
-	objectVersion = 77;
+	objectVersion = 70;
 	objects = {
 
+/* Begin PBXBuildFile section */
+		7D4880092CC69CCD004D5846 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7D4880082CC69CCD004D5846 /* GoogleService-Info.plist */; };
+		7D48800B2CC6A4F9004D5846 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D48800A2CC6A4F4004D5846 /* AppDelegate.swift */; };
+		7D69E3C42CC5B93600A442A5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7D69E3A82CC5B93600A442A5 /* Localizable.strings */; };
+		7D69E3C52CC5B93600A442A5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D69E3BA2CC5B93600A442A5 /* Preview Assets.xcassets */; };
+		7D69E3C62CC5B93600A442A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D69E3C22CC5B93600A442A5 /* Assets.xcassets */; };
+		7D69E3C72CC5B93600A442A5 /* LanguageManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3A52CC5B93600A442A5 /* LanguageManager.swift */; };
+		7D69E3C82CC5B93600A442A5 /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3AA2CC5B93600A442A5 /* Constants.swift */; };
+		7D69E3C92CC5B93600A442A5 /* ColorwordSUIApp.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3AD2CC5B93600A442A5 /* ColorwordSUIApp.swift */; };
+		7D69E3CA2CC5B93600A442A5 /* LoginScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3AE2CC5B93600A442A5 /* LoginScreen.swift */; };
+		7D69E3CB2CC5B93600A442A5 /* AppNameWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B02CC5B93600A442A5 /* AppNameWidget.swift */; };
+		7D69E3CC2CC5B93600A442A5 /* LanguagePickerWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B12CC5B93600A442A5 /* LanguagePickerWidget.swift */; };
+		7D69E3CD2CC5B93600A442A5 /* LoginButtonWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B22CC5B93600A442A5 /* LoginButtonWidget.swift */; };
+		7D69E3CE2CC5B93600A442A5 /* SignUpButtonWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B32CC5B93600A442A5 /* SignUpButtonWidget.swift */; };
+		7D69E3CF2CC5B93600A442A5 /* TextfieldWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B52CC5B93600A442A5 /* TextfieldWidgets.swift */; };
+		7D69E3D02CC5B93600A442A5 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B72CC5B93600A442A5 /* LoginViewModel.swift */; };
+		7D69E3D12CC5B93600A442A5 /* SignupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3BD2CC5B93600A442A5 /* SignupScreen.swift */; };
+		BA89AE4DA2CA9FD4AAD5D5AD /* Pods_ColorwordSUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E38876D7E36C944943DDC21C /* Pods_ColorwordSUI.framework */; };
+/* End PBXBuildFile section */
+
 /* Begin PBXFileReference section */
+		69259F8355923D17A1C3F54E /* Pods-ColorwordSUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorwordSUI.release.xcconfig"; path = "Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI.release.xcconfig"; sourceTree = "<group>"; };
+		7D4880082CC69CCD004D5846 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		7D48800A2CC6A4F4004D5846 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7D69E3A52CC5B93600A442A5 /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
+		7D69E3A62CC5B93600A442A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7D69E3A72CC5B93600A442A5 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
+		7D69E3AA2CC5B93600A442A5 /* Constants.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		7D69E3AD2CC5B93600A442A5 /* ColorwordSUIApp.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ColorwordSUIApp.swift; sourceTree = "<group>"; };
+		7D69E3AE2CC5B93600A442A5 /* LoginScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginScreen.swift; sourceTree = "<group>"; };
+		7D69E3B02CC5B93600A442A5 /* AppNameWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppNameWidget.swift; sourceTree = "<group>"; };
+		7D69E3B12CC5B93600A442A5 /* LanguagePickerWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguagePickerWidget.swift; sourceTree = "<group>"; };
+		7D69E3B22CC5B93600A442A5 /* LoginButtonWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginButtonWidget.swift; sourceTree = "<group>"; };
+		7D69E3B32CC5B93600A442A5 /* SignUpButtonWidget.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignUpButtonWidget.swift; sourceTree = "<group>"; };
+		7D69E3B52CC5B93600A442A5 /* TextfieldWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextfieldWidgets.swift; sourceTree = "<group>"; };
+		7D69E3B72CC5B93600A442A5 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
+		7D69E3BA2CC5B93600A442A5 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
+		7D69E3BD2CC5B93600A442A5 /* SignupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupScreen.swift; sourceTree = "<group>"; };
+		7D69E3C22CC5B93600A442A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7DA172892CC06DC100B3C6E6 /* ColorwordSUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorwordSUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		86626F54EF84E23B1C67EEA0 /* Pods-ColorwordSUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorwordSUI.debug.xcconfig"; path = "Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI.debug.xcconfig"; sourceTree = "<group>"; };
+		E38876D7E36C944943DDC21C /* Pods_ColorwordSUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ColorwordSUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
-		7DA1728B2CC06DC100B3C6E6 /* ColorwordSUI */ = {
-			isa = PBXFileSystemSynchronizedRootGroup;
-			path = ColorwordSUI;
-			sourceTree = "<group>";
-		};
+		7D8F474A2CC68EA7007B80B1 /* Service */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Service; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -23,17 +59,180 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				BA89AE4DA2CA9FD4AAD5D5AD /* Pods_ColorwordSUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		716FD8323924D687A419E455 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+				E38876D7E36C944943DDC21C /* Pods_ColorwordSUI.framework */,
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
+		7D69E3A32CC5B93600A442A5 /* Network */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Network;
+			sourceTree = "<group>";
+		};
+		7D69E3A42CC5B93600A442A5 /* Core */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3A32CC5B93600A442A5 /* Network */,
+			);
+			path = Core;
+			sourceTree = "<group>";
+		};
+		7D69E3A92CC5B93600A442A5 /* Localization */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3A52CC5B93600A442A5 /* LanguageManager.swift */,
+				7D69E3A82CC5B93600A442A5 /* Localizable.strings */,
+			);
+			path = Localization;
+			sourceTree = "<group>";
+		};
+		7D69E3AB2CC5B93600A442A5 /* init */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3A92CC5B93600A442A5 /* Localization */,
+				7D69E3AA2CC5B93600A442A5 /* Constants.swift */,
+			);
+			path = init;
+			sourceTree = "<group>";
+		};
+		7D69E3AC2CC5B93600A442A5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7D69E3AF2CC5B93600A442A5 /* Screen */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3AD2CC5B93600A442A5 /* ColorwordSUIApp.swift */,
+				7D69E3AE2CC5B93600A442A5 /* LoginScreen.swift */,
+			);
+			path = Screen;
+			sourceTree = "<group>";
+		};
+		7D69E3B42CC5B93600A442A5 /* Widgets */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3B02CC5B93600A442A5 /* AppNameWidget.swift */,
+				7D69E3B12CC5B93600A442A5 /* LanguagePickerWidget.swift */,
+				7D69E3B22CC5B93600A442A5 /* LoginButtonWidget.swift */,
+				7D69E3B32CC5B93600A442A5 /* SignUpButtonWidget.swift */,
+			);
+			path = Widgets;
+			sourceTree = "<group>";
+		};
+		7D69E3B62CC5B93600A442A5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3B42CC5B93600A442A5 /* Widgets */,
+				7D69E3B52CC5B93600A442A5 /* TextfieldWidgets.swift */,
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7D69E3B82CC5B93600A442A5 /* Viewmodel */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3B72CC5B93600A442A5 /* LoginViewModel.swift */,
+			);
+			path = Viewmodel;
+			sourceTree = "<group>";
+		};
+		7D69E3B92CC5B93600A442A5 /* Login */ = {
+			isa = PBXGroup;
+			children = (
+				7D8F474A2CC68EA7007B80B1 /* Service */,
+				7D69E3AC2CC5B93600A442A5 /* Model */,
+				7D69E3AF2CC5B93600A442A5 /* Screen */,
+				7D69E3B62CC5B93600A442A5 /* View */,
+				7D69E3B82CC5B93600A442A5 /* Viewmodel */,
+			);
+			path = Login;
+			sourceTree = "<group>";
+		};
+		7D69E3BB2CC5B93600A442A5 /* Preview Content */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3BA2CC5B93600A442A5 /* Preview Assets.xcassets */,
+			);
+			path = "Preview Content";
+			sourceTree = "<group>";
+		};
+		7D69E3BC2CC5B93600A442A5 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7D69E3BE2CC5B93600A442A5 /* Screen */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3BD2CC5B93600A442A5 /* SignupScreen.swift */,
+			);
+			path = Screen;
+			sourceTree = "<group>";
+		};
+		7D69E3BF2CC5B93600A442A5 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7D69E3C02CC5B93600A442A5 /* Viewmodel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Viewmodel;
+			sourceTree = "<group>";
+		};
+		7D69E3C12CC5B93600A442A5 /* Signup */ = {
+			isa = PBXGroup;
+			children = (
+				7D69E3BC2CC5B93600A442A5 /* Model */,
+				7D69E3BE2CC5B93600A442A5 /* Screen */,
+				7D69E3BF2CC5B93600A442A5 /* View */,
+				7D69E3C02CC5B93600A442A5 /* Viewmodel */,
+			);
+			path = Signup;
+			sourceTree = "<group>";
+		};
+		7D69E3C32CC5B93600A442A5 /* ColorwordSUI */ = {
+			isa = PBXGroup;
+			children = (
+				7D48800A2CC6A4F4004D5846 /* AppDelegate.swift */,
+				7D69E3A42CC5B93600A442A5 /* Core */,
+				7D69E3AB2CC5B93600A442A5 /* init */,
+				7D69E3B92CC5B93600A442A5 /* Login */,
+				7D69E3BB2CC5B93600A442A5 /* Preview Content */,
+				7D69E3C12CC5B93600A442A5 /* Signup */,
+				7D69E3C22CC5B93600A442A5 /* Assets.xcassets */,
+				7D4880082CC69CCD004D5846 /* GoogleService-Info.plist */,
+			);
+			path = ColorwordSUI;
+			sourceTree = "<group>";
+		};
 		7DA172802CC06DC100B3C6E6 = {
 			isa = PBXGroup;
 			children = (
-				7DA1728B2CC06DC100B3C6E6 /* ColorwordSUI */,
+				7D69E3C32CC5B93600A442A5 /* ColorwordSUI */,
 				7DA1728A2CC06DC100B3C6E6 /* Products */,
+				E98FFEEED3D5A178E214D9E3 /* Pods */,
+				716FD8323924D687A419E455 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};
@@ -45,6 +244,15 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
+		E98FFEEED3D5A178E214D9E3 /* Pods */ = {
+			isa = PBXGroup;
+			children = (
+				86626F54EF84E23B1C67EEA0 /* Pods-ColorwordSUI.debug.xcconfig */,
+				69259F8355923D17A1C3F54E /* Pods-ColorwordSUI.release.xcconfig */,
+			);
+			path = Pods;
+			sourceTree = "<group>";
+		};
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
@@ -52,20 +260,20 @@
 			isa = PBXNativeTarget;
 			buildConfigurationList = 7DA172972CC06DC300B3C6E6 /* Build configuration list for PBXNativeTarget "ColorwordSUI" */;
 			buildPhases = (
+				8570BC0D0356121703BF6A1F /* [CP] Check Pods Manifest.lock */,
 				7DA172852CC06DC100B3C6E6 /* Sources */,
 				7DA172862CC06DC100B3C6E6 /* Frameworks */,
 				7DA172872CC06DC100B3C6E6 /* Resources */,
+				BECD9B362EDD41055F36CC08 /* [CP] Embed Pods Frameworks */,
 			);
 			buildRules = (
 			);
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
-				7DA1728B2CC06DC100B3C6E6 /* ColorwordSUI */,
+				7D8F474A2CC68EA7007B80B1 /* Service */,
 			);
 			name = ColorwordSUI;
-			packageProductDependencies = (
-			);
 			productName = ColorwordSUI;
 			productReference = 7DA172892CC06DC100B3C6E6 /* ColorwordSUI.app */;
 			productType = "com.apple.product-type.application";
@@ -86,6 +294,7 @@
 				};
 			};
 			buildConfigurationList = 7DA172842CC06DC100B3C6E6 /* Build configuration list for PBXProject "ColorwordSUI" */;
+			compatibilityVersion = "Xcode 14.0";
 			developmentRegion = en;
 			hasScannedForEncodings = 0;
 			knownRegions = (
@@ -94,8 +303,6 @@
 				tr,
 			);
 			mainGroup = 7DA172802CC06DC100B3C6E6;
-			minimizedProjectReferenceProxies = 1;
-			preferredProjectObjectVersion = 77;
 			productRefGroup = 7DA1728A2CC06DC100B3C6E6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -110,20 +317,90 @@
 			isa = PBXResourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D69E3C42CC5B93600A442A5 /* Localizable.strings in Resources */,
+				7D69E3C52CC5B93600A442A5 /* Preview Assets.xcassets in Resources */,
+				7D4880092CC69CCD004D5846 /* GoogleService-Info.plist in Resources */,
+				7D69E3C62CC5B93600A442A5 /* Assets.xcassets in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXResourcesBuildPhase section */
+
+/* Begin PBXShellScriptBuildPhase section */
+		8570BC0D0356121703BF6A1F /* [CP] Check Pods Manifest.lock */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+			);
+			inputPaths = (
+				"${PODS_PODFILE_DIR_PATH}/Podfile.lock",
+				"${PODS_ROOT}/Manifest.lock",
+			);
+			name = "[CP] Check Pods Manifest.lock";
+			outputFileListPaths = (
+			);
+			outputPaths = (
+				"$(DERIVED_FILE_DIR)/Pods-ColorwordSUI-checkManifestLockResult.txt",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "diff \"${PODS_PODFILE_DIR_PATH}/Podfile.lock\" \"${PODS_ROOT}/Manifest.lock\" > /dev/null\nif [ $? != 0 ] ; then\n    # print error to STDERR\n    echo \"error: The sandbox is not in sync with the Podfile.lock. Run 'pod install' or update your CocoaPods installation.\" >&2\n    exit 1\nfi\n# This output is used by Xcode 'outputs' to avoid re-running this script phase.\necho \"SUCCESS\" > \"${SCRIPT_OUTPUT_FILE_0}\"\n";
+			showEnvVarsInLog = 0;
+		};
+		BECD9B362EDD41055F36CC08 /* [CP] Embed Pods Frameworks */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI-frameworks-${CONFIGURATION}-input-files.xcfilelist",
+			);
+			name = "[CP] Embed Pods Frameworks";
+			outputFileListPaths = (
+				"${PODS_ROOT}/Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI-frameworks-${CONFIGURATION}-output-files.xcfilelist",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${PODS_ROOT}/Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI-frameworks.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
+/* End PBXShellScriptBuildPhase section */
 
 /* Begin PBXSourcesBuildPhase section */
 		7DA172852CC06DC100B3C6E6 /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D48800B2CC6A4F9004D5846 /* AppDelegate.swift in Sources */,
+				7D69E3C72CC5B93600A442A5 /* LanguageManager.swift in Sources */,
+				7D69E3C82CC5B93600A442A5 /* Constants.swift in Sources */,
+				7D69E3C92CC5B93600A442A5 /* ColorwordSUIApp.swift in Sources */,
+				7D69E3CA2CC5B93600A442A5 /* LoginScreen.swift in Sources */,
+				7D69E3CB2CC5B93600A442A5 /* AppNameWidget.swift in Sources */,
+				7D69E3CC2CC5B93600A442A5 /* LanguagePickerWidget.swift in Sources */,
+				7D69E3CD2CC5B93600A442A5 /* LoginButtonWidget.swift in Sources */,
+				7D69E3CE2CC5B93600A442A5 /* SignUpButtonWidget.swift in Sources */,
+				7D69E3CF2CC5B93600A442A5 /* TextfieldWidgets.swift in Sources */,
+				7D69E3D02CC5B93600A442A5 /* LoginViewModel.swift in Sources */,
+				7D69E3D12CC5B93600A442A5 /* SignupScreen.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
 /* End PBXSourcesBuildPhase section */
+
+/* Begin PBXVariantGroup section */
+		7D69E3A82CC5B93600A442A5 /* Localizable.strings */ = {
+			isa = PBXVariantGroup;
+			children = (
+				7D69E3A62CC5B93600A442A5 /* en */,
+				7D69E3A72CC5B93600A442A5 /* tr */,
+			);
+			name = Localizable.strings;
+			sourceTree = "<group>";
+		};
+/* End PBXVariantGroup section */
 
 /* Begin XCBuildConfiguration section */
 		7DA172952CC06DC300B3C6E6 /* Debug */ = {
@@ -249,6 +526,7 @@
 		};
 		7DA172982CC06DC300B3C6E6 /* Debug */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 86626F54EF84E23B1C67EEA0 /* Pods-ColorwordSUI.debug.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -256,6 +534,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ColorwordSUI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
@@ -277,6 +556,7 @@
 		};
 		7DA172992CC06DC300B3C6E6 /* Release */ = {
 			isa = XCBuildConfiguration;
+			baseConfigurationReference = 69259F8355923D17A1C3F54E /* Pods-ColorwordSUI.release.xcconfig */;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
 				ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME = AccentColor;
@@ -284,6 +564,7 @@
 				CURRENT_PROJECT_VERSION = 1;
 				DEVELOPMENT_ASSET_PATHS = "\"ColorwordSUI/Preview Content\"";
 				ENABLE_PREVIEWS = YES;
+				ENABLE_USER_SCRIPT_SANDBOXING = NO;
 				GENERATE_INFOPLIST_FILE = YES;
 				INFOPLIST_KEY_UIApplicationSceneManifest_Generation = YES;
 				INFOPLIST_KEY_UIApplicationSupportsIndirectInputEvents = YES;
