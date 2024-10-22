@@ -9,6 +9,8 @@
 /* Begin PBXBuildFile section */
 		7D4880092CC69CCD004D5846 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 7D4880082CC69CCD004D5846 /* GoogleService-Info.plist */; };
 		7D48800B2CC6A4F9004D5846 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D48800A2CC6A4F4004D5846 /* AppDelegate.swift */; };
+		7D48800D2CC6B3F1004D5846 /* FirebaseAuthService.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D48800C2CC6B3ED004D5846 /* FirebaseAuthService.swift */; };
+		7D4880122CC6B503004D5846 /* AuthServiceInterface.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D4880112CC6B503004D5846 /* AuthServiceInterface.swift */; };
 		7D69E3C42CC5B93600A442A5 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7D69E3A82CC5B93600A442A5 /* Localizable.strings */; };
 		7D69E3C52CC5B93600A442A5 /* Preview Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D69E3BA2CC5B93600A442A5 /* Preview Assets.xcassets */; };
 		7D69E3C62CC5B93600A442A5 /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 7D69E3C22CC5B93600A442A5 /* Assets.xcassets */; };
@@ -30,6 +32,8 @@
 		69259F8355923D17A1C3F54E /* Pods-ColorwordSUI.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorwordSUI.release.xcconfig"; path = "Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI.release.xcconfig"; sourceTree = "<group>"; };
 		7D4880082CC69CCD004D5846 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
 		7D48800A2CC6A4F4004D5846 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
+		7D48800C2CC6B3ED004D5846 /* FirebaseAuthService.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseAuthService.swift; sourceTree = "<group>"; };
+		7D4880112CC6B503004D5846 /* AuthServiceInterface.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AuthServiceInterface.swift; sourceTree = "<group>"; };
 		7D69E3A52CC5B93600A442A5 /* LanguageManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LanguageManager.swift; sourceTree = "<group>"; };
 		7D69E3A62CC5B93600A442A5 /* en */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = en; path = en.lproj/Localizable.strings; sourceTree = "<group>"; };
 		7D69E3A72CC5B93600A442A5 /* tr */ = {isa = PBXFileReference; lastKnownFileType = text.plist.strings; name = tr; path = tr.lproj/Localizable.strings; sourceTree = "<group>"; };
@@ -51,6 +55,7 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7D48800E2CC6B422004D5846 /* CoreModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CoreModels; sourceTree = "<group>"; };
 		7D8F474A2CC68EA7007B80B1 /* Service */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Service; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
 
@@ -77,6 +82,8 @@
 		7D69E3A32CC5B93600A442A5 /* Network */ = {
 			isa = PBXGroup;
 			children = (
+				7D48800C2CC6B3ED004D5846 /* FirebaseAuthService.swift */,
+				7D4880112CC6B503004D5846 /* AuthServiceInterface.swift */,
 			);
 			path = Network;
 			sourceTree = "<group>";
@@ -84,6 +91,7 @@
 		7D69E3A42CC5B93600A442A5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				7D48800E2CC6B422004D5846 /* CoreModels */,
 				7D69E3A32CC5B93600A442A5 /* Network */,
 			);
 			path = Core;
@@ -271,6 +279,7 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				7D48800E2CC6B422004D5846 /* CoreModels */,
 				7D8F474A2CC68EA7007B80B1 /* Service */,
 			);
 			name = ColorwordSUI;
@@ -376,6 +385,7 @@
 				7D48800B2CC6A4F9004D5846 /* AppDelegate.swift in Sources */,
 				7D69E3C72CC5B93600A442A5 /* LanguageManager.swift in Sources */,
 				7D69E3C82CC5B93600A442A5 /* Constants.swift in Sources */,
+				7D48800D2CC6B3F1004D5846 /* FirebaseAuthService.swift in Sources */,
 				7D69E3C92CC5B93600A442A5 /* ColorwordSUIApp.swift in Sources */,
 				7D69E3CA2CC5B93600A442A5 /* LoginScreen.swift in Sources */,
 				7D69E3CB2CC5B93600A442A5 /* AppNameWidget.swift in Sources */,
@@ -383,6 +393,7 @@
 				7D69E3CD2CC5B93600A442A5 /* LoginButtonWidget.swift in Sources */,
 				7D69E3CE2CC5B93600A442A5 /* SignUpButtonWidget.swift in Sources */,
 				7D69E3CF2CC5B93600A442A5 /* TextfieldWidgets.swift in Sources */,
+				7D4880122CC6B503004D5846 /* AuthServiceInterface.swift in Sources */,
 				7D69E3D02CC5B93600A442A5 /* LoginViewModel.swift in Sources */,
 				7D69E3D12CC5B93600A442A5 /* SignupScreen.swift in Sources */,
 			);

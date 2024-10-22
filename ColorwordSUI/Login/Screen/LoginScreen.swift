@@ -44,6 +44,15 @@ struct LoginScreen: View {
     func loginButton() {
         
         //egocakli@gmail.com 123456
+        
+        
+        loginVM.authLogin(email: loginVM.email, password: loginVM.password)
+        
+//        loginVM.loginWithEmailPassword(email: "egocakli@gmail.com", password: "123456") { firebaseUsermodel in
+//            print(firebaseUsermodel?.name ?? "empty name")
+//        }
+//        
+
 
 //        Auth.auth().signIn(withEmail: "egemenocakli97@gmail.com", password: "") { result, error in
 //            if  error != nil {
