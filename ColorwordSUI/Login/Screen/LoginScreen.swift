@@ -12,6 +12,7 @@ struct LoginScreen: View {
     
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var loginVM = LoginViewModel()
+    @State private var showAlert = false
 
     var body: some View {
         NavigationStack {
@@ -37,7 +38,17 @@ struct LoginScreen: View {
                     }
                     .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                 }
-            }
+            }.alert(
+                loginVM.currentAlert?.title ?? "",
+                isPresented: $loginVM.showAlert,
+                actions: {
+                    Button(loginVM.currentAlert?.primaryButtonTitle ?? "", action: loginVM.currentAlert?.primaryAction ?? {})
+                    
+                },
+                message: {
+                    Text(loginVM.currentAlert?.message ?? "")
+                }
+            )
         }
     }
     
@@ -45,8 +56,17 @@ struct LoginScreen: View {
         
         //egocakli@gmail.com 123456
         
+        let validationResult = loginVM.validateInputs()
         
-        loginVM.authLogin(email: loginVM.email, password: loginVM.password)
+        if validationResult != false {
+            loginVM.authLogin(email: loginVM.email, password: loginVM.password)
+
+        }
+        
+       
+            
+        
+        
         
 //        loginVM.loginWithEmailPassword(email: "egocakli@gmail.com", password: "123456") { firebaseUsermodel in
 //            print(firebaseUsermodel?.name ?? "empty name")
@@ -77,5 +97,6 @@ struct LoginScreen: View {
     
 #Preview {
     LoginScreen()
+        .environmentObject(LanguageManager())
 }
 

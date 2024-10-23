@@ -18,6 +18,54 @@ class LoginViewModel: ObservableObject {
     @Published  var name: String = ""
     @Published  var lastName: String = ""
     
+    @Published var showAlert = false
+    var currentAlert: CommonAlertDialog?
+    var firebaseErrorMessage: String? ///TODO: firebaseden gelen mesajları buraya atıp aşağıya gönderebilirim. veya şartların hepsini karşılyorsa firebaseden gelen mesajı yazdırabilriim.
+    
+    
+        
+        private let validationManager = ValidationManager() // ValidationManager kullanıyoruz
+        
+        func validateInputs() -> Bool {
+            if let validationError = validationManager.validate(email: email, password: password) {
+                switch validationError {
+                case .emptyFields:
+                    currentAlert = CommonAlertDialog(
+                        title: "Error",
+                        message: "Email or Password can't be empty.",
+                        primaryButtonTitle: "Ok",
+                        secondaryButtonTitle: nil,
+                        primaryAction: { },
+                        secondaryAction: {nil}
+                    )
+                    
+                case .shortPassword:
+                    currentAlert = CommonAlertDialog(
+                        title: "Error",
+                        message: "Password must be at least 6 characters long.",
+                        primaryButtonTitle: "Ok",
+                        secondaryButtonTitle: nil,
+                        primaryAction: {  },
+                        secondaryAction: {nil}
+                    )
+                    
+                case .invalidEmail:
+                    currentAlert = CommonAlertDialog(
+                        title: "Error",
+                        message: "Invalid email format.",
+                        primaryButtonTitle: "Ok",
+                        secondaryButtonTitle: nil,
+                        primaryAction: {  },
+                        secondaryAction: { nil}
+                    )
+                }
+                showAlert = true
+                return false
+            } else {
+                return true
+            }
+        }
+    
     
     ///TODO: Genel bir textfield form doldurma kontrolü yapılacak eğer şartlar sağlanıyorsa aşağıdaki metod çalışacak.
     func authLogin(email: String, password: String) {

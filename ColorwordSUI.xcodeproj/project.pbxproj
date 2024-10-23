@@ -55,6 +55,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7D3728F52CC9ABF800DFDF99 /* CommonWidgets */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CommonWidgets; sourceTree = "<group>"; };
+		7D3728F82CC9BEB600DFDF99 /* Validation */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Validation; sourceTree = "<group>"; };
 		7D48800E2CC6B422004D5846 /* CoreModels */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = CoreModels; sourceTree = "<group>"; };
 		7D8F474A2CC68EA7007B80B1 /* Service */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Service; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -91,6 +93,8 @@
 		7D69E3A42CC5B93600A442A5 /* Core */ = {
 			isa = PBXGroup;
 			children = (
+				7D3728F82CC9BEB600DFDF99 /* Validation */,
+				7D3728F52CC9ABF800DFDF99 /* CommonWidgets */,
 				7D48800E2CC6B422004D5846 /* CoreModels */,
 				7D69E3A32CC5B93600A442A5 /* Network */,
 			);
@@ -279,6 +283,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				7D3728F52CC9ABF800DFDF99 /* CommonWidgets */,
+				7D3728F82CC9BEB600DFDF99 /* Validation */,
 				7D48800E2CC6B422004D5846 /* CoreModels */,
 				7D8F474A2CC68EA7007B80B1 /* Service */,
 			);
