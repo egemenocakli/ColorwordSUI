@@ -26,7 +26,9 @@ struct LoginScreen: View {
                             VStack {
                                 TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
                                 
-                                LoginButtonWidget(action: loginButton)
+                                LoginButtonWidget(action: loginButton).navigationDestination(isPresented: $loginVM.loginSucces) {
+                                    HomePageScreen()
+                                }
                                 
                                 SignUpButtonWidget(action: signupButton)
                                     
@@ -59,8 +61,8 @@ struct LoginScreen: View {
         let validationResult = loginVM.validateInputs()
         
         if validationResult != false {
-            loginVM.authLogin(email: loginVM.email, password: loginVM.password)
-
+            loginVM.loginSucces = loginVM.authLogin(email: loginVM.email, password: loginVM.password)
+            
         }
         
        

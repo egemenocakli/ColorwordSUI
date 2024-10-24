@@ -17,8 +17,8 @@ class LoginViewModel: ObservableObject {
     @Published  var password: String = ""
     @Published  var name: String = ""
     @Published  var lastName: String = ""
-    
     @Published var showAlert = false
+    @Published var loginSucces = false
     var currentAlert: CommonAlertDialog?
     var firebaseErrorMessage: String? ///TODO: firebaseden gelen mesajları buraya atıp aşağıya gönderebilirim. veya şartların hepsini karşılyorsa firebaseden gelen mesajı yazdırabilriim.
     
@@ -59,25 +59,33 @@ class LoginViewModel: ObservableObject {
                         secondaryAction: { nil}
                     )
                 }
+                
                 showAlert = true
                 return false
-            } else {
+            }else {
                 return true
             }
         }
     
     
     ///TODO: Genel bir textfield form doldurma kontrolü yapılacak eğer şartlar sağlanıyorsa aşağıdaki metod çalışacak.
-    func authLogin(email: String, password: String) {
+    func authLogin(email: String, password: String) -> Bool{
         
         
         if (email != "" && password != "") {
          
             loginService.loginWithEmailPassword(email: email, password: password, completion: { usermodel in
-                print(usermodel?.name ?? "empty name")
+                print(usermodel?.userId ?? "empty name")
+                ///TODO: burada singleton olan user modeline ulaşıp içeriği dolu mu değilmi kontrolü yapabiliriz sonuca göre sonraki sayfaya geçer
+                
+                
             })
+            loginSucces = true
+            return loginSucces
         }else {
             ///TODO: genel dizinde bir widget klasörü oluşturup Alert widget yapılcak
+            loginSucces = false
+            return loginSucces
         }
   
     }

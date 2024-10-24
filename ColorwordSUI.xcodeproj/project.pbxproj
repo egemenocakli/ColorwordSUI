@@ -25,6 +25,7 @@
 		7D69E3CF2CC5B93600A442A5 /* TextfieldWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B52CC5B93600A442A5 /* TextfieldWidgets.swift */; };
 		7D69E3D02CC5B93600A442A5 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3B72CC5B93600A442A5 /* LoginViewModel.swift */; };
 		7D69E3D12CC5B93600A442A5 /* SignupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D69E3BD2CC5B93600A442A5 /* SignupScreen.swift */; };
+		7DBECB082CCAF4ED00841448 /* HomePageScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DBECB032CCAF4ED00841448 /* HomePageScreen.swift */; };
 		BA89AE4DA2CA9FD4AAD5D5AD /* Pods_ColorwordSUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = E38876D7E36C944943DDC21C /* Pods_ColorwordSUI.framework */; };
 /* End PBXBuildFile section */
 
@@ -50,6 +51,7 @@
 		7D69E3BD2CC5B93600A442A5 /* SignupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupScreen.swift; sourceTree = "<group>"; };
 		7D69E3C22CC5B93600A442A5 /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		7DA172892CC06DC100B3C6E6 /* ColorwordSUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorwordSUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		7DBECB032CCAF4ED00841448 /* HomePageScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageScreen.swift; sourceTree = "<group>"; };
 		86626F54EF84E23B1C67EEA0 /* Pods-ColorwordSUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorwordSUI.debug.xcconfig"; path = "Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI.debug.xcconfig"; sourceTree = "<group>"; };
 		E38876D7E36C944943DDC21C /* Pods_ColorwordSUI.framework */ = {isa = PBXFileReference; explicitFileType = wrapper.framework; includeInIndex = 0; path = Pods_ColorwordSUI.framework; sourceTree = BUILT_PRODUCTS_DIR; };
 /* End PBXFileReference section */
@@ -219,6 +221,7 @@
 				7D69E3BE2CC5B93600A442A5 /* Screen */,
 				7D69E3BF2CC5B93600A442A5 /* View */,
 				7D69E3C02CC5B93600A442A5 /* Viewmodel */,
+				7DBECB072CCAF4ED00841448 /* HomePage */,
 			);
 			path = Signup;
 			sourceTree = "<group>";
@@ -254,6 +257,46 @@
 				7DA172892CC06DC100B3C6E6 /* ColorwordSUI.app */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		7DBECB022CCAF4ED00841448 /* Model */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Model;
+			sourceTree = "<group>";
+		};
+		7DBECB042CCAF4ED00841448 /* Screen */ = {
+			isa = PBXGroup;
+			children = (
+				7DBECB032CCAF4ED00841448 /* HomePageScreen.swift */,
+			);
+			path = Screen;
+			sourceTree = "<group>";
+		};
+		7DBECB052CCAF4ED00841448 /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = View;
+			sourceTree = "<group>";
+		};
+		7DBECB062CCAF4ED00841448 /* Viewmodel */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			path = Viewmodel;
+			sourceTree = "<group>";
+		};
+		7DBECB072CCAF4ED00841448 /* HomePage */ = {
+			isa = PBXGroup;
+			children = (
+				7DBECB022CCAF4ED00841448 /* Model */,
+				7DBECB042CCAF4ED00841448 /* Screen */,
+				7DBECB052CCAF4ED00841448 /* View */,
+				7DBECB062CCAF4ED00841448 /* Viewmodel */,
+			);
+			path = HomePage;
 			sourceTree = "<group>";
 		};
 		E98FFEEED3D5A178E214D9E3 /* Pods */ = {
@@ -390,6 +433,7 @@
 			files = (
 				7D48800B2CC6A4F9004D5846 /* AppDelegate.swift in Sources */,
 				7D69E3C72CC5B93600A442A5 /* LanguageManager.swift in Sources */,
+				7DBECB082CCAF4ED00841448 /* HomePageScreen.swift in Sources */,
 				7D69E3C82CC5B93600A442A5 /* Constants.swift in Sources */,
 				7D48800D2CC6B3F1004D5846 /* FirebaseAuthService.swift in Sources */,
 				7D69E3C92CC5B93600A442A5 /* ColorwordSUIApp.swift in Sources */,
