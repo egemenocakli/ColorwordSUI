@@ -7,8 +7,6 @@
 
 import Foundation
 
-import Foundation
-
 struct FirebaseUserModel {
     let userId: String
     let email: String

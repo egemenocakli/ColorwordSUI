@@ -62,7 +62,7 @@ struct LoginScreen: View {
         
         if validationResult != false {
             loginVM.loginSucces = loginVM.authLogin(email: loginVM.email, password: loginVM.password)
-            
+
         }
         
        

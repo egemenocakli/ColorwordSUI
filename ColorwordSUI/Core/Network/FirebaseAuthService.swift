@@ -12,10 +12,15 @@ import FirebaseAuth
 class FirebaseAuthService: AuthServiceInterface {
     private let firebaseAuth = Auth.auth()
     private var appUser: FirebaseUserModel?
+    private var userModel: UserSessionManager?
 
     func getCurrentUser() -> FirebaseUserModel? {
         guard let user = firebaseAuth.currentUser else { return nil }
         appUser = FirebaseUserModel(userId: user.uid, email: user.email ?? "", name: user.displayName ?? "", lastname: "")
+        if appUser != nil {
+            userModel?.updateUser(with: appUser ?? FirebaseUserModel(userId: user.uid, email: user.email ?? "", name: user.displayName ?? "", lastname: ""))
+            
+        }
         return appUser
     }
 
@@ -32,20 +37,37 @@ class FirebaseAuthService: AuthServiceInterface {
         }
     }
 
-    func loginWithEmailPassword(email: String, password: String, completion: @escaping (FirebaseUserModel?) -> Void) {
-        firebaseAuth.signIn(withEmail: email, password: password) { authResult, error in
+    
+    func loginWithEmailPassword(email: String, password: String, completion: @escaping (Bool, FirebaseUserModel?) -> Void) {
+        Auth.auth().signIn(withEmail: email, password: password) { authResult, error in
             if let error = error {
-                print("Login error: \(error.localizedDescription)")
-                completion(nil)
+                print("Giriş yapılamadı: \(error.localizedDescription)")
+                completion(false, nil)
                 return
             }
-            print("giriş başarılı")
-            self.appUser = FirebaseUserModel(userId: authResult?.user.uid ?? "", email: email, name: "", lastname: "")
-            completion(self.appUser)
+            
+            if let authResult = authResult {
+                let user = authResult.user
+                let userNameLastname = splitName(from: user.displayName ?? "")
+                let firebaseUser = FirebaseUserModel(
+                    userId: user.uid,
+                    email: user.email ?? "",
+                    name: userNameLastname.name,
+                    lastname: userNameLastname.lastName
+                )
+                completion(true, firebaseUser)
+            } else {
+                completion(false, nil)
+            }
+        }
+        
+        func splitName(from displayName: String) -> (name: String, lastName: String) {
+            let nameComponents = displayName.split(separator: " ", maxSplits: 1, omittingEmptySubsequences: true)
+            let name = nameComponents.first.map(String.init) ?? ""
+            let lastName = nameComponents.count > 1 ? String(nameComponents[1]) : ""
+            return (name, lastName)
         }
     }
-    
-    
     
 //    
 //    

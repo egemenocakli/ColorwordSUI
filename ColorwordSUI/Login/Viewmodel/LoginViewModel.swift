@@ -67,29 +67,44 @@ class LoginViewModel: ObservableObject {
             }
         }
     
-    
-    ///TODO: Genel bir textfield form doldurma kontrolü yapılacak eğer şartlar sağlanıyorsa aşağıdaki metod çalışacak.
-    func authLogin(email: String, password: String) -> Bool{
+    func authLogin (email: String, password: String) -> Bool{
         
-        
-        if (email != "" && password != "") {
-         
-            loginService.loginWithEmailPassword(email: email, password: password, completion: { usermodel in
-                print(usermodel?.userId ?? "empty name")
-                ///TODO: burada singleton olan user modeline ulaşıp içeriği dolu mu değilmi kontrolü yapabiliriz sonuca göre sonraki sayfaya geçer
-                
-                
-            })
-            loginSucces = true
-            return loginSucces
-        }else {
-            ///TODO: genel dizinde bir widget klasörü oluşturup Alert widget yapılcak
-            loginSucces = false
-            return loginSucces
-        }
-  
+            loginService.loginWithEmailPassword(email: email, password: password) { [weak self] success, user in
+                if success, let user = user {
+                    print("User logged in: \(user.email)")
+                    UserSessionManager.shared.updateUser(with: user)
+                    self?.loginSucces = true
+                } else {
+                    print("Login failed")
+                    self?.loginSucces = false
+                }
+            }
+        return loginSucces
     }
     
+    
+    ///TODO: Genel bir textfield form doldurma kontrolü yapılacak eğer şartlar sağlanıyorsa aşağıdaki metod çalışacak.
+//    func authLogin(email: String, password: String) -> Bool{
+//        
+//        
+//        if (email != "" && password != "") {
+//         
+//            loginService.loginWithEmailPassword(email: email, password: password, completion: { usermodel in
+//                print(usermodel?.userId ?? "empty name")
+//                ///TODO: burada singleton olan user modeline ulaşıp içeriği dolu mu değilmi kontrolü yapabiliriz sonuca göre sonraki sayfaya geçer
+//                
+//                
+//            })
+//            loginSucces = true
+//            return loginSucces
+//        }else {
+//            ///TODO: genel dizinde bir widget klasörü oluşturup Alert widget yapılcak
+//            loginSucces = false
+//            return loginSucces
+//        }
+//  
+//    }
+//    
     func authSignUp(email: String, password: String) {
         
         if (email != "" && password != "") {
