@@ -8,6 +8,7 @@
 
 /* Begin PBXBuildFile section */
 		7D77434B2CD9919A0080D4F5 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77434A2CD9919A0080D4F5 /* ThemeManager.swift */; };
+		7D8E49F02CDA69DA00D2CF96 /* ThemeSelectToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8E49EF2CDA69D900D2CF96 /* ThemeSelectToggleButton.swift */; };
 		7DC47F2B2CD9230500588A66 /* CommonAlertDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47EF72CD9230500588A66 /* CommonAlertDialog.swift */; };
 		7DC47F2C2CD9230500588A66 /* FirebaseUserModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47EF92CD9230500588A66 /* FirebaseUserModel.swift */; };
 		7DC47F2D2CD9230500588A66 /* UserSessionManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47EFA2CD9230500588A66 /* UserSessionManager.swift */; };
@@ -37,6 +38,7 @@
 /* Begin PBXFileReference section */
 		4988F3A42D0C0A580880D809 /* Pods-ColorwordSUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorwordSUI.debug.xcconfig"; path = "Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI.debug.xcconfig"; sourceTree = "<group>"; };
 		7D77434A2CD9919A0080D4F5 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
+		7D8E49EF2CDA69D900D2CF96 /* ThemeSelectToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectToggleButton.swift; sourceTree = "<group>"; };
 		7DA172892CC06DC100B3C6E6 /* ColorwordSUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorwordSUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
 		7DC47EF72CD9230500588A66 /* CommonAlertDialog.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CommonAlertDialog.swift; sourceTree = "<group>"; };
 		7DC47EF92CD9230500588A66 /* FirebaseUserModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FirebaseUserModel.swift; sourceTree = "<group>"; };
@@ -213,6 +215,7 @@
 				7DC47F102CD9230500588A66 /* LanguagePickerWidget.swift */,
 				7DC47F112CD9230500588A66 /* LoginButtonWidget.swift */,
 				7DC47F122CD9230500588A66 /* SignUpButtonWidget.swift */,
+				7D8E49EF2CDA69D900D2CF96 /* ThemeSelectToggleButton.swift */,
 			);
 			path = Widgets;
 			sourceTree = "<group>";
@@ -486,6 +489,7 @@
 				7DC47F372CD9230500588A66 /* LanguagePickerWidget.swift in Sources */,
 				7DC47F382CD9230500588A66 /* LoginButtonWidget.swift in Sources */,
 				7DC47F392CD9230500588A66 /* SignUpButtonWidget.swift in Sources */,
+				7D8E49F02CDA69DA00D2CF96 /* ThemeSelectToggleButton.swift in Sources */,
 				7DC47F3A2CD9230500588A66 /* TextfieldWidgets.swift in Sources */,
 				7DC47F3B2CD9230500588A66 /* LoginViewModel.swift in Sources */,
 				7DC47F3C2CD9230500588A66 /* HomePageScreen.swift in Sources */,

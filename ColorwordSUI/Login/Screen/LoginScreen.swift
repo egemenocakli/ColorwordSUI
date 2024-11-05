@@ -10,8 +10,7 @@ import FirebaseAuth
 
 struct LoginScreen: View {
     @EnvironmentObject var themeManager: ThemeManager
-
-    
+    @Environment(\.colorScheme) private var systemColorScheme
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var loginVM = LoginViewModel()
     @State private var showAlert = false
@@ -22,6 +21,20 @@ struct LoginScreen: View {
                 Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                 GeometryReader { geometry in
                     VStack {
+                        
+                        HStack {
+                            ThemeSelectToggleButton(isDarkMode: Binding(
+                                get: { themeManager.selectedTheme == Constants.AppTheme.dark_mode.rawValue },
+                                set: { _ in themeManager.toggleTheme() }
+                            ))
+                            
+                            Spacer()
+                            
+                            LanguagePickerWidget()
+                        }.preferredColorScheme(themeManager.colorScheme)
+                            .padding(10)
+                        
+
                         AppNameWidget(geometry: geometry)
                         
                         GeometryReader { geometry in
@@ -33,30 +46,11 @@ struct LoginScreen: View {
                                 }
                                 
                                 SignUpButtonWidget(action: signupButton)
-                                    
+                                
                             }
                             .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
                             .frame(height: geometry.size.height * 0.6)
                         }
-                        ///TODO: düzenleme yapılacak
-                        HStack {
-                            LanguagePickerWidget()
-                            
-                          
-                            Toggle(isOn: Binding(
-                                get: { themeManager.selectedTheme == Constants.AppTheme.dark_mode.rawValue },
-                                                set: { _ in themeManager.toggleTheme() }
-                                            )) {
-                                                themeManager.selectedTheme == Constants.AppTheme.light_mode.rawValue ?
-                                                Text("Dark Mode"): Text("Light Mode")
-                                            }
-                                            .toggleStyle(.switch)
-                                            .frame(width: 200, height: 100)
-                            
-                            
-
-                        }.preferredColorScheme(themeManager.colorScheme)
-
                     }
                     .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                     
@@ -73,6 +67,7 @@ struct LoginScreen: View {
                 }
             )
         }
+
     }
     
  

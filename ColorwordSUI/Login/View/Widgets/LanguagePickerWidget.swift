@@ -18,9 +18,10 @@ struct LanguagePickerWidget: View {
         }) {
             Text(languageManager.currentLanguage == "en" ? "TR" : "EN")
                 .padding()
-                .background(Color.gray.opacity(0.3))
+                .frame(width: 80, height: 40)
+                .background(Color.gray.opacity(0.1))
                 .foregroundColor(Constants.ColorConstants.whiteFont)
-                .cornerRadius(Constants.SizeRadiusConstants.xxSmall)
+                .cornerRadius(Constants.SizeRadiusConstants.large)
         }
     }
 }

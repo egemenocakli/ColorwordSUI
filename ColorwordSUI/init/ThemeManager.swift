@@ -1,14 +1,9 @@
-//
-//  ThemeManager.swift
-//  ColorwordSUI
-//
-//  Created by Emre Ocaklı on 5.11.2024.
-//
-
 import Foundation
 import SwiftUI
 
+//TODO: Eğer kullanıcı uygulamayı ilk defa açıyorsa cihaz temasını uygulamaya aktarsın.
 class ThemeManager: ObservableObject {
+
     @AppStorage("selectedTheme") var selectedTheme: String = Constants.AppTheme.light_mode.rawValue {
         didSet {
             updateColorScheme()
@@ -29,5 +24,9 @@ class ThemeManager: ObservableObject {
         selectedTheme = selectedTheme == Constants.AppTheme.dark_mode.rawValue ? Constants.AppTheme.light_mode.rawValue : Constants.AppTheme.dark_mode.rawValue
     }
     
-
+    func setSystemTheme(_ systemTheme: ColorScheme) {
+        print("Sistem default theme: \(systemTheme == .dark ? "Karanlık Mod" : "Aydınlık Mod")")
+    }
 }
+
+

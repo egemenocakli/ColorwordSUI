@@ -9,8 +9,6 @@ import SwiftUI
 import FirebaseCore
 
 
-
-
 @main
 struct ColorwordSUIApp: App {
     @StateObject private var themeManager = ThemeManager()
