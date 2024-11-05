@@ -13,7 +13,7 @@ import FirebaseCore
 
 @main
 struct ColorwordSUIApp: App {
-    
+    @StateObject private var themeManager = ThemeManager()
     @StateObject private var languageManager = LanguageManager()
 
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
@@ -21,6 +21,7 @@ struct ColorwordSUIApp: App {
         WindowGroup {
             LoginScreen()
                 .environmentObject(languageManager)
+                .environmentObject(themeManager)
         }
     }
 }

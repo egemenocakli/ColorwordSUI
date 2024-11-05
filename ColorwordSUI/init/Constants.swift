@@ -10,17 +10,28 @@ import SwiftUI
 
 class Constants {
     
+
     static let appName = "ColorWord"
     
+    enum AppTheme: String {
+        case dark_mode = "DARK_MODE"
+        case light_mode = "LIGHT_MODE"
+    }
+    
     class ColorConstants {
-        static let loginDarkThemeBackgroundGradient = LinearGradient(
-            gradient: Gradient(colors: [
-                Color(red: 0.0, green: 0.1, blue: 0.2),
-                Color.black
-            ]),
-            startPoint: .bottom,
-            endPoint: .top
-        )
+//        static let loginDarkThemeBackgroundGradient = LinearGradient(
+//            gradient: Gradient(colors: [
+//                //Color(red: 0.0, green: 0.1, blue: 0.2),
+//                //Color.black
+//                Color.backgroundColorGradient1,
+//                Color.backgroundColorGradient2
+//                
+//            ]),
+//            startPoint: .bottom,
+//            endPoint: .top
+//        )
+        
+        
 //        static let loginLightThemeBackgroundGradient = LinearGradient(
 //            gradient: Gradient(colors: [
 //                Color(red: 46/255.0, green: 47/255.0, blue: 66/255.0),
@@ -29,10 +40,13 @@ class Constants {
 //            startPoint: .bottom,
 //            endPoint: .top
 //        )
+        
         static let loginLightThemeBackgroundGradient = LinearGradient(
             gradient: Gradient(colors: [
-                Color(red: 150/255.0, green: 170/255.0, blue: 192/255.0),
-                Color(red: 55/255.0, green: 79/255.0, blue: 115/255.0)
+                //Color(red: 150/255.0, green: 170/255.0, blue: 192/255.0),
+                //Color(red: 55/255.0, green: 79/255.0, blue: 115/255.0)
+                Color.backgroundColorGradient1,
+                Color.backgroundColorGradient2,
             ]),
             startPoint: .top,
             endPoint: .bottom
@@ -83,5 +97,7 @@ class Constants {
         static let buttonWidth: CGFloat = 150
         static let buttonHeight: CGFloat = 50
     }
+    
+
     
 }

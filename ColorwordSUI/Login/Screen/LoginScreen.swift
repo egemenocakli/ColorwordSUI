@@ -9,6 +9,8 @@ import SwiftUI
 import FirebaseAuth
 
 struct LoginScreen: View {
+    @EnvironmentObject var themeManager: ThemeManager
+
     
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var loginVM = LoginViewModel()
@@ -36,10 +38,29 @@ struct LoginScreen: View {
                             .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
                             .frame(height: geometry.size.height * 0.6)
                         }
-                        LanguagePickerWidget()
+                        ///TODO: düzenleme yapılacak
+                        HStack {
+                            LanguagePickerWidget()
+                            
+                          
+                            Toggle(isOn: Binding(
+                                get: { themeManager.selectedTheme == Constants.AppTheme.dark_mode.rawValue },
+                                                set: { _ in themeManager.toggleTheme() }
+                                            )) {
+                                                themeManager.selectedTheme == Constants.AppTheme.light_mode.rawValue ?
+                                                Text("Dark Mode"): Text("Light Mode")
+                                            }
+                                            .toggleStyle(.switch)
+                                            .frame(width: 200, height: 100)
+                            
+                            
+
+                        }.preferredColorScheme(themeManager.colorScheme)
+
                     }
                     .environment(\.locale, .init(identifier: languageManager.currentLanguage))
-                }
+                    
+                 }
             }.alert(
                 loginVM.currentAlert?.title ?? "",
                 isPresented: $loginVM.showAlert,
@@ -54,6 +75,7 @@ struct LoginScreen: View {
         }
     }
     
+ 
     func loginButton() {
         
         //egocakli@gmail.com 123456

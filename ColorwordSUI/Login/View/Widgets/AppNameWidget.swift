@@ -20,6 +20,7 @@ struct AppNameWidget: View {
             .frame(width: UIScreen.main.bounds.width, height: Constants.PaddingSizeConstants.xlSize, alignment: .center)
             .font(.system(size: Constants.SizeConstants.appNameFontSize))
             .frame(height: geometry.size.height * 0.3)
-            .foregroundStyle(Constants.ColorConstants.whiteFont)
+            //.foregroundStyle(Constants.ColorConstants.whiteFont)
+            .foregroundStyle(Color.textColor)
     }
 }
