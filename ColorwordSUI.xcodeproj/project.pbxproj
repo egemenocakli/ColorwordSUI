@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D733F782CDD093D00D21D22 /* HomePageViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D733F772CDD093D00D21D22 /* HomePageViewModel.swift */; };
 		7D77434B2CD9919A0080D4F5 /* ThemeManager.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D77434A2CD9919A0080D4F5 /* ThemeManager.swift */; };
 		7D8E49F02CDA69DA00D2CF96 /* ThemeSelectToggleButton.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7D8E49EF2CDA69D900D2CF96 /* ThemeSelectToggleButton.swift */; };
 		7DC47F2B2CD9230500588A66 /* CommonAlertDialog.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47EF72CD9230500588A66 /* CommonAlertDialog.swift */; };
@@ -26,7 +27,7 @@
 		7DC47F392CD9230500588A66 /* SignUpButtonWidget.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F122CD9230500588A66 /* SignUpButtonWidget.swift */; };
 		7DC47F3A2CD9230500588A66 /* TextfieldWidgets.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F142CD9230500588A66 /* TextfieldWidgets.swift */; };
 		7DC47F3B2CD9230500588A66 /* LoginViewModel.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F162CD9230500588A66 /* LoginViewModel.swift */; };
-		7DC47F3C2CD9230500588A66 /* HomePageScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F1C2CD9230500588A66 /* HomePageScreen.swift */; };
+		7DC47F3C2CD9230500588A66 /* HomePage.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F1C2CD9230500588A66 /* HomePage.swift */; };
 		7DC47F3D2CD9230500588A66 /* SignupScreen.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F222CD9230500588A66 /* SignupScreen.swift */; };
 		7DC47F3E2CD9230500588A66 /* AppDelegate.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7DC47F272CD9230500588A66 /* AppDelegate.swift */; };
 		7DC47F3F2CD9230500588A66 /* Localizable.strings in Resources */ = {isa = PBXBuildFile; fileRef = 7DC47F052CD9230500588A66 /* Localizable.strings */; };
@@ -37,6 +38,7 @@
 
 /* Begin PBXFileReference section */
 		4988F3A42D0C0A580880D809 /* Pods-ColorwordSUI.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-ColorwordSUI.debug.xcconfig"; path = "Target Support Files/Pods-ColorwordSUI/Pods-ColorwordSUI.debug.xcconfig"; sourceTree = "<group>"; };
+		7D733F772CDD093D00D21D22 /* HomePageViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; name = HomePageViewModel.swift; path = ColorwordSUI/HomePage/HomePageViewModel.swift; sourceTree = SOURCE_ROOT; };
 		7D77434A2CD9919A0080D4F5 /* ThemeManager.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeManager.swift; sourceTree = "<group>"; };
 		7D8E49EF2CDA69D900D2CF96 /* ThemeSelectToggleButton.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ThemeSelectToggleButton.swift; sourceTree = "<group>"; };
 		7DA172892CC06DC100B3C6E6 /* ColorwordSUI.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = ColorwordSUI.app; sourceTree = BUILT_PRODUCTS_DIR; };
@@ -60,7 +62,7 @@
 		7DC47F142CD9230500588A66 /* TextfieldWidgets.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = TextfieldWidgets.swift; sourceTree = "<group>"; };
 		7DC47F162CD9230500588A66 /* LoginViewModel.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = LoginViewModel.swift; sourceTree = "<group>"; };
 		7DC47F192CD9230500588A66 /* Preview Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = "Preview Assets.xcassets"; sourceTree = "<group>"; };
-		7DC47F1C2CD9230500588A66 /* HomePageScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePageScreen.swift; sourceTree = "<group>"; };
+		7DC47F1C2CD9230500588A66 /* HomePage.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HomePage.swift; sourceTree = "<group>"; };
 		7DC47F222CD9230500588A66 /* SignupScreen.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SignupScreen.swift; sourceTree = "<group>"; };
 		7DC47F272CD9230500588A66 /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		7DC47F292CD9230500588A66 /* GoogleService-Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
@@ -69,6 +71,8 @@
 /* End PBXFileReference section */
 
 /* Begin PBXFileSystemSynchronizedRootGroup section */
+		7D733F792CDD0ACF00D21D22 /* Service */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Service; sourceTree = "<group>"; };
+		7D733F7E2CDD0C8000D21D22 /* App */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = App; sourceTree = "<group>"; };
 		7D7743412CD97D100080D4F5 /* Assets */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Assets; sourceTree = "<group>"; };
 		7D7743472CD982570080D4F5 /* Extensions */ = {isa = PBXFileSystemSynchronizedRootGroup; explicitFileTypes = {}; explicitFolders = (); path = Extensions; sourceTree = "<group>"; };
 /* End PBXFileSystemSynchronizedRootGroup section */
@@ -246,8 +250,10 @@
 				7DC47F152CD9230500588A66 /* View */,
 				7DC47F172CD9230500588A66 /* Viewmodel */,
 			);
-			path = Login;
-			sourceTree = "<group>";
+			name = Login;
+			path = ColorwordSUI/Login;
+			sourceTree = SOURCE_ROOT;
+			usesTabs = 0;
 		};
 		7DC47F1A2CD9230500588A66 /* Preview Content */ = {
 			isa = PBXGroup;
@@ -267,7 +273,7 @@
 		7DC47F1D2CD9230500588A66 /* Screen */ = {
 			isa = PBXGroup;
 			children = (
-				7DC47F1C2CD9230500588A66 /* HomePageScreen.swift */,
+				7DC47F1C2CD9230500588A66 /* HomePage.swift */,
 			);
 			path = Screen;
 			sourceTree = "<group>";
@@ -282,6 +288,7 @@
 		7DC47F1F2CD9230500588A66 /* Viewmodel */ = {
 			isa = PBXGroup;
 			children = (
+				7D733F772CDD093D00D21D22 /* HomePageViewModel.swift */,
 			);
 			path = Viewmodel;
 			sourceTree = "<group>";
@@ -289,6 +296,7 @@
 		7DC47F202CD9230500588A66 /* HomePage */ = {
 			isa = PBXGroup;
 			children = (
+				7D733F792CDD0ACF00D21D22 /* Service */,
 				7DC47F1B2CD9230500588A66 /* Model */,
 				7DC47F1D2CD9230500588A66 /* Screen */,
 				7DC47F1E2CD9230500588A66 /* View */,
@@ -329,7 +337,6 @@
 		7DC47F262CD9230500588A66 /* Signup */ = {
 			isa = PBXGroup;
 			children = (
-				7DC47F202CD9230500588A66 /* HomePage */,
 				7DC47F212CD9230500588A66 /* Model */,
 				7DC47F232CD9230500588A66 /* Screen */,
 				7DC47F242CD9230500588A66 /* View */,
@@ -341,6 +348,7 @@
 		7DC47F2A2CD9230500588A66 /* ColorwordSUI */ = {
 			isa = PBXGroup;
 			children = (
+				7D733F7E2CDD0C8000D21D22 /* App */,
 				7D7743472CD982570080D4F5 /* Extensions */,
 				7D7743412CD97D100080D4F5 /* Assets */,
 				7DC47F012CD9230500588A66 /* Core */,
@@ -350,6 +358,7 @@
 				7DC47F262CD9230500588A66 /* Signup */,
 				7DC47F272CD9230500588A66 /* AppDelegate.swift */,
 				7DC47F292CD9230500588A66 /* GoogleService-Info.plist */,
+				7DC47F202CD9230500588A66 /* HomePage */,
 			);
 			path = ColorwordSUI;
 			sourceTree = "<group>";
@@ -372,6 +381,8 @@
 			dependencies = (
 			);
 			fileSystemSynchronizedGroups = (
+				7D733F792CDD0ACF00D21D22 /* Service */,
+				7D733F7E2CDD0C8000D21D22 /* App */,
 				7D7743412CD97D100080D4F5 /* Assets */,
 				7D7743472CD982570080D4F5 /* Extensions */,
 			);
@@ -492,7 +503,8 @@
 				7D8E49F02CDA69DA00D2CF96 /* ThemeSelectToggleButton.swift in Sources */,
 				7DC47F3A2CD9230500588A66 /* TextfieldWidgets.swift in Sources */,
 				7DC47F3B2CD9230500588A66 /* LoginViewModel.swift in Sources */,
-				7DC47F3C2CD9230500588A66 /* HomePageScreen.swift in Sources */,
+				7D733F782CDD093D00D21D22 /* HomePageViewModel.swift in Sources */,
+				7DC47F3C2CD9230500588A66 /* HomePage.swift in Sources */,
 				7DC47F3D2CD9230500588A66 /* SignupScreen.swift in Sources */,
 				7DC47F3E2CD9230500588A66 /* AppDelegate.swift in Sources */,
 				7D77434B2CD9919A0080D4F5 /* ThemeManager.swift in Sources */,

@@ -7,15 +7,18 @@
 
 import SwiftUI
 
-struct HomePageScreen: View {
+struct HomePage: View {
     @EnvironmentObject var languageManager: LanguageManager
     
     var body: some View {
-        Text("homepage screen")//.environment(\.locale, .init(identifier: languageManager.currentLanguage))
+       
+        VStack {
+            Text("İlk Kelime ")
+        }
             
     }
 }
 
 #Preview {
-    HomePageScreen()
+    HomePage()
 }
