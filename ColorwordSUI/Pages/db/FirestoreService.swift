@@ -9,12 +9,14 @@ import Foundation
 import FirebaseFirestore
 
 class FirestoreService: FirestoreInterface {
+
+    
     
    private let db = Firestore.firestore()
     
     //zaman alabilecek bir işlem await vs eklenecek. bu yüzden anasayfaya beklenmesi gerekecek şekilde uygulanacak
         
-        func readWords() async throws -> [Word] {
+        func getWordList() async throws -> [Word] {
             // Kullanıcı ID'si kontrolü
             guard let userId = UserSessionManager.shared.currentUser?.userId else {
                 throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -32,9 +34,7 @@ class FirestoreService: FirestoreInterface {
                     words.append(word)
                 }
             }
-            
-            print(words.first?.word ?? "Bulamadık")
-            
+                        
             return words.isEmpty ? [] : words
         }
     }

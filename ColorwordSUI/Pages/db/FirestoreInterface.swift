@@ -8,5 +8,5 @@
 import Foundation
 
 protocol FirestoreInterface {
-    func readWords() async throws -> [Word] 
+    func getWordList() async throws -> [Word] 
 }
