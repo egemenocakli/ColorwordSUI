@@ -21,4 +21,7 @@ extension Color {
         return Color("backgroundColor2")
     }
     
+    static var appNameColor: Color {
+        return Color("appName")
+    }
 }

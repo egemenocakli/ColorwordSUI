@@ -21,6 +21,6 @@ struct AppNameWidget: View {
             .font(.system(size: Constants.SizeConstants.appNameFontSize))
             .frame(height: geometry.size.height * 0.3)
             //.foregroundStyle(Constants.ColorConstants.whiteFont)
-            .foregroundStyle(Color.textColor)
+            .foregroundStyle(Color.appNameColor)
     }
 }

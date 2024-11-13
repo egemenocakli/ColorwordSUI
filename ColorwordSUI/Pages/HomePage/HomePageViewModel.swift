@@ -39,4 +39,11 @@ class HomeViewModel: ObservableObject {
 //            }
         }
     }
+    
+    func getWordColorForBackground(word: Word){
+        //Belki burada bir ekrandaki kelimeyle rengi birbirine eşitse gibi kontrol
+        
+        let backgroudColor = word.color?.toHex() ?? "#000000"
+        wordBackgroundColor = backgroudColor
+    }
 }

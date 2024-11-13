@@ -98,7 +98,16 @@ class Constants {
         static let buttonHeight: CGFloat = 50
     }
     
-
+    class FontSizeConstants {
+        static let xSmall: CGFloat = 12
+        static let small: CGFloat = 14
+        static let medium: CGFloat = 16
+        static let large: CGFloat = 18
+        static let xLarge: CGFloat = 20
+        static let x2Large: CGFloat = 22
+        static let x3Large: CGFloat = 30
+        static let x4Large: CGFloat = 40
+    }
     
 }
 
