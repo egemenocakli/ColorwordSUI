@@ -64,12 +64,12 @@ class Constants {
         static let signUpButtonColor: Color = Color(red: 83/255.0, green: 95/255.0, blue: 112/255.0)
     }
     
-    class SizeConstants {
-        static let iconxSmallSize: CGFloat = 18
-        static let iconSmallSize: CGFloat = 24
-        static let iconMSize: CGFloat = 26
-        static let iconLSize: CGFloat = 28
-        static let appNameFontSize: CGFloat = 60
+    class FrameSizeConstants {
+        static let xSmallSize: CGFloat = 10
+        static let smallSize: CGFloat = 20
+        static let mSize: CGFloat = 30
+        static let lSize: CGFloat = 40
+        static let xLSize: CGFloat = 50
     }
     
     class PaddingSizeConstants {
@@ -107,8 +107,12 @@ class Constants {
         static let x2Large: CGFloat = 22
         static let x3Large: CGFloat = 30
         static let x4Large: CGFloat = 40
+        static let appNameFontSize: CGFloat = 60
     }
-    
+    class IconTextConstants {
+        static let leftButton = "chevron.left"
+        static let rightButton = "chevron.right"
+    }
 }
 
 extension UIScreen{
