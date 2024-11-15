@@ -14,3 +14,8 @@
 
 //Signup
 "welcome_to_signup" = "Welcome to Signup Page";
+
+
+//HomePage
+"no_data" = "We were unable to access your word list or you did not add any words.";
+

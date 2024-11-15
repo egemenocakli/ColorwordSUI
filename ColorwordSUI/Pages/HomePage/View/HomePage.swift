@@ -18,7 +18,7 @@ struct HomePage: View {
             
             VStack {
             if homepageVM.wordList.isEmpty {
-                Text("Henüz veri yok.")
+                Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
             } else {
                 TabView(selection: $selectedTabIndex) {
                     ForEach(Array(homepageVM.wordList.enumerated()), id: \.element.wordId) { index, word in
@@ -27,7 +27,7 @@ struct HomePage: View {
                             Text(word.translatedWords?.first ?? "").font(.system(size: Constants.FontSizeConstants.x3Large))
                             Text(word.score != nil ? "\(word.score!)" : "").font(.system(size: Constants.FontSizeConstants.xLarge))
                         }
-                        .padding(.horizontal, 40)
+                        .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                         .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                         .tag(index)
                     }
@@ -61,7 +61,7 @@ struct HomePage: View {
                                    .resizable()
                                    .scaledToFit()
                                    .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
-                                   .padding(.leading, 10)
+                                   .padding(.leading, Constants.PaddingSizeConstants.xSmallSize)
                                    .foregroundColor(selectedTabIndex == 0 ? .gray : .white.opacity(0.7))
                            }
                            .disabled(selectedTabIndex == 0)
@@ -78,13 +78,13 @@ struct HomePage: View {
                                    .resizable()
                                    .scaledToFit()
                                    .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
-                                   .padding(.trailing, 10)
+                                   .padding(.trailing, Constants.PaddingSizeConstants.xSmallSize)
                                    .foregroundColor(selectedTabIndex == homepageVM.wordList.count - 1 ? .gray : .white.opacity(0.7)) 
                            }
                            .disabled(selectedTabIndex == homepageVM.wordList.count - 1)
                        }
-        }
-}
+        }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
+    }
        
         
     //TODO: Dil eklentisi

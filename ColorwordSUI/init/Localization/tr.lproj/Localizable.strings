@@ -15,3 +15,5 @@
 //Signup
 "welcome_to_signup" = "Signup Sayfasına Hoşgeldiniz";
 
+//HomePage
+"no_data" = "Kelime listenize ulaşamadık veya siz hiç kelime eklemediniz.";
