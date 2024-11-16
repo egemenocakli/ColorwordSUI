@@ -20,18 +20,7 @@ struct HomePage: View {
             if homepageVM.wordList.isEmpty {
                 Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
             } else {
-                TabView(selection: $selectedTabIndex) {
-                    ForEach(Array(homepageVM.wordList.enumerated()), id: \.element.wordId) { index, word in
-                        VStack {
-                            Text(word.word ?? "").fontWeight(.bold).font(.system(size: Constants.FontSizeConstants.x4Large))
-                            Text(word.translatedWords?.first ?? "").font(.system(size: Constants.FontSizeConstants.x3Large))
-                            Text(word.score != nil ? "\(word.score!)" : "").font(.system(size: Constants.FontSizeConstants.xLarge))
-                        }
-                        .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
-                        .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                        .tag(index)
-                    }
-                }
+                WordListTabView(selectedTabIndex: $selectedTabIndex,homePageVM: homepageVM)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .onAppear {
                     if let firstWord = homepageVM.wordList.first {
@@ -50,44 +39,10 @@ struct HomePage: View {
             await homepageVM.getWordList()
         }
         
-            HStack {
-                           Button {
-                               
-                               if selectedTabIndex > 0 {
-                                   selectedTabIndex -= 1
-                               }
-                           } label: {
-                               Image(systemName: Constants.IconTextConstants.leftButton)
-                                   .resizable()
-                                   .scaledToFit()
-                                   .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
-                                   .padding(.leading, Constants.PaddingSizeConstants.xSmallSize)
-                                   .foregroundColor(selectedTabIndex == 0 ? .gray : .white.opacity(0.7))
-                           }
-                           .disabled(selectedTabIndex == 0)
-                           
-                Spacer()
-                           
-                           Button {
-                              
-                               if selectedTabIndex < homepageVM.wordList.count - 1 {
-                                   selectedTabIndex += 1
-                               }
-                           } label: {
-                               Image(systemName: Constants.IconTextConstants.rightButton)
-                                   .resizable()
-                                   .scaledToFit()
-                                   .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
-                                   .padding(.trailing, Constants.PaddingSizeConstants.xSmallSize)
-                                   .foregroundColor(selectedTabIndex == homepageVM.wordList.count - 1 ? .gray : .white.opacity(0.7)) 
-                           }
-                           .disabled(selectedTabIndex == homepageVM.wordList.count - 1)
-                       }
+            NextButtonWidgets(selectedTabIndex: $selectedTabIndex, homepageVM: homepageVM)
         }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
     }
        
-        
-    //TODO: Dil eklentisi
 }
 
 //#Preview {
