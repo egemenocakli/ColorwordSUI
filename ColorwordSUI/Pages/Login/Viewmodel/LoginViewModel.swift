@@ -131,7 +131,7 @@ class LoginViewModel: ObservableObject {
         UserDefaults.standard.synchronize()
         
         if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            scene.windows.first?.rootViewController = UIHostingController(rootView: LoginScreen())
+            scene.windows.first?.rootViewController = UIHostingController(rootView: LoginView())
         }
         
         languageManager.currentLanguage = language

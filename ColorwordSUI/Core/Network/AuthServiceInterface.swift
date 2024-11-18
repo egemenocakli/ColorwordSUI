@@ -11,7 +11,7 @@ import FirebaseAuth
 protocol AuthServiceInterface {
     //    func signInWithGoogle(completion: @escaping (FirebaseUserModel?) -> Void)
     //    func getCurrentUser() -> FirebaseUserModel?
-    //    func signOut(completion: @escaping (Bool) -> Void)
+    func signOut(completion: @escaping (Bool) -> Void)
     //    func updateName(displayName: String, completion: @escaping (Bool) -> Void)
     //    func updateEmail(email: String, completion: @escaping (Bool) -> Void)
     //    func deleteAccount(completion: @escaping (Bool) -> Void)

@@ -105,15 +105,15 @@ class FirebaseAuthService: AuthServiceInterface {
 ////
 //    }
 //
-//    func signOut(completion: @escaping (Bool) -> Void) {
-//        do {
-//            try firebaseAuth.signOut()
-//            completion(true)
-//        } catch {
-//            print("Sign out error: \(error)")
-//            completion(false)
-//        }
-//    }
+    func signOut(completion: @escaping (Bool) -> Void) {
+        do {
+            try firebaseAuth.signOut()
+            completion(true)
+        } catch {
+            print("Sign out error: \(error)")
+            completion(false)
+        }
+    }
 //
 //    func updateName(displayName: String, completion: @escaping (Bool) -> Void) {
 ////        firebaseAuth.currentUser?.updateDisplayName(displayName) { error in

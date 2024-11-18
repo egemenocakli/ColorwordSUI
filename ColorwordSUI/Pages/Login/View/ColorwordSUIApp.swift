@@ -17,7 +17,7 @@ struct ColorwordSUIApp: App {
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {
-            LoginScreen()
+            LoginView()
                 .environmentObject(languageManager)
                 .environmentObject(themeManager)
         }

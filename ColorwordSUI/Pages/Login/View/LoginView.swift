@@ -8,7 +8,7 @@
 import SwiftUI
 import FirebaseAuth
 
-struct LoginScreen: View {
+struct LoginView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @Environment(\.colorScheme) private var systemColorScheme
     @EnvironmentObject var languageManager: LanguageManager
@@ -42,7 +42,7 @@ struct LoginScreen: View {
                                 TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
                                 
                                 LoginButtonWidget(action: loginButton).navigationDestination(isPresented: $loginVM.loginSucces) {
-                                    HomePage().navigationBarBackButtonHidden(true)
+                                    HomeView().navigationBarBackButtonHidden(true)
                                 }
                                 
                                 SignUpButtonWidget(action: signupButton)
@@ -115,7 +115,7 @@ struct LoginScreen: View {
 
     
 #Preview {
-    LoginScreen()
+    LoginView()
         .environmentObject(LanguageManager())
 }
 

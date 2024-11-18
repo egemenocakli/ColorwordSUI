@@ -7,11 +7,13 @@
 
 import Foundation
 
-protocol HomePageServiceInterface {
+protocol HomeServiceInterface {
     func getWordList() async throws -> [Word]
+    func signOut(completion: @escaping (Bool) -> Void)
 }
 
-class HomePageService: HomePageServiceInterface {
+class HomeService: HomeServiceInterface {
+    private let firebaseAuthService = FirebaseAuthService()
     private let firestoreService = FirestoreService()
     var words : [Word] = []
     
@@ -25,6 +27,13 @@ class HomePageService: HomePageServiceInterface {
         return words
     }
     
-    
+    func signOut(completion: @escaping (Bool) -> Void) {
+        firebaseAuthService.signOut { result in
+            
+             
+            completion(result)
+        }
+
+    }
     
 }

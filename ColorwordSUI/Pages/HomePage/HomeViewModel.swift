@@ -11,7 +11,7 @@ import SwiftUI
 class HomeViewModel: ObservableObject {
     @Published var wordList: [Word] = []
     @Published var wordBackgroundColor: String = "#000000"
-    let homepageService = HomePageService()
+    let homepageService = HomeService()
 
 
 
@@ -45,5 +45,13 @@ class HomeViewModel: ObservableObject {
         
         let backgroudColor = word.color?.toHex() ?? "#000000"
         wordBackgroundColor = backgroudColor
+    }
+    
+    func signOut() -> Bool {
+        var result: Bool = false
+        homepageService.signOut { response in
+            result = response
+        }
+        return result
     }
 }
