@@ -10,9 +10,8 @@ import SwiftUI
 
 class HomeViewModel: ObservableObject {
     @Published var wordList: [Word] = []
-    @Published var wordBackgroundColor: String = "#000000"
+    @Published var wordBackgroundColor: String = "#00FFFFFF"
     let homepageService = HomeService()
-
 
 
     //TODO: öncesinde service eklenecek oradan buraya yönlenecek.
@@ -40,11 +39,15 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func getWordColorForBackground(word: Word){
-        //Belki burada bir ekrandaki kelimeyle rengi birbirine eşitse gibi kontrol
+    func getWordColorForBackground(word: Word, themeManager: ThemeManager){
         
-        let backgroudColor = word.color?.toHex() ?? "#000000"
-        wordBackgroundColor = backgroudColor
+        if (themeManager.selectedTheme != Constants.AppTheme.dark_mode.rawValue) {
+            let backgroudColor = word.color?.toHex() ?? "#000000"
+            wordBackgroundColor = backgroudColor
+        }
+        else {
+            wordBackgroundColor = "#000000"
+        }
     }
     
     func signOut() -> Bool {

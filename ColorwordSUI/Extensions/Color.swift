@@ -10,9 +10,6 @@ import SwiftUICore
 
 extension Color {
     
-    static var textColor: Color {
-        return Color("textColor")
-    }
     static var backgroundColorGradient1: Color {
         return Color("backgroundColor")
     }
@@ -24,4 +21,8 @@ extension Color {
     static var appNameColor: Color {
         return Color("appName")
     }
+    static var textColorWhite: Color {
+        return Color("textColorW")
+    }
+
 }

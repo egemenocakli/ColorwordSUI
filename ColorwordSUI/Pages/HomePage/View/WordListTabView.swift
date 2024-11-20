@@ -18,12 +18,15 @@ struct WordListTabView: View {
                     Text(word.word ?? "")
                         .fontWeight(.bold)
                         .font(.system(size: Constants.FontSizeConstants.x4Large))
+                        .foregroundStyle(Color.textColorWhite)
                     
                     Text(word.translatedWords?.first ?? "")
                         .font(.system(size: Constants.FontSizeConstants.x3Large))
+                        .foregroundStyle(Color.textColorWhite)
                     
                     Text(word.score != nil ? "\(word.score!)" : "")
                         .font(.system(size: Constants.FontSizeConstants.xLarge))
+                    .foregroundStyle(Color.textColorWhite)
                 }
                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)

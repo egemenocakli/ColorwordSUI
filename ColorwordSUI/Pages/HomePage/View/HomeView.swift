@@ -10,27 +10,31 @@ import SwiftUI
 struct HomeView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var homeVM = HomeViewModel()
+    @EnvironmentObject var themeManager: ThemeManager
 
     @State private var selectedTabIndex = 0
     @State private var navigateToLogin = false // Yönlendirme kontrolü
-    
+    @State private var selectedTab = 0 // TabView için seçili index
+
     var body: some View {
         ZStack (alignment: .center){
             
             VStack {
+            //Loading belki yüklenmezse bu uyarı yazılabilir.
             if homeVM.wordList.isEmpty {
                 Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
+                    .background(Color.white.opacity(0.00))
             } else {
                 WordListTabView(selectedTabIndex: $selectedTabIndex,homePageVM: homeVM)
                 .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                 .onAppear {
                     if let firstWord = homeVM.wordList.first {
-                        homeVM.getWordColorForBackground(word: firstWord)
+                        homeVM.getWordColorForBackground(word: firstWord,themeManager: themeManager)
                     }
                 }
                 .onChange(of: selectedTabIndex) { oldIndex, newIndex in
                     let word = homeVM.wordList[newIndex]
-                    homeVM.getWordColorForBackground(word: word)
+                    homeVM.getWordColorForBackground(word: word,themeManager: themeManager)
                 }
             }
                 //TODO: Bu buton bu sayfada gereksiz, profil veya ayarlar gibi bir yerde olmalı. Taşınacak
@@ -45,6 +49,7 @@ struct HomeView: View {
                 label: {
                     Text("Çıkış")
                 }.padding(.bottom, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
+                    .background(Color.white.opacity(0.00))
 
         }
         .background(Color(hex: homeVM.wordBackgroundColor))
@@ -60,11 +65,14 @@ struct HomeView: View {
             LoginView().navigationBarBackButtonHidden(true)
             
         }
+        
     }
-       
+    
 }
 
 //#Preview {
-//    HomePage()
-//}
+//    
+//    HomeView().environmentObject(LanguageManager())
 //
+//}
+
