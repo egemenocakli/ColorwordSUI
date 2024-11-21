@@ -59,7 +59,7 @@ struct Word {
     }
 }
 
-// UIColor'ı Color'a çeviren uzantı
+// UIColor'ı Color'a çeviren uzantı. hex->rgb
 extension Color {
     init?(hex: String) {
         guard let hexNumber = Int(hex.replacingOccurrences(of: "#", with: ""), radix: 16) else { return nil }
@@ -68,7 +68,7 @@ extension Color {
         let b = Double(hexNumber & 0xFF) / 255.0
         self = Color(red: r, green: g, blue: b)
     }
-
+// rgb->hex
     func toHex() -> String {
         let uiColor = UIColor(self)
         var red: CGFloat = 0
