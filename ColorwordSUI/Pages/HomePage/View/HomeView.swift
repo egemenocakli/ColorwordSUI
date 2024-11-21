@@ -13,14 +13,14 @@ struct HomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     @State private var selectedTabIndex = 0
-    @State private var navigateToLogin = false // Yönlendirme kontrolü
-    @State private var selectedTab = 0 // TabView için seçili index
+    @State private var navigateToLogin = false 
+    @State private var selectedTab = 0
 
     var body: some View {
         ZStack (alignment: .center){
             
             VStack {
-            //Loading belki yüklenmezse bu uyarı yazılabilir.
+            //Loading gösterilebilir hatta yüklenmezse bu uyarı yazılabilir.
             if homeVM.wordList.isEmpty {
                 Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
                     .background(Color.white.opacity(0.00))
