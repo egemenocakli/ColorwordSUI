@@ -8,13 +8,18 @@
 import Foundation
 
 class MchoiceTestViewModel: ObservableObject {
+    @Published var wordBackgroundColor: String = "#00FFFFFF"
     @Published var questList: [QuestModel] = []
     
-    var wordList : [Word]? = []
+    var wordList : [Word] = []
+    let mChoiceTestService = MchoiceTestService()
     
-   let mChoiceTestService = MchoiceTestService()
+//    @Published var isPressed1: Bool = false
+//    @Published var isPressed2: Bool = false
+//    @Published var isPressed3: Bool = false
+//    @Published var isPressed4: Bool = false
 
-    //İlk etap
+    
     func getWordList() async  -> [Word]? {
         
         
@@ -24,7 +29,7 @@ class MchoiceTestViewModel: ObservableObject {
         }catch {
             print(error)
         }
-        if  wordList?.isEmpty != true {
+        if  wordList.isEmpty != true {
             return wordList
         }else {
             return nil
@@ -36,10 +41,10 @@ class MchoiceTestViewModel: ObservableObject {
         
         var optionList: Set<String> = []
         
-        self.wordList =  await getWordList()
+        self.wordList =  await getWordList() ?? []
       
-          if wordList != nil {
-              wordList?.forEach({ word in
+        if wordList.isEmpty != true {
+            wordList.forEach({ word in
                   optionList.insert(word.translatedWords?[0] ?? "")
                   print(word.translatedWords?[0] ?? "")
               })
@@ -58,7 +63,7 @@ class MchoiceTestViewModel: ObservableObject {
         print(createdOptionList.count)
         
         
-        wordList?.forEach({ word in
+        wordList.forEach({ word in
             var randomOptions: [String] = []
             randomOptions.append(word.translatedWords?[0] ?? "")
             
@@ -86,7 +91,16 @@ class MchoiceTestViewModel: ObservableObject {
         return questList
     }
     
-    
+    func getWordColorForBackground(word: Word, themeManager: ThemeManager){
+        
+        if (themeManager.selectedTheme != Constants.AppTheme.dark_mode.rawValue) {
+            let backgroudColor = word.color?.toHex() ?? "#000000"
+            wordBackgroundColor = backgroudColor
+        }
+        else {
+            wordBackgroundColor = "#000000"
+        }
+    }
     
     
 }
