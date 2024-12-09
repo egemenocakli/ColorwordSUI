@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 
 class MchoiceTestViewModel: ObservableObject {
     @Published var wordBackgroundColor: String = "#00FFFFFF"
@@ -13,6 +14,9 @@ class MchoiceTestViewModel: ObservableObject {
     
     var wordList : [Word] = []
     let mChoiceTestService = MchoiceTestService()
+    
+    @State var onPageQuestion: QuestModel?
+    
     
 //    @Published var isPressed1: Bool = false
 //    @Published var isPressed2: Bool = false
@@ -90,6 +94,53 @@ class MchoiceTestViewModel: ObservableObject {
 
         return questList
     }
+    
+    //parametreler: kelime(translated[0]), quest.options[], seçilen buton
+    //değişecekler: buttonState,buttonBackground, butonlar disabled olacak
+   
+        
+        func checkAnswerAndUpdateButtonState(quest: QuestModel?, selectedButton: Int?) {
+
+            
+            guard let quest = quest, let selectedButton = selectedButton else {
+                print("Hata: Quest veya selectedButton boş")
+                return
+            }
+            
+            guard let correctAnswer = quest.word.translatedWords?.first else {
+                print("Hata: translatedWords boş")
+                return
+            }
+            
+//            if correctAnswer == quest.options[selectedButton].optionText {
+//                
+                for option in quest.options {
+                    if option.optionText != correctAnswer {
+                        option.optionState = .wrong
+                    } else {
+                        option.optionState = .correct
+                    }
+                }
+                
+                
+                print(quest.options[0].optionState)
+                print(quest.options[1].optionState)
+                print(quest.options[2].optionState)
+                print(quest.options[3].optionState)
+                
+//                }
+          
+            
+        }
+    //Color list alcak daha sonra üstteki nin cevabına göre gerekli renkleri değiştirecek
+    func changeButtonColors (colorList : [Color]) {
+        
+    }
+    
+    
+    
+    
+    
     
     func getWordColorForBackground(word: Word, themeManager: ThemeManager){
         

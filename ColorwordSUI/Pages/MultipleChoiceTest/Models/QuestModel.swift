@@ -7,8 +7,12 @@
 
 import Foundation
 
-struct QuestModel {
-    
+class QuestModel {
     var word: Word
     var options: [OptionModel]
+    
+    init(word: Word, options: [OptionModel]) {
+        self.word = word
+        self.options = options
+    }
 }
