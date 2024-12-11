@@ -41,7 +41,7 @@ struct MchoiceTestView: View {
                                         .foregroundStyle(Color.textColorWhite)
                                     
                                     // Binding oluşturma
-                                    choiceButtons(initialQuestion: .constant(onPageQuestion))
+                                    choiceButtons(initialQuestion: .constant(onPageQuestion), onPageQuestion: onPageQuestion)
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -93,7 +93,12 @@ struct MchoiceTestView: View {
 //            }
 //        }
 //    }
-    private func choiceButtons(initialQuestion: Binding<QuestModel>) -> some View {
+    
+    //TODO: Şuan bu aşamada istediğime yakınım
+    //Ancak saçma olan işler var yani bu amele mantığı bir metod ile düzeltmeliyim.
+    // Aşağıdaki butonların rengini değiştirme işlemini daha düzgün viewmodelden gerekirse düzenlemeliyim.
+    //Belki yine buraya çağırabileceğim bir if ve for döngüsü yaparım
+    private func choiceButtons(initialQuestion: Binding<QuestModel>, onPageQuestion: QuestModel) -> some View {
 
            Group {
                
@@ -103,6 +108,9 @@ struct MchoiceTestView: View {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 0)
                            if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[0].optionText){
                                buttonColor = .green
+                               buttonColor2 = .red
+                               buttonColor3 = .red
+                               buttonColor4 = .red
                            }else {
                                buttonColor = .red
                            }
@@ -120,6 +128,9 @@ struct MchoiceTestView: View {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 1)
                            if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[1].optionText){
                                buttonColor2 = .green
+                               buttonColor = .red
+                               buttonColor3 = .red
+                               buttonColor4 = .red
                            }else {
                                buttonColor2 = .red
                            }
@@ -136,6 +147,9 @@ struct MchoiceTestView: View {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 2)
                            if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[2].optionText){
                                buttonColor3 = .green
+                               buttonColor = .red
+                               buttonColor2 = .red
+                               buttonColor4 = .red
                            }else {
                                buttonColor3 = .red
                            }
@@ -152,6 +166,9 @@ struct MchoiceTestView: View {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 3)
                            if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[3].optionText){
                                buttonColor4 = .green
+                               buttonColor = .red
+                               buttonColor2 = .red
+                               buttonColor3 = .red
                            }else {
                                buttonColor4 = .red
                            }

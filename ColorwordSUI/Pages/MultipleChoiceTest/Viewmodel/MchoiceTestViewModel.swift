@@ -77,7 +77,7 @@ class MchoiceTestViewModel: ObservableObject {
             let optionStates: [OptionState] = [.correct, .none, .none, .none]
 
             let optionModelList = zip(randomOptions, optionStates).map { optionText, optionState in
-                OptionModel(optionText: optionText, optionState: optionState)
+                OptionModel(optionText: optionText, optionState: optionState, buttonColor: .white.opacity(0.3))
             }
             /*
              var optionModelList: [OptionModel] = []

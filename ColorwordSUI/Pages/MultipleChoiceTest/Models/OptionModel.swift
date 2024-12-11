@@ -6,15 +6,19 @@
 //
 
 import Foundation
+import SwiftUICore
 
 
-class OptionModel {
+class OptionModel: ObservableObject, Identifiable {
+    var id = UUID()
     var optionText: String
     var optionState: OptionState
+    var buttonColor: Color
 
-    init(optionText: String, optionState: OptionState) {
+    init(optionText: String, optionState: OptionState, buttonColor: Color) {
         self.optionText = optionText
         self.optionState = optionState
+        self.buttonColor = buttonColor
     }
 }
 
