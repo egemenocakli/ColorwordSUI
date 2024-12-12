@@ -16,7 +16,7 @@ class MchoiceTestViewModel: ObservableObject {
     let mChoiceTestService = MchoiceTestService()
     
     @State var onPageQuestion: QuestModel?
-    
+//    @State var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
     
     
 //    @Published var isPressed1: Bool = false
@@ -139,7 +139,17 @@ class MchoiceTestViewModel: ObservableObject {
     }
     
     
-    
+    func updateButtonColors(optionList: [OptionModel], buttonColorList: inout [Color]) {
+        buttonColorList = optionList.map { option in
+            if option.optionState == .correct {
+                return .green
+            } else if option.optionState == .wrong {
+                return .red
+            } else {
+                return .white.opacity(0.3)
+            }
+        }
+    }
     
     
     

@@ -11,7 +11,8 @@ struct MchoiceTestView: View {
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     @State private var selectedTabIndex = 0
     @EnvironmentObject var themeManager: ThemeManager
-    @State private var buttonColorList: [Color] = [.white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3)]
+    @State private var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+    
     
     var body: some View {
         ZStack(alignment: .center) {
@@ -53,7 +54,7 @@ struct MchoiceTestView: View {
                             let word = mchoiceTestVM.wordList[newIndex]
                             mchoiceTestVM.getWordColorForBackground(word: word, themeManager: themeManager)
 
-                            buttonColorList = [.white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3)]
+                            buttonColorList = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
                         }
                     }
                 }
@@ -69,13 +70,14 @@ struct MchoiceTestView: View {
     //TODO: Şuan bu aşamada istediğime yakınım
     //Ancak saçma olan işler var yani bu amele mantığı bir metod ile düzeltmeliyim.
     // Aşağıdaki butonların rengini değiştirme işlemini daha düzgün viewmodelden gerekirse düzenlemeliyim.
+    //Belki ileride diğer butonları animasyon ile yokedip sadece doğru şıkkı gösterebilirim, böylece hangisinin doğru olduğu daha iyi anlaşılır.
     private func choiceButtons(initialQuestion: Binding<QuestModel>, onPageQuestion: QuestModel) -> some View {
 
            Group {
                    VStack{
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 0)
-                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
+                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
 
                        }) {
                            Text(initialQuestion.wrappedValue.options[0].optionText + " (\(initialQuestion.wrappedValue.options[0].optionState))")
@@ -88,7 +90,7 @@ struct MchoiceTestView: View {
                        
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 1)
-                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
+                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
 
                        }) {
                            Text(initialQuestion.wrappedValue.options[1].optionText + " (\(initialQuestion.wrappedValue.options[1].optionState))")
@@ -101,7 +103,7 @@ struct MchoiceTestView: View {
                        
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 2)
-                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
+                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
 
                        }) {
                            Text(initialQuestion.wrappedValue.options[2].optionText + " (\(initialQuestion.wrappedValue.options[2].optionState))")
@@ -114,7 +116,7 @@ struct MchoiceTestView: View {
                        
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 3)
-                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
+                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
                        }) {
                            Text(initialQuestion.wrappedValue.options[3].optionText + " (\(initialQuestion.wrappedValue.options[3].optionState))")
                                .padding()
@@ -127,18 +129,6 @@ struct MchoiceTestView: View {
            }
        }
     
-    func updateButtonColors(optionList: [OptionModel]) {
-        
-        buttonColorList = optionList.map { option in
-            if option.optionState == .correct {
-                return .green
-            } else if option.optionState == .wrong {
-                return .red
-            } else {
-                return .white.opacity(0.3)
-            }
-        }
-    }
 }
 
 //#Preview {
