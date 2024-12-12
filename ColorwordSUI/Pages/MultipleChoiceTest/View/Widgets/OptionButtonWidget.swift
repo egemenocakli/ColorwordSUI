@@ -8,23 +8,18 @@
 import SwiftUI
 
 struct OptionButtonWidget: View {
-    var selectedButton: Int
-    var viewModel: MchoiceTestViewModel
-//    var action: () -> Void
-    var onPageQuestion: QuestModel?
+    
+    var action: () -> Void
+    var initialQuestion: Binding<QuestModel>
+    @Binding var backgroundColor: Color // Renk değişimlerini reaktif hale getirmek için Binding
+    var buttonIndex: Int
 
     var body: some View {
-        Button(action: {
-
-            
-            viewModel.checkAnswerAndUpdateButtonState(quest: onPageQuestion, selectedButton: selectedButton)
-
-            
-        }) {
-            Text(onPageQuestion!.options[selectedButton].optionText + " (\(onPageQuestion!.options[selectedButton].optionState))")
+        Button(action: action) {
+            Text(initialQuestion.options[buttonIndex].wrappedValue.optionText + " (\(initialQuestion.options[buttonIndex].wrappedValue.optionState))")
                 .padding()
                 .foregroundColor(.white)
-                .background(.white.opacity(0.1))
+                .background(backgroundColor)
                 .cornerRadius(100)
         }
         .padding(.all, 10)

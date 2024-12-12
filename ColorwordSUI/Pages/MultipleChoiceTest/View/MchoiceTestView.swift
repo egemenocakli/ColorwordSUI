@@ -13,11 +13,11 @@ struct MchoiceTestView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @State private var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
     
-    
+    //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
     var body: some View {
         ZStack(alignment: .center) {
             VStack {
-                // Loading göstergesi
+                //TODO: Loading göstergesi
                 if mchoiceTestVM.wordList.isEmpty {
                     Text("no_data")
                         .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
@@ -37,7 +37,9 @@ struct MchoiceTestView: View {
                                         .font(.system(size: Constants.FontSizeConstants.x3Large))
                                         .foregroundStyle(Color.textColorWhite)
                                     
-                                    choiceButtons(initialQuestion: .constant(onPageQuestion), onPageQuestion: onPageQuestion)
+                                    if (onPageQuestion.options.isEmpty != true ) {
+                                        choiceButtons(initialQuestion: .constant(onPageQuestion))
+                                    }
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -71,61 +73,77 @@ struct MchoiceTestView: View {
     //Ancak saçma olan işler var yani bu amele mantığı bir metod ile düzeltmeliyim.
     // Aşağıdaki butonların rengini değiştirme işlemini daha düzgün viewmodelden gerekirse düzenlemeliyim.
     //Belki ileride diğer butonları animasyon ile yokedip sadece doğru şıkkı gösterebilirim, böylece hangisinin doğru olduğu daha iyi anlaşılır.
-    private func choiceButtons(initialQuestion: Binding<QuestModel>, onPageQuestion: QuestModel) -> some View {
+    private func choiceButtons(initialQuestion: Binding<QuestModel>) -> some View {
 
            Group {
-                   VStack{
-                       Button(action: {
-                           mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 0)
-                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
-
-                       }) {
-                           Text(initialQuestion.wrappedValue.options[0].optionText + " (\(initialQuestion.wrappedValue.options[0].optionState))")
-                               .padding()
-                               .foregroundColor(.white)
-                               .background(buttonColorList[0])
-                               .cornerRadius(100)
-                       }
-                       .padding(.all, 10)
-                       
-                       Button(action: {
-                           mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 1)
-                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
-
-                       }) {
-                           Text(initialQuestion.wrappedValue.options[1].optionText + " (\(initialQuestion.wrappedValue.options[1].optionState))")
-                               .padding()
-                               .foregroundColor(.white)
-                               .background(buttonColorList[1])
-                               .cornerRadius(100)
-                       }
-                       .padding(.all, 10)
-                       
-                       Button(action: {
-                           mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 2)
-                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
-
-                       }) {
-                           Text(initialQuestion.wrappedValue.options[2].optionText + " (\(initialQuestion.wrappedValue.options[2].optionState))")
-                               .padding()
-                               .foregroundColor(.white)
-                               .background(buttonColorList[2])
-                               .cornerRadius(100)
-                       }
-                       .padding(.all, 10)
-                       
-                       Button(action: {
-                           mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 3)
-                           mchoiceTestVM.updateButtonColors(optionList: initialQuestion.wrappedValue.options,buttonColorList: &buttonColorList)
-                       }) {
-                           Text(initialQuestion.wrappedValue.options[3].optionText + " (\(initialQuestion.wrappedValue.options[3].optionState))")
-                               .padding()
-                               .foregroundColor(.white)
-                               .background(buttonColorList[3])
-                               .cornerRadius(100)
-                       }
-                       .padding(.all, 10)
-                   }
+               
+               VStack {
+                   OptionButtonWidget(
+                                   action: {
+                                       mchoiceTestVM.checkAnswerAndUpdateButtonState(
+                                           quest: initialQuestion.wrappedValue,
+                                           selectedButton: 0
+                                       )
+                                       mchoiceTestVM.updateButtonColors(
+                                           optionList: initialQuestion.wrappedValue.options,
+                                           buttonColorList: &buttonColorList
+                                       )
+                                   },
+                                   initialQuestion: initialQuestion,
+                                   backgroundColor: $buttonColorList[0],
+                                   buttonIndex: 0
+                               )
+                               
+                               OptionButtonWidget(
+                                   action: {
+                                       mchoiceTestVM.checkAnswerAndUpdateButtonState(
+                                           quest: initialQuestion.wrappedValue,
+                                           selectedButton: 1
+                                       )
+                                       mchoiceTestVM.updateButtonColors(
+                                           optionList: initialQuestion.wrappedValue.options,
+                                           buttonColorList: &buttonColorList
+                                       )
+                                   },
+                                   initialQuestion: initialQuestion,
+                                   backgroundColor: $buttonColorList[1],
+                                   buttonIndex: 1
+                               )
+                               
+                               OptionButtonWidget(
+                                   action: {
+                                       mchoiceTestVM.checkAnswerAndUpdateButtonState(
+                                           quest: initialQuestion.wrappedValue,
+                                           selectedButton: 2
+                                       )
+                                       mchoiceTestVM.updateButtonColors(
+                                           optionList: initialQuestion.wrappedValue.options,
+                                           buttonColorList: &buttonColorList
+                                       )
+                                   },
+                                   initialQuestion: initialQuestion,
+                                   backgroundColor: $buttonColorList[2],
+                                   buttonIndex: 2
+                               )
+                               
+                               OptionButtonWidget(
+                                   action: {
+                                       mchoiceTestVM.checkAnswerAndUpdateButtonState(
+                                           quest: initialQuestion.wrappedValue,
+                                           selectedButton: 3
+                                       )
+                                       mchoiceTestVM.updateButtonColors(
+                                           optionList: initialQuestion.wrappedValue.options,
+                                           buttonColorList: &buttonColorList
+                                       )
+                                   },
+                                   initialQuestion: initialQuestion,
+                                   backgroundColor: $buttonColorList[3],
+                                   buttonIndex: 3
+                               )
+                           
+                   
+               }
            }
        }
     

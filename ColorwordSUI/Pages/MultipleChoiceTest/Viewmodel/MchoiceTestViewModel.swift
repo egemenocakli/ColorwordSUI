@@ -103,7 +103,7 @@ class MchoiceTestViewModel: ObservableObject {
         func checkAnswerAndUpdateButtonState(quest: QuestModel?, selectedButton: Int?) {
 
             
-            guard let quest = quest, let selectedButton = selectedButton else {
+            guard let quest = quest, let _ = selectedButton else {
                 print("Hata: Quest veya selectedButton boş")
                 return
             }
@@ -112,9 +112,7 @@ class MchoiceTestViewModel: ObservableObject {
                 print("Hata: translatedWords boş")
                 return
             }
-            
-//            if correctAnswer == quest.options[selectedButton].optionText {
-//                
+                 
                 for option in quest.options {
                     if option.optionText != correctAnswer {
                         option.optionState = .wrong
@@ -124,20 +122,11 @@ class MchoiceTestViewModel: ObservableObject {
                 }
                 
                 
-                print(quest.options[0].optionState)
-                print(quest.options[1].optionState)
-                print(quest.options[2].optionState)
-                print(quest.options[3].optionState)
-                
-//                }
+
           
             
         }
-    //Color list alcak daha sonra üstteki nin cevabına göre gerekli renkleri değiştirecek
-    func changeButtonColors (colorList : [Color]) {
-        
-    }
-    
+
     
     func updateButtonColors(optionList: [OptionModel], buttonColorList: inout [Color]) {
         buttonColorList = optionList.map { option in
