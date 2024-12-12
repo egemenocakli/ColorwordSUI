@@ -18,6 +18,7 @@ class MchoiceTestViewModel: ObservableObject {
     @State var onPageQuestion: QuestModel?
     
     
+    
 //    @Published var isPressed1: Bool = false
 //    @Published var isPressed2: Bool = false
 //    @Published var isPressed3: Bool = false

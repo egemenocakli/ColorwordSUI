@@ -11,11 +11,7 @@ struct MchoiceTestView: View {
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     @State private var selectedTabIndex = 0
     @EnvironmentObject var themeManager: ThemeManager
-    
-    @State private var buttonColor: Color = .white
-    @State private var buttonColor2: Color = .white
-    @State private var buttonColor3: Color = .white
-    @State private var buttonColor4: Color = .white
+    @State private var buttonColorList: [Color] = [.white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3)]
     
     var body: some View {
         ZStack(alignment: .center) {
@@ -40,7 +36,6 @@ struct MchoiceTestView: View {
                                         .font(.system(size: Constants.FontSizeConstants.x3Large))
                                         .foregroundStyle(Color.textColorWhite)
                                     
-                                    // Binding oluşturma
                                     choiceButtons(initialQuestion: .constant(onPageQuestion), onPageQuestion: onPageQuestion)
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
@@ -57,10 +52,8 @@ struct MchoiceTestView: View {
                         .onChange(of: selectedTabIndex) { oldIndex, newIndex in
                             let word = mchoiceTestVM.wordList[newIndex]
                             mchoiceTestVM.getWordColorForBackground(word: word, themeManager: themeManager)
-                            buttonColor = .white.opacity(0.1)
-                            buttonColor2 = .white.opacity(0.1)
-                            buttonColor3 = .white.opacity(0.1)
-                            buttonColor4 = .white.opacity(0.1)
+
+                            buttonColorList = [.white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3), .white.opacity(0.3)]
                         }
                     }
                 }
@@ -72,122 +65,80 @@ struct MchoiceTestView: View {
             }
         }
     }
-    
-//    private func choiceButtons(initialQuestion: Binding<QuestModel>) -> some View {
-//        Group {
-//            VStack {
-//                ForEach(0..<initialQuestion.wrappedValue.options.count, id: \.self) { index in
-//                    Button(action: {
-//                        // checkAnswerAndUpdateButtonState model üzerinde değişiklik yapacak
-//                        mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: index)
-//                    }) {
-//                        Text("\(initialQuestion.wrappedValue.options[index].optionText) (\(initialQuestion.wrappedValue.options[index].optionState))")
-//                            .padding()
-//                            .foregroundColor(.white)
-////                            .background(backgroundForOption(at: index))
-//                            .background(Color(.white.opacity(0.1)))
-//                            .cornerRadius(100)
-//                    }
-//                    .padding(.all, 10)
-//                }
-//            }
-//        }
-//    }
-    
+
     //TODO: Şuan bu aşamada istediğime yakınım
     //Ancak saçma olan işler var yani bu amele mantığı bir metod ile düzeltmeliyim.
     // Aşağıdaki butonların rengini değiştirme işlemini daha düzgün viewmodelden gerekirse düzenlemeliyim.
-    //Belki yine buraya çağırabileceğim bir if ve for döngüsü yaparım
     private func choiceButtons(initialQuestion: Binding<QuestModel>, onPageQuestion: QuestModel) -> some View {
 
            Group {
-               
-                   
                    VStack{
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 0)
-                           if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[0].optionText){
-                               buttonColor = .green
-                               buttonColor2 = .red
-                               buttonColor3 = .red
-                               buttonColor4 = .red
-                           }else {
-                               buttonColor = .red
-                           }
+                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
 
                        }) {
                            Text(initialQuestion.wrappedValue.options[0].optionText + " (\(initialQuestion.wrappedValue.options[0].optionState))")
                                .padding()
                                .foregroundColor(.white)
-                               .background(buttonColor.opacity(0.1))
+                               .background(buttonColorList[0])
                                .cornerRadius(100)
                        }
                        .padding(.all, 10)
                        
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 1)
-                           if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[1].optionText){
-                               buttonColor2 = .green
-                               buttonColor = .red
-                               buttonColor3 = .red
-                               buttonColor4 = .red
-                           }else {
-                               buttonColor2 = .red
-                           }
+                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
+
                        }) {
                            Text(initialQuestion.wrappedValue.options[1].optionText + " (\(initialQuestion.wrappedValue.options[1].optionState))")
                                .padding()
                                .foregroundColor(.white)
-                               .background(buttonColor2.opacity(0.1))
+                               .background(buttonColorList[1])
                                .cornerRadius(100)
                        }
                        .padding(.all, 10)
                        
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 2)
-                           if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[2].optionText){
-                               buttonColor3 = .green
-                               buttonColor = .red
-                               buttonColor2 = .red
-                               buttonColor4 = .red
-                           }else {
-                               buttonColor3 = .red
-                           }
+                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
+
                        }) {
                            Text(initialQuestion.wrappedValue.options[2].optionText + " (\(initialQuestion.wrappedValue.options[2].optionState))")
                                .padding()
                                .foregroundColor(.white)
-                               .background(buttonColor3.opacity(0.1))
+                               .background(buttonColorList[2])
                                .cornerRadius(100)
                        }
                        .padding(.all, 10)
                        
                        Button(action: {
                            mchoiceTestVM.checkAnswerAndUpdateButtonState(quest: initialQuestion.wrappedValue, selectedButton: 3)
-                           if(initialQuestion.wrappedValue.word.translatedWords![0] == initialQuestion.wrappedValue.options[3].optionText){
-                               buttonColor4 = .green
-                               buttonColor = .red
-                               buttonColor2 = .red
-                               buttonColor3 = .red
-                           }else {
-                               buttonColor4 = .red
-                           }
+                           updateButtonColors(optionList: initialQuestion.wrappedValue.options)
                        }) {
                            Text(initialQuestion.wrappedValue.options[3].optionText + " (\(initialQuestion.wrappedValue.options[3].optionState))")
                                .padding()
                                .foregroundColor(.white)
-                               .background(buttonColor4.opacity(0.1))
+                               .background(buttonColorList[3])
                                .cornerRadius(100)
                        }
                        .padding(.all, 10)
                    }
-              
-               
            }
-        
        }
     
-    
+    func updateButtonColors(optionList: [OptionModel]) {
+        
+        buttonColorList = optionList.map { option in
+            if option.optionState == .correct {
+                return .green
+            } else if option.optionState == .wrong {
+                return .red
+            } else {
+                return .white.opacity(0.3)
+            }
+        }
+    }
 }
 
 //#Preview {
