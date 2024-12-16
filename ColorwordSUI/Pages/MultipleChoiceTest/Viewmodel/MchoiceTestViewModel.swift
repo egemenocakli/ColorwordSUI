@@ -120,11 +120,6 @@ class MchoiceTestViewModel: ObservableObject {
                         option.optionState = .correct
                     }
                 }
-                
-                
-
-          
-            
         }
 
     

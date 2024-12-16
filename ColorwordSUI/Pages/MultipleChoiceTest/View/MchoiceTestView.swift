@@ -7,11 +7,21 @@
 
 import SwiftUI
 
+//TODO: sayfa ile işim bittiğinde taşınabilecek her değişkeni vm ye taşı. state ve binding durumları sorun çıkartmayacaksa
 struct MchoiceTestView: View {
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     @State private var selectedTabIndex = 0
-    @EnvironmentObject var themeManager: ThemeManager
+    @EnvironmentObject private var themeManager: ThemeManager
     @State private var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+    
+    @State private var opacity: Double = 1.0
+    
+    @State private var isButtonsEnabled: Bool = true
+    
+    //Auto slide işlemi için yine alttaki timera ihtiyaç olabilir
+//    @State private var timeRemaining = 10
+//    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+
     
     //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
     var body: some View {
@@ -47,6 +57,7 @@ struct MchoiceTestView: View {
                             }
                         }
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                        
                         .onAppear {
                             if let firstWord = mchoiceTestVM.wordList.first {
                                 mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
@@ -84,18 +95,20 @@ struct MchoiceTestView: View {
                                            quest: initialQuestion.wrappedValue,
                                            selectedButton: 0
                                        )
+                                       
                                        mchoiceTestVM.updateButtonColors(
                                            optionList: initialQuestion.wrappedValue.options,
                                            buttonColorList: &buttonColorList
                                        )
+                                       isButtonsEnabled = false
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[0],
                                    buttonIndex: 0
-                               )
+                   ).disabled(!isButtonsEnabled)
                                
                                OptionButtonWidget(
-                                   action: {
+                                   action:  {
                                        mchoiceTestVM.checkAnswerAndUpdateButtonState(
                                            quest: initialQuestion.wrappedValue,
                                            selectedButton: 1
@@ -104,12 +117,13 @@ struct MchoiceTestView: View {
                                            optionList: initialQuestion.wrappedValue.options,
                                            buttonColorList: &buttonColorList
                                        )
+                                       isButtonsEnabled = false
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[1],
                                    buttonIndex: 1
-                               )
-                               
+                               ).disabled(!isButtonsEnabled)
+
                                OptionButtonWidget(
                                    action: {
                                        mchoiceTestVM.checkAnswerAndUpdateButtonState(
@@ -120,12 +134,13 @@ struct MchoiceTestView: View {
                                            optionList: initialQuestion.wrappedValue.options,
                                            buttonColorList: &buttonColorList
                                        )
+                                       isButtonsEnabled = false
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[2],
                                    buttonIndex: 2
-                               )
-                               
+                               ).disabled(!isButtonsEnabled)
+
                                OptionButtonWidget(
                                    action: {
                                        mchoiceTestVM.checkAnswerAndUpdateButtonState(
@@ -136,12 +151,13 @@ struct MchoiceTestView: View {
                                            optionList: initialQuestion.wrappedValue.options,
                                            buttonColorList: &buttonColorList
                                        )
+                                       isButtonsEnabled = false
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[3],
                                    buttonIndex: 3
-                               )
-                           
+                               ).disabled(!isButtonsEnabled)
+
                    
                }
            }
