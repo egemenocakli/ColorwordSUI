@@ -56,6 +56,7 @@ struct MchoiceTestView: View {
                                 .tag(index)
                             }
                         }
+                        
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                         
                         .onAppear {
@@ -66,8 +67,9 @@ struct MchoiceTestView: View {
                         .onChange(of: selectedTabIndex) { oldIndex, newIndex in
                             let word = mchoiceTestVM.wordList[newIndex]
                             mchoiceTestVM.getWordColorForBackground(word: word, themeManager: themeManager)
-
+                            
                             buttonColorList = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+                            isButtonsEnabled = true
                         }
                     }
                 }
