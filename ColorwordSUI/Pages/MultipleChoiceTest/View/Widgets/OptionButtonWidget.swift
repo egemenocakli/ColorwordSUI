@@ -14,7 +14,6 @@ struct OptionButtonWidget: View {
     @Binding var backgroundColor: Color
     var buttonIndex: Int
     @State private var opacity: Double = 1
-
     @State private var timeRemaining = 1
     let timer = Timer.publish(every: 0.7, on: .main, in: .common).autoconnect()
 

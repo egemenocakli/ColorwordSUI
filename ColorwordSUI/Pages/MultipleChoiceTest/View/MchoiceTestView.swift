@@ -18,6 +18,9 @@ struct MchoiceTestView: View {
     
     @State private var isButtonsEnabled: Bool = true
     
+    @State private var isAnsweredList: [Bool] = []
+
+    
     //Auto slide işlemi için yine alttaki timera ihtiyaç olabilir
 //    @State private var timeRemaining = 10
 //    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
@@ -68,8 +71,12 @@ struct MchoiceTestView: View {
                             let word = mchoiceTestVM.wordList[newIndex]
                             mchoiceTestVM.getWordColorForBackground(word: word, themeManager: themeManager)
                             
-                            buttonColorList = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
-                            isButtonsEnabled = true
+                            if isAnsweredList[newIndex] {
+                                isButtonsEnabled = false
+                            } else {
+                                isButtonsEnabled = true
+                                buttonColorList = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+                            }
                         }
                     }
                 }
@@ -78,14 +85,12 @@ struct MchoiceTestView: View {
             .edgesIgnoringSafeArea(.all)
             .task {
                 mchoiceTestVM.questList = await mchoiceTestVM.createThreeUniqueOption()
+                isAnsweredList = Array(repeating: false, count: mchoiceTestVM.questList.count)
+
             }
         }
     }
 
-    //TODO: Şuan bu aşamada istediğime yakınım
-    //Ancak saçma olan işler var yani bu amele mantığı bir metod ile düzeltmeliyim.
-    // Aşağıdaki butonların rengini değiştirme işlemini daha düzgün viewmodelden gerekirse düzenlemeliyim.
-    //Belki ileride diğer butonları animasyon ile yokedip sadece doğru şıkkı gösterebilirim, böylece hangisinin doğru olduğu daha iyi anlaşılır.
     private func choiceButtons(initialQuestion: Binding<QuestModel>) -> some View {
 
            Group {
@@ -103,11 +108,13 @@ struct MchoiceTestView: View {
                                            buttonColorList: &buttonColorList
                                        )
                                        isButtonsEnabled = false
+                                       isAnsweredList[selectedTabIndex] = true
+                                       selectedTabIndex = selectedTabIndex+1
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[0],
                                    buttonIndex: 0
-                   ).disabled(!isButtonsEnabled)
+                                ).disabled(isAnsweredList[selectedTabIndex])
                                
                                OptionButtonWidget(
                                    action:  {
@@ -120,11 +127,14 @@ struct MchoiceTestView: View {
                                            buttonColorList: &buttonColorList
                                        )
                                        isButtonsEnabled = false
+                                       isAnsweredList[selectedTabIndex] = true
+                                       selectedTabIndex = selectedTabIndex+1
+
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[1],
                                    buttonIndex: 1
-                               ).disabled(!isButtonsEnabled)
+                               ).disabled(isAnsweredList[selectedTabIndex])
 
                                OptionButtonWidget(
                                    action: {
@@ -137,11 +147,14 @@ struct MchoiceTestView: View {
                                            buttonColorList: &buttonColorList
                                        )
                                        isButtonsEnabled = false
+                                       isAnsweredList[selectedTabIndex] = true
+                                       selectedTabIndex = selectedTabIndex+1
+
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[2],
                                    buttonIndex: 2
-                               ).disabled(!isButtonsEnabled)
+                               ).disabled(isAnsweredList[selectedTabIndex])
 
                                OptionButtonWidget(
                                    action: {
@@ -154,11 +167,14 @@ struct MchoiceTestView: View {
                                            buttonColorList: &buttonColorList
                                        )
                                        isButtonsEnabled = false
+                                       isAnsweredList[selectedTabIndex] = true
+                                       selectedTabIndex = selectedTabIndex+1
+
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[3],
                                    buttonIndex: 3
-                               ).disabled(!isButtonsEnabled)
+                               ).disabled(isAnsweredList[selectedTabIndex])
 
                    
                }
