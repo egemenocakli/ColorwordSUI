@@ -16,13 +16,11 @@ class MchoiceTestViewModel: ObservableObject {
     let mChoiceTestService = MchoiceTestService()
     
     @State var onPageQuestion: QuestModel?
-//    @State var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+
     
-    
-//    @Published var isPressed1: Bool = false
-//    @Published var isPressed2: Bool = false
-//    @Published var isPressed3: Bool = false
-//    @Published var isPressed4: Bool = false
+    var storedValue: Int = 0
+    var timerIsFinished: Bool = false
+
 
     
     func getWordList() async  -> [Word]? {
@@ -80,13 +78,7 @@ class MchoiceTestViewModel: ObservableObject {
             let optionModelList = zip(randomOptions, optionStates).map { optionText, optionState in
                 OptionModel(optionText: optionText, optionState: optionState, buttonColor: .white.opacity(0.3))
             }
-            /*
-             var optionModelList: [OptionModel] = []
-                         optionModelList.append(OptionModel(optionText: randomOptions[0], optionState: OptionState.correct))
-                         optionModelList.append(OptionModel(optionText: randomOptions[1], optionState: OptionState.none))
-                         optionModelList.append(OptionModel(optionText: randomOptions[2], optionState: OptionState.none))
-                         optionModelList.append(OptionModel(optionText: randomOptions[3], optionState: OptionState.none))
-             */
+
             questList.append(QuestModel(word: word, options: optionModelList.shuffled()))
             
         })
@@ -96,9 +88,6 @@ class MchoiceTestViewModel: ObservableObject {
         return questList
     }
     
-    //parametreler: kelime(translated[0]), quest.options[], seçilen buton
-    //değişecekler: buttonState,buttonBackground, butonlar disabled olacak
-   
         
         func checkAnswerAndUpdateButtonState(quest: QuestModel?, selectedButton: Int?) {
 
@@ -149,4 +138,48 @@ class MchoiceTestViewModel: ObservableObject {
     }
     
     
+    // 1. İlk metod: Parametre alır, değeri saklar ve timer başlatır
+    func startProcess(with initialValue: Int) {
+        storedValue = initialValue
+        print("\(storedValue)" + "içeriği doldu")
+        timerIsFinished = false // Timer'ın durumu resetlenir
+        print("Initial value stored: \(storedValue)")
+        
+        // 2 saniyelik bir timer başlatılır
+        Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
+            self.timerIsFinished = true
+            print("Timer finished, ready for comparison.")
+        }
+    }
+    
+    
+    //Burada ilk sayfada sorunsuz işliyor ikincisinde işlemiyor
+    
+    // 2. İkinci metod: Yeni bir değer alır ve saklanan değerle karşılaştırır
+    func compareValues(with newValue: Int) -> Int {
+        var newGetterValue = newValue
+//        guard timerIsFinished else {
+//            print("Timer is not finished yet. Please wait.")
+//            return -1 // Timer bitmeden çağırılırsa -1 döndürülür
+//        }
+        
+        if storedValue == newValue {
+            print("Values match!")
+            storedValue = newGetterValue
+            if (questList.count-1 != storedValue){
+                newGetterValue = newGetterValue + 1
+            }
+            
+            return newGetterValue
+        } else {
+            
+            print("Values do not match!")
+            print(storedValue)
+            print(newValue)
+            return newValue
+        }
+    }
+
 }
+
+
