@@ -9,9 +9,12 @@ import Foundation
 
 protocol MchoiceTestServiceInterface {
     func getWordList() async throws -> [Word]
+    func increaseWordScore(word: Word, points: Int) async throws
 }
 
 class MchoiceTestService: MchoiceTestServiceInterface {
+
+    
     private let firestoreService = FirestoreService()
     var words : [Word] = []
     
@@ -25,5 +28,11 @@ class MchoiceTestService: MchoiceTestServiceInterface {
         return words
     }
     
-    
+    func increaseWordScore(word: Word, points: Int) async throws {
+        do {
+            try await firestoreService.increaseWordScore(word: word, points: points)
+        }catch{
+            print(error)
+        }
+    }
 }

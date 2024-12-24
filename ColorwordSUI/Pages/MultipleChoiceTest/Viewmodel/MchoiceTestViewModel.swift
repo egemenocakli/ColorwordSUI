@@ -183,3 +183,4 @@ class MchoiceTestViewModel: ObservableObject {
 }
 
 
+//TODO: doğru/yanlış şık tespiti ile increase metodu sonra decrase
