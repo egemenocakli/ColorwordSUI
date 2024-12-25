@@ -13,11 +13,8 @@ struct MchoiceTestView: View {
     @State private var selectedTabIndex = 0
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
-    
     @State private var opacity: Double = 1.0
-    
     @State private var isButtonsEnabled: Bool = true
-    
     @State private var isAnsweredList: [Bool] = []
     
     
@@ -79,6 +76,7 @@ struct MchoiceTestView: View {
                                 isButtonsEnabled = true
                                 buttonColorList = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
                             }
+                            mchoiceTestVM.userAnswer = false
                         }
                     }
                 }
@@ -86,7 +84,7 @@ struct MchoiceTestView: View {
             .background(Color(hex: mchoiceTestVM.wordBackgroundColor))
             .edgesIgnoringSafeArea(.all)
             .task {
-                mchoiceTestVM.questList = await mchoiceTestVM.createThreeUniqueOption()
+                mchoiceTestVM.questList = await mchoiceTestVM.createQuestList()
                 isAnsweredList = Array(repeating: false, count: mchoiceTestVM.questList.count)
 
             }
@@ -101,6 +99,15 @@ struct MchoiceTestView: View {
                 selectedTabIndex = result
             }
         }
+    }
+    
+    fileprivate func getUserAnswer(initialQuestion: Binding<QuestModel>, selectedOptionNo: Int) {
+        let screenWord: Word = initialQuestion.wrappedValue.word
+        
+        initialQuestion.wrappedValue.options[selectedOptionNo].optionText == initialQuestion.wrappedValue.word.translatedWords![0] ? mchoiceTestVM.userAnswer = true : nil
+        Task {
+            await mchoiceTestVM.getUserAnswer(word: screenWord)
+         }
     }
     
     private func choiceButtons(initialQuestion: Binding<QuestModel>) -> some View {
@@ -121,10 +128,9 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-//                                       selectedTabIndex = selectedTabIndex+1
-                                       // 2 saniye sonra compareValues çağrılır ve selectedTabIndex güncellenir
                                        mchoiceTestVM.startProcess(with: selectedTabIndex)
                                        asyncTimerCompareValues()
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 0)
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[0],
@@ -143,9 +149,9 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-//                                       selectedTabIndex = selectedTabIndex+1
                                        mchoiceTestVM.startProcess(with: selectedTabIndex)
                                        asyncTimerCompareValues()
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 1)
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[1],
@@ -164,9 +170,10 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-//                                       selectedTabIndex = selectedTabIndex+1
                                        mchoiceTestVM.startProcess(with: selectedTabIndex)
                                        asyncTimerCompareValues()
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 2)
+
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[2],
@@ -185,9 +192,10 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-//                                       selectedTabIndex = selectedTabIndex+1
                                        mchoiceTestVM.startProcess(with: selectedTabIndex)
                                        asyncTimerCompareValues()
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 3)
+
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[3],

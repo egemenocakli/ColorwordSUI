@@ -58,10 +58,16 @@ class Constants {
         static let gray: Color = Color.gray
         static let placeHolderTextColor: Color = Color.white.opacity(0.40)
         static let borderColor: Color = Color.white.opacity(0.30)
+        static let blackHex: String = "#000000"
 
         
-        static let loginButtonColor: Color = Color(red: 55/255, green: 97/255, blue: 147/255)
-        static let signUpButtonColor: Color = Color(red: 83/255.0, green: 95/255.0, blue: 112/255.0)
+        static let loginButtonColor: Color = Color(hex: "376193")!
+        static let signUpButtonColor: Color = Color(hex: "535F70")!
+        
+
+        static let correctButtonColor: Color = Color(hex: "008b00")!
+        static let wrongButtonColor: Color = Color(hex: "C62828")!
+        
     }
     
     class FrameSizeConstants {

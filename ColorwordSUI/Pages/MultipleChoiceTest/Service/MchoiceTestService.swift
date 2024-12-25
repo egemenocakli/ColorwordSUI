@@ -10,6 +10,7 @@ import Foundation
 protocol MchoiceTestServiceInterface {
     func getWordList() async throws -> [Word]
     func increaseWordScore(word: Word, points: Int) async throws
+    func decreaseWordScore(word: Word, points: Int) async throws
 }
 
 class MchoiceTestService: MchoiceTestServiceInterface {
@@ -31,6 +32,13 @@ class MchoiceTestService: MchoiceTestServiceInterface {
     func increaseWordScore(word: Word, points: Int) async throws {
         do {
             try await firestoreService.increaseWordScore(word: word, points: points)
+        }catch{
+            print(error)
+        }
+    }
+    func decreaseWordScore(word: Word, points: Int) async throws {
+        do {
+            try await firestoreService.decreaseWordScore(word: word, points: points)
         }catch{
             print(error)
         }
