@@ -12,19 +12,15 @@ struct MchoiceTestView: View {
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     @State private var selectedTabIndex = 0
     @EnvironmentObject private var themeManager: ThemeManager
-    @State private var buttonColorList: [Color] = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+    @State private var buttonColorList: [Color] = [.black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12)]
     @State private var opacity: Double = 1.0
     @State private var isButtonsEnabled: Bool = true
     @State private var isAnsweredList: [Bool] = []
-    
-    
 
-    
-    //Auto slide işlemi için yine alttaki timera ihtiyaç olabilir
-//    @State private var timeRemaining = 10
-//    let timer = Timer.publish(every: 1, on: .main, in: .common).autoconnect()
+    @State private var showSettings = false
+    @State private var isNotificationOn = true
+    @State private var isDarkModeOn = false
 
-    
     //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
     var body: some View {
         ZStack(alignment: .center) {
@@ -52,11 +48,14 @@ struct MchoiceTestView: View {
                                     if (onPageQuestion.options.isEmpty != true ) {
                                         choiceButtons(initialQuestion: .constant(onPageQuestion))
                                     }
+                                    
+                                   
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
                                 .tag(index)
                             }
+                            
                         }
                         
                         .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -74,12 +73,47 @@ struct MchoiceTestView: View {
                                 isButtonsEnabled = false
                             } else {
                                 isButtonsEnabled = true
-                                buttonColorList = [.white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2), .white.opacity(0.2)]
+                                buttonColorList = [.black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12)]
                             }
                             mchoiceTestVM.userAnswer = false
                         }
                     }
                 }
+            }
+            .toolbar {
+                ToolbarItem(placement: .topBarTrailing) {
+                    Button(action: {
+                        showSettings.toggle()
+                    }) {
+                        Image(systemName: "gearshape.fill")  // SF Symbol: Ayarlar simgesi
+                            .font(.title2)  // Simge boyutu
+                            .foregroundColor(.white)
+                    }
+                }
+            
+                    
+
+                }.sheet(isPresented: $showSettings) {
+                    // Sheet içeriği
+                    VStack {
+                        Text("Ayarlar Menüsü")
+                            .font(.headline)
+                            .padding()
+
+                        Toggle("Sayfa kaydırma animasyonu", isOn: $isNotificationOn)
+                            .padding()
+
+                        Toggle("Hızlı mod", isOn: $isDarkModeOn)
+                            .padding()
+
+                        Button("Kapat") {
+                            showSettings = false
+                        }
+                        .padding()
+                        .foregroundColor(.red)
+                    }
+                    .presentationDetents([.medium, .large])  // Yarım ekran veya tam ekran seçenekleri
+                    .presentationDragIndicator(.visible)     // Yukarıdan çekme çubuğu
             }
             .background(Color(hex: mchoiceTestVM.wordBackgroundColor))
             .edgesIgnoringSafeArea(.all)
@@ -91,7 +125,7 @@ struct MchoiceTestView: View {
         }
     }
 
-    //Kullanıcı cevap sonrası sayfayı kaydırmazsa autoslide olacak.
+    //User when pick one choice if does not slide the page this method will be autoslide.
     fileprivate func asyncTimerCompareValues() {
         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
             let result = mchoiceTestVM.compareValues(with: selectedTabIndex)
@@ -209,6 +243,20 @@ struct MchoiceTestView: View {
     
 }
 
+
+
+
 //#Preview {
 //    MchoiceTestView()
 //}
+
+
+
+/*
+ Yapılacaklar:
+ 
+    bottom sheet e eklenecek özellikler belirlenecek (Animasyon hızı: normal/hızlı)
+    manuel kaydırma: autoslide özelliğini kapatır kullanıcı kaydırır.
+ 
+    geri tuşunu ben koymadım otomatik geliyor ve dil kendi kendine değişiyor yapabilrsem rengini ikisinin de beyaz veya gri tonunda yapmalıyım.
+ */
