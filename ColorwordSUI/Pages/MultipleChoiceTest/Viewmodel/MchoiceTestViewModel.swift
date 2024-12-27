@@ -157,11 +157,10 @@ class MchoiceTestViewModel: ObservableObject {
     }
     
     ///User slide control methods. #1 PageSlide: Order of Operations
-    func startProcess(with initialValue: Int) {
+    func startProcess(with initialValue: Int,timerSeconds: Int) {
         storedValue = initialValue
         timerIsFinished = false
-        
-        Timer.scheduledTimer(withTimeInterval: 3, repeats: false) { _ in
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(timerSeconds), repeats: false) { _ in
             self.timerIsFinished = true
         }
     }

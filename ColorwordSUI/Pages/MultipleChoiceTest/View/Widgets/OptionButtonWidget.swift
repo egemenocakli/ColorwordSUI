@@ -16,6 +16,8 @@ struct OptionButtonWidget: View {
     @State private var opacity: Double = 1
     @State private var timeRemaining = 1
     let timer = Timer.publish(every: 0.7, on: .main, in: .common).autoconnect()
+    let fastTimer = Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()
+    var animationDuration: Int
 
     var body: some View {
         Button(action: action) {
@@ -25,12 +27,12 @@ struct OptionButtonWidget: View {
                 .foregroundColor(.white)
                 .background(backgroundColor)
                 .cornerRadius(100)
-        }.onReceive(timer) { time in
+        }.onReceive(animationDuration == 1 ? timer : fastTimer) { time in
             if timeRemaining > 0 {
                     timeRemaining -= 1
                 }
             else if(timeRemaining == 0 && initialQuestion.options[buttonIndex].wrappedValue.optionState == .wrong){
-                withAnimation(.easeInOut(duration: 1)) {
+                withAnimation(.easeInOut(duration: animationDuration == 3 ? Double(1) : Double(0.2) )) {
                     opacity = 0
                   }
                 timer.upstream.connect().cancel()

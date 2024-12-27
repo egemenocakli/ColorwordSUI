@@ -18,8 +18,26 @@ struct MchoiceTestView: View {
     @State private var isAnsweredList: [Bool] = []
 
     @State private var showSettings = false
-    @State private var isNotificationOn = true
-    @State private var isDarkModeOn = false
+    @State private var animationActive = true
+    @State private var animamationSpeedToggle: AnimationToggleState = .normal
+    
+    enum AnimationToggleState: Int {
+        case fast = 1
+        case normal = 3
+        
+        var isFast: Bool {
+            self == .fast
+        }
+        
+        init(isFast: Bool) {
+            self = isFast ? .fast : .normal
+        }
+        
+        var value: Int {
+            return self.rawValue
+        }
+    }
+
 
     //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
     var body: some View {
@@ -100,11 +118,16 @@ struct MchoiceTestView: View {
                             .font(.headline)
                             .padding()
 
-                        Toggle("Sayfa kaydırma animasyonu", isOn: $isNotificationOn)
+                        Toggle("Otomatik Kaydırma (Açık/Kapalı)", isOn: $animationActive)
                             .padding()
-
-                        Toggle("Hızlı mod", isOn: $isDarkModeOn)
-                            .padding()
+           
+                        Toggle("Otomatik Kaydırma Hızı (Normal/Hızlı)", isOn: Binding(
+                                        get: { animamationSpeedToggle.isFast },  // Bool olarak enum durumu
+                                        set: { newValue in
+                                            animamationSpeedToggle = AnimationToggleState(isFast: newValue)
+                                        }
+                                    ))
+                                    .padding()
 
                         Button("Kapat") {
                             showSettings = false
@@ -112,8 +135,8 @@ struct MchoiceTestView: View {
                         .padding()
                         .foregroundColor(.red)
                     }
-                    .presentationDetents([.medium, .large])  // Yarım ekran veya tam ekran seçenekleri
-                    .presentationDragIndicator(.visible)     // Yukarıdan çekme çubuğu
+                    .presentationDetents([.medium, .large])
+                    .presentationDragIndicator(.visible)
             }
             .background(Color(hex: mchoiceTestVM.wordBackgroundColor))
             .edgesIgnoringSafeArea(.all)
@@ -126,8 +149,8 @@ struct MchoiceTestView: View {
     }
 
     //User when pick one choice if does not slide the page this method will be autoslide.
-    fileprivate func asyncTimerCompareValues() {
-        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+    fileprivate func asyncTimerCompareValues(timerSecond: Int) {
+        DispatchQueue.main.asyncAfter(deadline: .now() + Double(timerSecond)) {
             let result = mchoiceTestVM.compareValues(with: selectedTabIndex)
             if result != -1 {
                 selectedTabIndex = result
@@ -162,13 +185,18 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-                                       mchoiceTestVM.startProcess(with: selectedTabIndex)
-                                       asyncTimerCompareValues()
+                                       if(animationActive == true) {
+                                           mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
+                                           asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
+                                       }
+                                       
+                                       
                                        getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 0)
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[0],
-                                   buttonIndex: 0
+                                   buttonIndex: 0,
+                                   animationDuration: animamationSpeedToggle.rawValue
                                 ).disabled(isAnsweredList[selectedTabIndex])
                                
                                OptionButtonWidget(
@@ -183,13 +211,16 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-                                       mchoiceTestVM.startProcess(with: selectedTabIndex)
-                                       asyncTimerCompareValues()
+                                       if(animationActive == true) {
+                                           mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
+                                           asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
+                                       }
                                        getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 1)
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[1],
-                                   buttonIndex: 1
+                                   buttonIndex: 1,
+                                   animationDuration: animamationSpeedToggle.rawValue
                                ).disabled(isAnsweredList[selectedTabIndex])
 
                                OptionButtonWidget(
@@ -204,14 +235,17 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-                                       mchoiceTestVM.startProcess(with: selectedTabIndex)
-                                       asyncTimerCompareValues()
+                                       if(animationActive == true) {
+                                           mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
+                                           asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
+                                       }
                                        getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 2)
 
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[2],
-                                   buttonIndex: 2
+                                   buttonIndex: 2,
+                                   animationDuration: animamationSpeedToggle.rawValue
                                ).disabled(isAnsweredList[selectedTabIndex])
 
                                OptionButtonWidget(
@@ -226,14 +260,17 @@ struct MchoiceTestView: View {
                                        )
                                        isButtonsEnabled = false
                                        isAnsweredList[selectedTabIndex] = true
-                                       mchoiceTestVM.startProcess(with: selectedTabIndex)
-                                       asyncTimerCompareValues()
+                                       if(animationActive == true) {
+                                           mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
+                                           asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
+                                       }
                                        getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 3)
 
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[3],
-                                   buttonIndex: 3
+                                   buttonIndex: 3,
+                                   animationDuration: animamationSpeedToggle.rawValue
                                ).disabled(isAnsweredList[selectedTabIndex])
 
                    
