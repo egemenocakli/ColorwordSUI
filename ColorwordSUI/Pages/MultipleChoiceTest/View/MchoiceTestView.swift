@@ -105,7 +105,7 @@ struct MchoiceTestView: View {
                     }) {
                         Image(systemName: "gearshape.fill")  // SF Symbol: Ayarlar simgesi
                             .font(.title2)  // Simge boyutu
-                            .foregroundColor(.white)
+                            .foregroundColor(.white.opacity(0.6))
                     }
                 }
             

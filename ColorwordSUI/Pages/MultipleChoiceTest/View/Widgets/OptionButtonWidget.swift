@@ -37,6 +37,8 @@ struct OptionButtonWidget: View {
                   }
                 timer.upstream.connect().cancel()
             }
+        }.onDisappear {
+            timer.upstream.connect().cancel()
         }
         .opacity(opacity)
         .padding(.all, 10)

@@ -160,8 +160,8 @@ class MchoiceTestViewModel: ObservableObject {
     func startProcess(with initialValue: Int,timerSeconds: Int) {
         storedValue = initialValue
         timerIsFinished = false
-        Timer.scheduledTimer(withTimeInterval: TimeInterval(timerSeconds), repeats: false) { _ in
-            self.timerIsFinished = true
+        Timer.scheduledTimer(withTimeInterval: TimeInterval(timerSeconds), repeats: false) { [weak self] _ in
+            self?.timerIsFinished = true
         }
     }
     
