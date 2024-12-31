@@ -16,10 +16,10 @@ struct MchoiceTestView: View {
     @State private var opacity: Double = 1.0
     @State private var isButtonsEnabled: Bool = true
     @State private var isAnsweredList: [Bool] = []
-
     @State private var showSettings = false
     @State private var animationActive = true
     @State private var animamationSpeedToggle: AnimationToggleState = .normal
+    @State private var showToast: Bool = false
     
     enum AnimationToggleState: Int {
         case fast = 1
@@ -49,7 +49,8 @@ struct MchoiceTestView: View {
                         .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                         .frame(alignment: .center)
                         .background(Color.white.opacity(0.00))
-                } else {
+                }
+                else {
                     VStack {
                         TabView(selection: $selectedTabIndex) {
                             ForEach(Array(mchoiceTestVM.questList.enumerated()), id: \.element.word.wordId) { index, onPageQuestion in
@@ -66,8 +67,12 @@ struct MchoiceTestView: View {
                                     if (onPageQuestion.options.isEmpty != true ) {
                                         choiceButtons(initialQuestion: .constant(onPageQuestion))
                                     }
-                                    
+                                    if ($selectedTabIndex.wrappedValue == mchoiceTestVM.questList.count-1) {
+                                        checkToLastPage(onPageQuestNo: index, totalQuestions: mchoiceTestVM.questList.count)
+                                    }
                                    
+                                    
+                                    
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -96,6 +101,7 @@ struct MchoiceTestView: View {
                             mchoiceTestVM.userAnswer = false
                         }
                     }
+                
                 }
             }
             .toolbar {
@@ -145,9 +151,28 @@ struct MchoiceTestView: View {
                 isAnsweredList = Array(repeating: false, count: mchoiceTestVM.questList.count)
 
             }
+            
         }
+        
     }
 
+    //TODO: doğru yanlış cevap sayısı
+    func checkToLastPage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
+        var result = mchoiceTestVM.checkAnswers()
+        return ZStack {
+            // Mevcut sayfa içeriği
+            
+            ToastView(message: result)
+                .transition(.slide)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                        self.showToast = false
+                    }
+                    
+                }
+        }
+    }
+    
     //User when pick one choice if does not slide the page this method will be autoslide.
     fileprivate func asyncTimerCompareValues(timerSecond: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(timerSecond)) {
@@ -163,7 +188,7 @@ struct MchoiceTestView: View {
         
         initialQuestion.wrappedValue.options[selectedOptionNo].optionText == initialQuestion.wrappedValue.word.translatedWords![0] ? mchoiceTestVM.userAnswer = true : nil
         Task {
-            await mchoiceTestVM.getUserAnswer(word: screenWord)
+            await mchoiceTestVM.getUserAnswer(word: screenWord,pageIndex: selectedTabIndex)
          }
     }
     
@@ -277,7 +302,17 @@ struct MchoiceTestView: View {
                }
            }
        }
-    
+    struct ToastView: View {
+        var message: String
+        var body: some View {
+            Text(message)
+                .padding()
+                .background(Color.black.opacity(0.7))
+                .foregroundColor(.white)
+                .cornerRadius(10)
+                .padding(.top, 50)
+        }
+    }
 }
 
 

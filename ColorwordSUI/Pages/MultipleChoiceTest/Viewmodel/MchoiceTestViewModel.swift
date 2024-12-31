@@ -17,7 +17,17 @@ class MchoiceTestViewModel: ObservableObject {
     var storedValue: Int = 0
     var timerIsFinished: Bool = false
     var userAnswer: Bool = false
+//    var correctWrongAnswerList : [Bool]? = nil  //[Bool] = Array(repeating: false, count: 5) //sayı?
 
+    
+    enum AnswerState: String {
+        case correct = "true"
+        case wrong = "false"
+        case empty = "empty"
+    }
+    
+    var answerList: [AnswerState]? = nil
+    
     ///Returns the user's word list. #1 QuestAndOption: Order of Operations
     func getWordList() async  -> [Word]? {
         
@@ -118,29 +128,43 @@ class MchoiceTestViewModel: ObservableObject {
     }
     
     ///Update word score after user selection. #6 QuestAndOption: Order of Operations
-    func getUserAnswer(word: Word) async {
+    ///Answer counter
+    func getUserAnswer(word: Word, pageIndex: Int) async {
         var updatedWord = word
+        
+        if ( answerList == nil) {
+            DispatchQueue.main.async {
+                self.answerList = Array(repeating: .wrong, count: self.wordList.count)
+            }
+        }
         
         if (userAnswer == true) {
             updatedWord.score = (updatedWord.score ?? 0) + 2
-            
+            DispatchQueue.main.async {
+                self.answerList?[pageIndex] = .correct
+                
+                print(pageIndex)
+            }
             do{
                 try await mChoiceTestService.increaseWordScore(word: updatedWord, points: 2)
             }catch {
                 print("getUserAnswer error")
             }
-        }else {
+        }else if (userAnswer == false ){
             do{
                 if (updatedWord.score! >= 2) {
                     updatedWord.score = (updatedWord.score ?? 0) - 2
                 }else {
                     updatedWord.score = 0
                 }
-                
+                DispatchQueue.main.async {
+                    self.answerList![pageIndex] = .wrong
+                }
                 try await mChoiceTestService.decreaseWordScore(word: updatedWord, points: 2)
             }catch {
                 print("getUserAnswer error")
             }
+            
         }
     }
     
@@ -181,6 +205,35 @@ class MchoiceTestViewModel: ObservableObject {
             return newValue
         }
     }
+    
+    
+    //TODO: Boş cevapta sorun yaşıyorum. empty = toplam soru sayısı - true + false şeklinde hesaplayabilirim.
+    func checkAnswers() -> String {
+        var trueAnswerCount = 0
+        var falseAnswerCount = 0
+        var emptyAnswerCount = 0
+        
+        if let answerList = answerList, !answerList.isEmpty {
+            answerList.forEach { answer in
+                switch answer {
+                case .correct:
+                    trueAnswerCount += 1
+                case .wrong:
+                    falseAnswerCount += 1
+                case .empty:
+                    emptyAnswerCount += 1
+                }
+            }
+        }
+        
+        
+        return """
+        Doğru cevaplar: \(trueAnswerCount)
+        Yanlış cevaplar: \(falseAnswerCount)
+        Boş cevaplar: \(emptyAnswerCount)
+        """
+    }
+
 }
 
 
