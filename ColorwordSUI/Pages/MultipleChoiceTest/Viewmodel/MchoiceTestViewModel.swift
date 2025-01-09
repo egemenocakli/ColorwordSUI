@@ -25,7 +25,7 @@ class MchoiceTestViewModel: ObservableObject {
         case wrong = "false"
         case empty = "empty"
     }
-    
+        
     var answerList: [AnswerState]? = nil
     
     ///Returns the user's word list. #1 QuestAndOption: Order of Operations
@@ -132,9 +132,9 @@ class MchoiceTestViewModel: ObservableObject {
     func getUserAnswer(word: Word, pageIndex: Int) async {
         var updatedWord = word
         
-        if ( answerList == nil) {
+        if answerList == nil {
             DispatchQueue.main.async {
-                self.answerList = Array(repeating: .wrong, count: self.wordList.count)
+                self.answerList = Array(repeating: .empty, count: self.wordList.count)
             }
         }
         
@@ -225,6 +225,7 @@ class MchoiceTestViewModel: ObservableObject {
                 }
             }
         }
+//        print(emptyAnswerCounter)
         
         
         return """

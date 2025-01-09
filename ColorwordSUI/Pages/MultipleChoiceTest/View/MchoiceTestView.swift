@@ -8,6 +8,8 @@
 import SwiftUI
 
 //TODO: sayfa ile işim bittiğinde taşınabilecek her değişkeni vm ye taşı. state ve binding durumları sorun çıkartmayacaksa
+//Aynı şekilde iconlar ve buton renkleri de taşınacak
+
 struct MchoiceTestView: View {
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     @State private var selectedTabIndex = 0
@@ -67,10 +69,9 @@ struct MchoiceTestView: View {
                                     if (onPageQuestion.options.isEmpty != true ) {
                                         choiceButtons(initialQuestion: .constant(onPageQuestion))
                                     }
-                                    if ($selectedTabIndex.wrappedValue == mchoiceTestVM.questList.count-1) {
-                                        checkToLastPage(onPageQuestNo: index, totalQuestions: mchoiceTestVM.questList.count)
+                                    if ($selectedTabIndex.wrappedValue == mchoiceTestVM.questList.count-1 && isAnsweredList[index] == true ) {
+                                        showResultToastMessage(onPageQuestNo: index, totalQuestions: mchoiceTestVM.questList.count)
                                     }
-                                   
                                     
                                     
                                 }
@@ -99,6 +100,7 @@ struct MchoiceTestView: View {
                                 buttonColorList = [.black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12)]
                             }
                             mchoiceTestVM.userAnswer = false
+                            emptyFinder(oldIndex: oldIndex)
                         }
                     }
                 
@@ -155,21 +157,27 @@ struct MchoiceTestView: View {
         }
         
     }
+    //TODO: Test edilecek ilk boş orta boş ve son soru boş bırakılacak
+    func emptyFinder(oldIndex: Int) {
+        //ilk sayfa kontrolü yapılacak
+        
+        if(isAnsweredList[selectedTabIndex-1] == false) {
+            mchoiceTestVM.answerList?[selectedTabIndex-1] = .empty
+        }
+    }
 
     //TODO: doğru yanlış cevap sayısı
-    func checkToLastPage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
-        var result = mchoiceTestVM.checkAnswers()
+    func showResultToastMessage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
+        let result = mchoiceTestVM.checkAnswers()
         return ZStack {
-            // Mevcut sayfa içeriği
-            
             ToastView(message: result)
                 .transition(.slide)
                 .onAppear {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
                         self.showToast = false
                     }
-                    
                 }
+            
         }
     }
     
@@ -302,6 +310,7 @@ struct MchoiceTestView: View {
                }
            }
        }
+    //TODO: düzenle
     struct ToastView: View {
         var message: String
         var body: some View {
