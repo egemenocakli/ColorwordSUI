@@ -57,8 +57,8 @@ struct MchoiceTestView: View {
                         TabView(selection: $selectedTabIndex) {
                             ForEach(Array(mchoiceTestVM.questList.enumerated()), id: \.element.word.wordId) { index, onPageQuestion in
                                 VStack {
-                                    if(mchoiceTestVM.userAnswer != nil && onPageQuestion.options[0].optionState != .none) {
-                                        AnswerIcon(isCorrect: mchoiceTestVM.userAnswer!)
+                                    if(mchoiceTestVM.isCorrectCheckForIcon != nil && onPageQuestion.options[0].optionState != .none) {
+                                        AnswerIcon(isCorrect: mchoiceTestVM.isCorrectCheckForIcon!)
                                     }
                                     Text(onPageQuestion.word.word ?? "")
                                         .fontWeight(.bold)
@@ -76,7 +76,7 @@ struct MchoiceTestView: View {
                                         showResultToastMessage(onPageQuestNo: index, totalQuestions: mchoiceTestVM.questList.count)
                                     }
                                     
-
+                                    
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -102,8 +102,9 @@ struct MchoiceTestView: View {
                                 isButtonsEnabled = true
                                 buttonColorList = [.black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12)]
                             }
-                            mchoiceTestVM.userAnswer = false
+                            mchoiceTestVM.isAnswerCorrect = false
                             emptyFinder(oldIndex: oldIndex)
+                            mchoiceTestVM.isCorrectCheckForIcon = nil
                         }
                     }
                 
@@ -197,7 +198,7 @@ struct MchoiceTestView: View {
     fileprivate func getUserAnswer(initialQuestion: Binding<QuestModel>, selectedOptionNo: Int) {
         let screenWord: Word = initialQuestion.wrappedValue.word
         
-        initialQuestion.wrappedValue.options[selectedOptionNo].optionText == initialQuestion.wrappedValue.word.translatedWords![0] ? mchoiceTestVM.userAnswer = true : nil
+        initialQuestion.wrappedValue.options[selectedOptionNo].optionText == initialQuestion.wrappedValue.word.translatedWords![0] ? mchoiceTestVM.isAnswerCorrect = true : nil
         Task {
             await mchoiceTestVM.getUserAnswer(word: screenWord,pageIndex: selectedTabIndex)
          }
@@ -336,14 +337,12 @@ struct MchoiceTestView: View {
         var isCorrect: Bool
         
         var body: some View {
-            if (isCorrect != nil) {
-                Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle").font(Font.system(size: 60)).foregroundStyle(.white).padding()
-            }
-            else {
-                EmptyView()
-            }
             
+
+            Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle").font(Font.system(size: 60)).foregroundStyle(.white).padding()
+                   
         }
+        
     }
 }
 
@@ -354,13 +353,3 @@ struct MchoiceTestView: View {
 //    MchoiceTestView()
 //}
 
-
-
-/*
- Yapılacaklar:
- 
-    bottom sheet e eklenecek özellikler belirlenecek (Animasyon hızı: normal/hızlı)
-    manuel kaydırma: autoslide özelliğini kapatır kullanıcı kaydırır.
- 
-    geri tuşunu ben koymadım otomatik geliyor ve dil kendi kendine değişiyor yapabilrsem rengini ikisinin de beyaz veya gri tonunda yapmalıyım.
- */

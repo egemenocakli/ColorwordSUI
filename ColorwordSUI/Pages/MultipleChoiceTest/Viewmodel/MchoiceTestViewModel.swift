@@ -16,9 +16,8 @@ class MchoiceTestViewModel: ObservableObject {
     let mChoiceTestService = MchoiceTestService()
     var storedValue: Int = 0
     var timerIsFinished: Bool = false
-    var userAnswer: Bool? = nil
+    var isAnswerCorrect: Bool = false
 
-    
     enum AnswerState: String {
         case correct = "true"
         case wrong = "false"
@@ -26,6 +25,7 @@ class MchoiceTestViewModel: ObservableObject {
     }
         
     var answerList: [AnswerState]? = nil
+    @Published var isCorrectCheckForIcon: Bool? = nil
     
     ///Returns the user's word list. #1 QuestAndOption: Order of Operations
     func getWordList() async  -> [Word]? {
@@ -137,9 +137,10 @@ class MchoiceTestViewModel: ObservableObject {
             }
         }
         
-        if (userAnswer == true) {
+        if (isAnswerCorrect == true) {
             updatedWord.score = (updatedWord.score ?? 0) + 2
             DispatchQueue.main.async {
+                self.isCorrectCheckForIcon = true
                 self.answerList?[pageIndex] = .correct
                 
                 print(pageIndex)
@@ -149,7 +150,7 @@ class MchoiceTestViewModel: ObservableObject {
             }catch {
                 print("getUserAnswer error")
             }
-        }else if (userAnswer == false ){
+        }else if (isAnswerCorrect == false ){
             do{
                 if (updatedWord.score! >= 2) {
                     updatedWord.score = (updatedWord.score ?? 0) - 2
@@ -157,6 +158,7 @@ class MchoiceTestViewModel: ObservableObject {
                     updatedWord.score = 0
                 }
                 DispatchQueue.main.async {
+                    self.isCorrectCheckForIcon = false
                     self.answerList![pageIndex] = .wrong
                 }
                 try await mChoiceTestService.decreaseWordScore(word: updatedWord, points: 2)
@@ -206,7 +208,7 @@ class MchoiceTestViewModel: ObservableObject {
     }
     
     
-    //TODO: Boş cevapta sorun yaşıyorum. empty = toplam soru sayısı - true + false şeklinde hesaplayabilirim.
+    //TODO: Yine bir sorun var gibi tam olarak doğru vermiyor. tekrar kontrol edilecek.
     func checkAnswers() -> String {
         var trueAnswerCount = 0
         var falseAnswerCount = 0
