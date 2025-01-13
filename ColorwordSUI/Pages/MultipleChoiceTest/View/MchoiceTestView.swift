@@ -57,6 +57,9 @@ struct MchoiceTestView: View {
                         TabView(selection: $selectedTabIndex) {
                             ForEach(Array(mchoiceTestVM.questList.enumerated()), id: \.element.word.wordId) { index, onPageQuestion in
                                 VStack {
+                                    if(mchoiceTestVM.userAnswer != nil && onPageQuestion.options[0].optionState != .none) {
+                                        AnswerIcon(isCorrect: mchoiceTestVM.userAnswer!)
+                                    }
                                     Text(onPageQuestion.word.word ?? "")
                                         .fontWeight(.bold)
                                         .font(.system(size: Constants.FontSizeConstants.x4Large))
@@ -73,7 +76,7 @@ struct MchoiceTestView: View {
                                         showResultToastMessage(onPageQuestNo: index, totalQuestions: mchoiceTestVM.questList.count)
                                     }
                                     
-                                    
+
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
                                 .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
@@ -320,6 +323,26 @@ struct MchoiceTestView: View {
                 .foregroundColor(.white)
                 .cornerRadius(10)
                 .padding(.top, 50)
+        }
+    }
+    
+    
+    //TODO: Bazen yanlışlar kalıyor ekranda sonraki sayfada da kalıyor.
+    
+    //Enum olarak 2 cevap duruma göre tik veya çarpı
+    //doğru: checkmark.circle
+    //yanlış: xmark.circle
+    struct AnswerIcon: View {
+        var isCorrect: Bool
+        
+        var body: some View {
+            if (isCorrect != nil) {
+                Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle").font(Font.system(size: 60)).foregroundStyle(.white).padding()
+            }
+            else {
+                EmptyView()
+            }
+            
         }
     }
 }

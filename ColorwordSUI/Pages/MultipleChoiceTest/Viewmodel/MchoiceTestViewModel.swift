@@ -16,8 +16,7 @@ class MchoiceTestViewModel: ObservableObject {
     let mChoiceTestService = MchoiceTestService()
     var storedValue: Int = 0
     var timerIsFinished: Bool = false
-    var userAnswer: Bool = false
-//    var correctWrongAnswerList : [Bool]? = nil  //[Bool] = Array(repeating: false, count: 5) //sayı?
+    var userAnswer: Bool? = nil
 
     
     enum AnswerState: String {
