@@ -335,12 +335,20 @@ struct MchoiceTestView: View {
     //yanlış: xmark.circle
     struct AnswerIcon: View {
         var isCorrect: Bool
-        
+        @State private var isVisible = true
         var body: some View {
             
 
-            Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle").font(Font.system(size: 60)).foregroundStyle(.white).padding()
-                   
+            Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle").font(Font.system(size: 60)).foregroundStyle(.white)
+                .padding()
+                .opacity(isVisible ? 1 : 0)       // Görünürlük kontrolü
+                .animation(.spring(response: 0.5, dampingFraction: 0.5), value: isVisible)
+                .onAppear {
+                    // Gözüktükten 1.5 saniye sonra kaybolur
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                        isVisible = false
+                    }
+                }
         }
         
     }
