@@ -18,7 +18,7 @@ struct AppNameWidget: View {
     func appNameTextWidget(geometry: GeometryProxy) -> some View {
         Text(Constants.appName)
             .frame(width: UIScreen.main.bounds.width, height: Constants.PaddingSizeConstants.xlSize, alignment: .center)
-            .font(.system(size: Constants.FontSizeConstants.appNameFontSize))
+            .font(.system(size: Constants.FontSizeConstants.hugeSize))
             .frame(height: geometry.size.height * 0.3)
             //.foregroundStyle(Constants.ColorConstants.whiteFont)
             .foregroundStyle(Color.appNameColor)

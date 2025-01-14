@@ -11,34 +11,18 @@ import SwiftUI
 //Aynı şekilde iconlar ve buton renkleri de taşınacak
 
 struct MchoiceTestView: View {
+    @EnvironmentObject var languageManager: LanguageManager
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     @State private var selectedTabIndex = 0
     @EnvironmentObject private var themeManager: ThemeManager
-    @State private var buttonColorList: [Color] = [.black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12)]
+    @State private var buttonColorList: [Color] = Array(repeating: Constants.ColorConstants.optionButtonBackgroundColor, count: 4)
     @State private var opacity: Double = 1.0
     @State private var isButtonsEnabled: Bool = true
     @State private var isAnsweredList: [Bool] = []
     @State private var showSettings = false
     @State private var animationActive = true
     @State private var animamationSpeedToggle: AnimationToggleState = .normal
-    @State private var showToast: Bool = false
-    
-    enum AnimationToggleState: Int {
-        case fast = 1
-        case normal = 3
-        
-        var isFast: Bool {
-            self == .fast
-        }
-        
-        init(isFast: Bool) {
-            self = isFast ? .fast : .normal
-        }
-        
-        var value: Int {
-            return self.rawValue
-        }
-    }
+    @State private var showToast: Bool = false    
 
 
     //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
@@ -115,33 +99,32 @@ struct MchoiceTestView: View {
                     Button(action: {
                         showSettings.toggle()
                     }) {
-                        Image(systemName: "gearshape.fill")  // SF Symbol: Ayarlar simgesi
-                            .font(.title2)  // Simge boyutu
-                            .foregroundColor(.white.opacity(0.6))
+                        Image(systemName: Constants.IconTextConstants.settingsButton)
+                            .font(.system(size: Constants.FontSizeConstants.x2Large))
+                            .foregroundColor(Constants.ColorConstants.grayButtonColor)
                     }
                 }
             
                     
 
                 }.sheet(isPresented: $showSettings) {
-                    // Sheet içeriği
                     VStack {
-                        Text("Ayarlar Menüsü")
+                        Text("test_settings")
                             .font(.headline)
                             .padding()
 
-                        Toggle("Otomatik Kaydırma (Açık/Kapalı)", isOn: $animationActive)
+                        Toggle("auto_slide_toggle", isOn: $animationActive)
                             .padding()
            
-                        Toggle("Otomatik Kaydırma Hızı (Normal/Hızlı)", isOn: Binding(
-                                        get: { animamationSpeedToggle.isFast },  // Bool olarak enum durumu
+                        Toggle("auto_slide_speed", isOn: Binding(
+                                        get: { animamationSpeedToggle.isFast },
                                         set: { newValue in
                                             animamationSpeedToggle = AnimationToggleState(isFast: newValue)
                                         }
                                     ))
                                     .padding()
 
-                        Button("Kapat") {
+                        Button("close") {
                             showSettings = false
                         }
                         .padding()
@@ -158,10 +141,12 @@ struct MchoiceTestView: View {
 
             }
             
-        }
+        }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
+
         
     }
     //TODO: Test edilecek ilk boş orta boş ve son soru boş bırakılacak
+    ///**Finds the question that was skipped**
     func emptyFinder(oldIndex: Int) {
         //ilk sayfa kontrolü yapılacak
         
@@ -170,7 +155,7 @@ struct MchoiceTestView: View {
         }
     }
 
-    //TODO: doğru yanlış cevap sayısı
+    ///**User test result showing with ToastMessage**
     func showResultToastMessage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
         let result = mchoiceTestVM.checkAnswers()
         return ZStack {
@@ -185,7 +170,7 @@ struct MchoiceTestView: View {
         }
     }
     
-    //User when pick one choice if does not slide the page this method will be autoslide.
+    ///**User when pick one choice if does not slide the page this method will be autoslide.**
     fileprivate func asyncTimerCompareValues(timerSecond: Int) {
         DispatchQueue.main.asyncAfter(deadline: .now() + Double(timerSecond)) {
             let result = mchoiceTestVM.compareValues(with: selectedTabIndex)
@@ -194,7 +179,7 @@ struct MchoiceTestView: View {
             }
         }
     }
-    
+    ///**Change the score of the word by taking the true or false status from the button selected by the user.**
     fileprivate func getUserAnswer(initialQuestion: Binding<QuestModel>, selectedOptionNo: Int) {
         let screenWord: Word = initialQuestion.wrappedValue.word
         
@@ -203,7 +188,7 @@ struct MchoiceTestView: View {
             await mchoiceTestVM.getUserAnswer(word: screenWord,pageIndex: selectedTabIndex)
          }
     }
-    
+    ///**The question option buttons**
     private func choiceButtons(initialQuestion: Binding<QuestModel>) -> some View {
 
            Group {
@@ -259,7 +244,7 @@ struct MchoiceTestView: View {
                                    buttonIndex: 1,
                                    animationDuration: animamationSpeedToggle.rawValue
                                ).disabled(isAnsweredList[selectedTabIndex])
-
+                   
                                OptionButtonWidget(
                                    action: {
                                        mchoiceTestVM.checkAnswerAndUpdateButtonState(
@@ -314,43 +299,40 @@ struct MchoiceTestView: View {
                }
            }
        }
-    //TODO: düzenle
+    ///**The method where we show the results to the user at the end of the test.**
     struct ToastView: View {
         var message: String
         var body: some View {
             Text(message)
                 .padding()
-                .background(Color.black.opacity(0.7))
-                .foregroundColor(.white)
-                .cornerRadius(10)
-                .padding(.top, 50)
+                .background(Constants.ColorConstants.toastMessageBackgroundColor)
+                .foregroundColor(Constants.ColorConstants.whiteColor)
+                .cornerRadius(Constants.SizeRadiusConstants.xSmall)
+                .padding(.top, Constants.PaddingSizeConstants.lSize)
         }
     }
-    
-    
-    //TODO: Bazen yanlışlar kalıyor ekranda sonraki sayfada da kalıyor.
-    
-    //Enum olarak 2 cevap duruma göre tik veya çarpı
-    //doğru: checkmark.circle
-    //yanlış: xmark.circle
+    ///**When the user makes a selection, a true/false icon is displayed on the screen.**
     struct AnswerIcon: View {
-        var isCorrect: Bool
         @State private var isVisible = true
+        
+        var style: AnswerIconStyle
+
+        init(isCorrect: Bool) {
+            self.style = AnswerIconStyle(isCorrect: isCorrect)
+        }
+        
         var body: some View {
             
-
-            Image(systemName: isCorrect ? "checkmark.circle" : "xmark.circle").font(Font.system(size: 60)).foregroundStyle(.white)
+            Image(systemName: style.systemImageName).font(Font.system(size: Constants.FontSizeConstants.hugeSize)).foregroundStyle(.white)
                 .padding()
-                .opacity(isVisible ? 1 : 0)       // Görünürlük kontrolü
-                .animation(.spring(response: 0.5, dampingFraction: 0.5), value: isVisible)
+                .opacity(isVisible ? 1 : 0)
+                .animation(.spring(response: Constants.TimerTypeConstants.standardSpringAnimation, dampingFraction: Constants.TimerTypeConstants.standardSpringAnimation), value: isVisible)
                 .onAppear {
-                    // Gözüktükten 1.5 saniye sonra kaybolur
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 1.5) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + Constants.TimerTypeConstants.shortTimer) {
                         isVisible = false
                     }
                 }
         }
-        
     }
 }
 
@@ -361,3 +343,6 @@ struct MchoiceTestView: View {
 //    MchoiceTestView()
 //}
 
+
+//TODO: Toplam kelime sayısı ve gösterilen sayfadaki kelimenin sırası
+//TODO: Appbar yazı/buton renkleri aynı olsun

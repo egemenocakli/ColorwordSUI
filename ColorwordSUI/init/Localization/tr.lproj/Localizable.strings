@@ -17,3 +17,9 @@
 
 //HomePage
 "no_data" = "Kelime listenize ulaşamadık veya siz hiç kelime eklemediniz.";
+
+//MultipleChoiceTestView
+"test_settings" = "Test Ayarları";
+"auto_slide_toggle" = "Otomatik Kaydırma (Açık/Kapalı)";
+"auto_slide_speed" = "Otomatik Kaydırma Hızı (Normal/Hızlı)";
+"close" = "Kapat";

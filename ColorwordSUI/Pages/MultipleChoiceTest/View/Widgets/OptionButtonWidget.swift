@@ -15,14 +15,13 @@ struct OptionButtonWidget: View {
     var buttonIndex: Int
     @State private var opacity: Double = 1
     @State private var timeRemaining = 1
-    let timer = Timer.publish(every: 0.7, on: .main, in: .common).autoconnect()
-    let fastTimer = Timer.publish(every: 0.2, on: .main, in: .common).autoconnect()
+    let timer = Timer.publish(every: Constants.TimerTypeConstants.shortTimer, on: .main, in: .common).autoconnect()
+    let fastTimer = Timer.publish(every: Constants.TimerTypeConstants.tooShortTimer, on: .main, in: .common).autoconnect()
     var animationDuration: Int
 
     var body: some View {
         Button(action: action) {
             Text(initialQuestion.options[buttonIndex].wrappedValue.optionText)
-//                 + " (\(initialQuestion.options[buttonIndex].wrappedValue.optionState))")
                 .padding()
                 .foregroundColor(.white)
                 .background(backgroundColor)
@@ -32,7 +31,7 @@ struct OptionButtonWidget: View {
                     timeRemaining -= 1
                 }
             else if(timeRemaining == 0 && initialQuestion.options[buttonIndex].wrappedValue.optionState == .wrong){
-                withAnimation(.easeInOut(duration: animationDuration == 3 ? Double(1) : Double(0.2) )) {
+                withAnimation(.easeInOut(duration: animationDuration == 3 ? Constants.TimerTypeConstants.normalTimer : Constants.TimerTypeConstants.tooShortTimer )) {
                     opacity = 0
                   }
                 timer.upstream.connect().cancel()
