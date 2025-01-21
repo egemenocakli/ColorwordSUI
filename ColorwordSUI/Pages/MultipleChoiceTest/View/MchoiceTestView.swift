@@ -46,20 +46,14 @@ struct MchoiceTestView: View {
                                     if(mchoiceTestVM.isCorrectCheckForIcon != nil && onPageQuestion.options[0].optionState != .none) {
                                         AnswerIcon(isCorrect: mchoiceTestVM.isCorrectCheckForIcon!)
                                     }
-                                    Text(onPageQuestion.word.word ?? "")
-                                        .fontWeight(.bold)
-                                        .font(.system(size: Constants.FontSizeConstants.x4Large))
-                                        .foregroundStyle(Color.textColorWhite)
-                                    
-                                    Text(onPageQuestion.word.translatedWords?.first ?? "")
-                                        .font(.system(size: Constants.FontSizeConstants.x3Large))
-                                        .foregroundStyle(Color.textColorWhite)
+                                    OnPageWordTextWidget(onPageQuestion: onPageQuestion)
                                     
                                     if (onPageQuestion.options.isEmpty != true ) {
                                         choiceButtons(initialQuestion: .constant(onPageQuestion))
                                     }
+                                    
                                     if ($selectedTabIndex.wrappedValue == mchoiceTestVM.questList.count-1 && isAnsweredList[index] == true ) {
-                                        showResultToastMessage(onPageQuestNo: index, totalQuestions: mchoiceTestVM.questList.count)
+                                        showResultToastMessage()
                                     }
                                     
                                     
@@ -156,8 +150,9 @@ struct MchoiceTestView: View {
         }
     }
 
+    //TODO: Sayfadan ayrılıp anasayfaya dön.
     ///**User test result showing with ToastMessage**
-    fileprivate func showResultToastMessage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
+    fileprivate func showResultToastMessage() -> some View{
         let result = mchoiceTestVM.checkAnswers()
         return ZStack {
             ToastView(message: result)
