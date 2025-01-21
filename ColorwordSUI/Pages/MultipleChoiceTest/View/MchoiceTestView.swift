@@ -103,30 +103,7 @@ struct MchoiceTestView: View {
                     
 //TODO: Ayrı bir method olarak yazılcak
                 }.sheet(isPresented: $showSettings) {
-                    VStack {
-                        Text("test_settings")
-                            .font(.headline)
-                            .padding()
-
-                        Toggle("auto_slide_toggle", isOn: $animationActive)
-                            .padding()
-           
-                        Toggle("auto_slide_speed", isOn: Binding(
-                                        get: { animamationSpeedToggle.isFast },
-                                        set: { newValue in
-                                            animamationSpeedToggle = AnimationToggleState(isFast: newValue)
-                                        }
-                                    ))
-                                    .padding()
-
-                        Button("close") {
-                            showSettings = false
-                        }
-                        .padding()
-                        .foregroundColor(.red)
-                    }
-                    .presentationDetents([.medium, .large])
-                    .presentationDragIndicator(.visible)
+                    settingsSheetWidget()
             }
             .background(Color(hex: mchoiceTestVM.wordBackgroundColor))
             .edgesIgnoringSafeArea(.all)
@@ -295,6 +272,35 @@ struct MchoiceTestView: View {
                }
            }
        }
+    
+    fileprivate func settingsSheetWidget() -> some View {
+        return VStack {
+            Text("test_settings")
+                .font(.headline)
+                .padding()
+            
+            Toggle("auto_slide_toggle", isOn: $animationActive)
+                .padding()
+            
+            Toggle("auto_slide_speed", isOn: Binding(
+                get: { animamationSpeedToggle.isFast },
+                set: { newValue in
+                    animamationSpeedToggle = AnimationToggleState(isFast: newValue)
+                }
+            ))
+            .padding()
+            
+            Button("close") {
+                showSettings = false
+            }
+            .padding()
+            .foregroundColor(.red)
+        }
+        .presentationDetents([.medium, .large])
+        .presentationDragIndicator(.visible)
+    }
+    
+    
     fileprivate func changeButtonStateAndColor() {
         isButtonsEnabled = true
         buttonColorList = Array(repeating: Constants.ColorConstants.optionButtonBackgroundColor, count: 4)
