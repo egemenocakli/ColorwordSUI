@@ -26,6 +26,8 @@ struct MchoiceTestView: View {
 
 
     //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
+
+    
     var body: some View {
         ZStack(alignment: .center) {
             VStack {
@@ -83,8 +85,7 @@ struct MchoiceTestView: View {
                             if isAnsweredList[newIndex] {
                                 isButtonsEnabled = false
                             } else {
-                                isButtonsEnabled = true
-                                buttonColorList = [.black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12), .black.opacity(0.12)]
+                                changeButtonStateAndColor()
                             }
                             mchoiceTestVM.isAnswerCorrect = false
                             emptyFinder(oldIndex: oldIndex)
@@ -106,7 +107,7 @@ struct MchoiceTestView: View {
                 }
             
                     
-
+//TODO: Ayrı bir method olarak yazılcak
                 }.sheet(isPresented: $showSettings) {
                     VStack {
                         Text("test_settings")
@@ -147,7 +148,7 @@ struct MchoiceTestView: View {
     }
     //TODO: Test edilecek ilk boş orta boş ve son soru boş bırakılacak
     ///**Finds the question that was skipped**
-    func emptyFinder(oldIndex: Int) {
+    fileprivate func emptyFinder(oldIndex: Int) {
         //ilk sayfa kontrolü yapılacak
         
         if(isAnsweredList[selectedTabIndex-1] == false) {
@@ -156,7 +157,7 @@ struct MchoiceTestView: View {
     }
 
     ///**User test result showing with ToastMessage**
-    func showResultToastMessage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
+    fileprivate func showResultToastMessage(onPageQuestNo: Int, totalQuestions: Int) -> some View{
         let result = mchoiceTestVM.checkAnswers()
         return ZStack {
             ToastView(message: result)
@@ -299,6 +300,11 @@ struct MchoiceTestView: View {
                }
            }
        }
+    fileprivate func changeButtonStateAndColor() {
+        isButtonsEnabled = true
+        buttonColorList = Array(repeating: Constants.ColorConstants.optionButtonBackgroundColor, count: 4)
+    }
+    
     ///**The method where we show the results to the user at the end of the test.**
     struct ToastView: View {
         var message: String
