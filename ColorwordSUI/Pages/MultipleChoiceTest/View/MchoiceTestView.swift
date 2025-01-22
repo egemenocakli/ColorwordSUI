@@ -8,7 +8,6 @@
 import SwiftUI
 
 //TODO: sayfa ile işim bittiğinde taşınabilecek her değişkeni vm ye taşı. state ve binding durumları sorun çıkartmayacaksa
-//Aynı şekilde iconlar ve buton renkleri de taşınacak
 
 struct MchoiceTestView: View {
     @EnvironmentObject var languageManager: LanguageManager
@@ -23,123 +22,140 @@ struct MchoiceTestView: View {
     @State private var animationActive = true
     @State private var animamationSpeedToggle: AnimationToggleState = .normal
     @State private var showToast: Bool = false    
+    @State private var navigateToNextScreen = false
 
 
     //TODO: Sayfaya genel bir kontrol eklenecek. kişi 5ten az kelime eklediyse buraya gelmemeli, alert gösterilmeli.
 
     
     var body: some View {
-        ZStack(alignment: .center) {
-            VStack {
-                //TODO: Loading göstergesi
-                if mchoiceTestVM.wordList.isEmpty {
-                    Text("no_data")
-                        .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
-                        .frame(alignment: .center)
-                        .background(Color.white.opacity(0.00))
-                }
-                else {
-                    VStack {
-                        TabView(selection: $selectedTabIndex) {
-                            ForEach(Array(mchoiceTestVM.questList.enumerated()), id: \.element.word.wordId) { index, onPageQuestion in
-                                VStack {
-                                    if(mchoiceTestVM.isCorrectCheckForIcon != nil && onPageQuestion.options[0].optionState != .none) {
-                                        AnswerIcon(isCorrect: mchoiceTestVM.isCorrectCheckForIcon!)
-                                    }
-                                    OnPageWordTextWidget(onPageQuestion: onPageQuestion)
-                                    
-                                    if (onPageQuestion.options.isEmpty != true ) {
-                                        choiceButtons(initialQuestion: .constant(onPageQuestion))
-                                    }
-                                    
-                                    if ($selectedTabIndex.wrappedValue == mchoiceTestVM.questList.count-1 && isAnsweredList[index] == true ) {
-                                        showResultToastMessage()
-                                    }
-                                    
-                                    
-                                }
-                                .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
-                                .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
-                                .tag(index)
-                            }
-                            
-                        }
-                        
-                        .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                        
-                        .onAppear {
-                            if let firstWord = mchoiceTestVM.wordList.first {
-                                mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
-                            }
-                        }
-                        .onChange(of: selectedTabIndex) { oldIndex, newIndex in
-                            let word = mchoiceTestVM.wordList[newIndex]
-                            mchoiceTestVM.getWordColorForBackground(word: word, themeManager: themeManager)
-                            
-                            if isAnsweredList[newIndex] {
-                                isButtonsEnabled = false
-                            } else {
-                                changeButtonStateAndColor()
-                            }
-                            mchoiceTestVM.isAnswerCorrect = false
-                            emptyFinder(oldIndex: oldIndex)
-                            mchoiceTestVM.isCorrectCheckForIcon = nil
-                        }
-                    }
+        NavigationStack {
+            ZStack(alignment: .center) {
+                Color(hex: mchoiceTestVM.wordBackgroundColor)
+                    .animation(.easeInOut(duration: Constants.TimerTypeConstants.standardSpringAnimation), value: mchoiceTestVM.wordBackgroundColor)
+                    .edgesIgnoringSafeArea(.all)
                 
-                }
-            }
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        showSettings.toggle()
-                    }) {
-                        Image(systemName: Constants.IconTextConstants.settingsButton)
-                            .font(.system(size: Constants.FontSizeConstants.x2Large))
-                            .foregroundColor(Constants.ColorConstants.grayButtonColor)
+                VStack {
+                    if (mchoiceTestVM.questList.isEmpty && mchoiceTestVM.questList.count > 5) {
+                        ProgressView("loading")
+                            .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
+                    }
+                    else {
+                        VStack {
+                            TabView(selection: $selectedTabIndex) {
+                                ForEach(Array(mchoiceTestVM.questList.enumerated()), id: \.element.word.wordId) { index, onPageQuestion in
+                                    VStack {
+                                        if(mchoiceTestVM.isCorrectCheckForIcon != nil && onPageQuestion.options[0].optionState != .none) {
+                                            AnswerIcon(isCorrect: mchoiceTestVM.isCorrectCheckForIcon!)
+                                        }
+                                        OnPageWordTextWidget(onPageQuestion: onPageQuestion)
+                                        
+                                        if (onPageQuestion.options.isEmpty != true ) {
+                                            choiceButtons(initialQuestion: .constant(onPageQuestion))
+                                        }
+                                        
+                                        if ($selectedTabIndex.wrappedValue == mchoiceTestVM.questList.count-1 && isAnsweredList[index] == true ) {
+                                            showResultToastMessage()
+                                        }
+                                    }
+                                    .padding(.horizontal, Constants.PaddingSizeConstants.lmSize)
+                                    .frame(width: UIScreen.main.bounds.width, height: UIScreen.main.bounds.height)
+                                    .tag(index)
+                                }
+                                
+                            }
+                            
+                            .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
+                            
+                            .onAppear {
+                                if let firstWord = mchoiceTestVM.wordList.first {
+                                    mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
+                                }
+                            }
+                            .onChange(of: selectedTabIndex) { oldIndex, newIndex in
+                                let word = mchoiceTestVM.wordList[newIndex]
+                                mchoiceTestVM.getWordColorForBackground(word: word, themeManager: themeManager)
+                                
+                                if isAnsweredList[newIndex] {
+                                    isButtonsEnabled = false
+                                } else {
+                                    changeButtonStateAndColor()
+                                }
+                                mchoiceTestVM.isAnswerCorrect = false
+                                emptyFinder(oldIndex: oldIndex)
+                                mchoiceTestVM.isCorrectCheckForIcon = nil
+                            }
+                        }
+                        
                     }
                 }
-            
+                .toolbar {
+                    ToolbarItem(placement: .topBarTrailing) {
+                        Button(action: {
+                            showSettings.toggle()
+                        }) {
+                            Image(systemName: Constants.IconTextConstants.settingsButton)
+                                .font(.system(size: Constants.FontSizeConstants.x2Large))
+                                .foregroundColor(Constants.ColorConstants.grayButtonColor)
+                        }
+                    }
                     
-//TODO: Ayrı bir method olarak yazılcak
+                    
+                    //TODO: Ayrı bir method olarak yazılcak
                 }.sheet(isPresented: $showSettings) {
                     settingsSheetWidget()
+                }
+                .background(
+                    Color(Color(hex: mchoiceTestVM.wordBackgroundColor)!)
+                        .animation(.easeInOut(duration: Constants.TimerTypeConstants.standardSpringAnimation), value: Color(hex: mchoiceTestVM.wordBackgroundColor))
+                )
+                .edgesIgnoringSafeArea(.all)
+                .task {
+                    mchoiceTestVM.questList = await mchoiceTestVM.createQuestList()
+                    isAnsweredList = Array(repeating: false, count: mchoiceTestVM.questList.count)
+                    
+                    if let firstWord = mchoiceTestVM.wordList.first {
+                        mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
+                    }
+                }
+                
             }
-            .background(Color(hex: mchoiceTestVM.wordBackgroundColor))
-            .edgesIgnoringSafeArea(.all)
-            .task {
-                mchoiceTestVM.questList = await mchoiceTestVM.createQuestList()
-                isAnsweredList = Array(repeating: false, count: mchoiceTestVM.questList.count)
-
+            .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+            .navigationDestination(isPresented: $navigateToNextScreen) {
+                HomeView()
             }
             
-        }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
-
-        
-    }
-    //TODO: Test edilecek ilk boş orta boş ve son soru boş bırakılacak
-    ///**Finds the question that was skipped**
-    fileprivate func emptyFinder(oldIndex: Int) {
-        //ilk sayfa kontrolü yapılacak
-        
-        if(isAnsweredList[selectedTabIndex-1] == false) {
-            mchoiceTestVM.answerList?[selectedTabIndex-1] = .empty
         }
     }
 
-    //TODO: Sayfadan ayrılıp anasayfaya dön.
+    ///**Finds the question that was skipped**
+    fileprivate func emptyFinder(oldIndex: Int) {
+        //ilk sayfa kontrolü yapılacak
+        guard selectedTabIndex > 0, selectedTabIndex - 1 < isAnsweredList.count else {
+            return
+        }
+
+        if !isAnsweredList[selectedTabIndex - 1] {
+            mchoiceTestVM.answerList?[selectedTabIndex - 1] = .empty
+        }
+    }
+
     ///**User test result showing with ToastMessage**
     fileprivate func showResultToastMessage() -> some View{
+
         let result = mchoiceTestVM.checkAnswers()
         return ZStack {
+            
             ToastView(message: result)
                 .transition(.slide)
                 .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 2) {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
                         self.showToast = false
+                        self.navigateToNextScreen = true 
+
                     }
                 }
-            
+                
         }
     }
     
@@ -346,10 +362,9 @@ struct MchoiceTestView: View {
 
 
 
-//#Preview {
-//    MchoiceTestView()
-//}
+#Preview {
+    MchoiceTestView()
+}
 
 
 //TODO: Toplam kelime sayısı ve gösterilen sayfadaki kelimenin sırası
-//TODO: Appbar yazı/buton renkleri aynı olsun

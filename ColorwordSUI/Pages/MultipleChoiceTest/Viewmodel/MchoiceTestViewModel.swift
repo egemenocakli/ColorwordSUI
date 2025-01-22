@@ -10,7 +10,7 @@ import SwiftUI
 
 
 class MchoiceTestViewModel: ObservableObject {
-    @Published var wordBackgroundColor: String = "#00FFFFFF"
+    @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
     @Published var questList: [QuestModel] = []
     var wordList : [Word] = []
     let mChoiceTestService = MchoiceTestService()

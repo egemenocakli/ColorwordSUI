@@ -23,3 +23,5 @@
 "auto_slide_toggle" = "Auto Slide (On/Off)";
 "auto_slide_speed" = "Slide Speed (Normal/Fast)";
 "close" = "Close";
+"loading" = "Loading...";
+
