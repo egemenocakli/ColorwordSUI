@@ -15,7 +15,7 @@
 //Signup
 "welcome_to_signup" = "Welcome to Signup Page";
 
-//HomePage
+//WordListPage
 "no_data" = "We were unable to access your word list or you did not add any words.";
 
 //MultipleChoiceTestView

@@ -7,9 +7,9 @@
 
 import SwiftUI
 
-struct HomeView: View {
+struct WordListView: View {
     @EnvironmentObject var languageManager: LanguageManager
-    @StateObject private var homeVM = HomeViewModel()
+    @StateObject private var wordListVM = WordListViewModel()
     @EnvironmentObject var themeManager: ThemeManager
 
     @State private var selectedTabIndex = 0
@@ -22,26 +22,26 @@ struct HomeView: View {
             
                 VStack {
                     //Loading gösterilebilir hatta yüklenmezse bu uyarı yazılabilir.
-                    if homeVM.wordList.isEmpty {
+                    if wordListVM.wordList.isEmpty {
                         Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
                             .background(Color.white.opacity(0.00))
                     } else {
-                        WordListTabView(selectedTabIndex: $selectedTabIndex,homePageVM: homeVM)
+                        WordListTabView(selectedTabIndex: $selectedTabIndex,wordListVM: wordListVM)
                             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                             .onAppear {
-                                if let firstWord = homeVM.wordList.first {
-                                    homeVM.getWordColorForBackground(word: firstWord,themeManager: themeManager)
+                                if let firstWord = wordListVM.wordList.first {
+                                    wordListVM.getWordColorForBackground(word: firstWord,themeManager: themeManager)
                                 }
                             }
                             .onChange(of: selectedTabIndex) { oldIndex, newIndex in
-                                let word = homeVM.wordList[newIndex]
-                                homeVM.getWordColorForBackground(word: word,themeManager: themeManager)
+                                let word = wordListVM.wordList[newIndex]
+                                wordListVM.getWordColorForBackground(word: word,themeManager: themeManager)
                             }
                     }
                     //TODO: Bu buton bu sayfada gereksiz, profil veya ayarlar gibi bir yerde olmalı. Taşınacak
                     //Çıkışta veriler silinecek
                     Button {
-                        if homeVM.signOut() == true {
+                        if wordListVM.signOut() == true {
                             navigateToLogin = true
                         }else {
                             
@@ -61,13 +61,13 @@ struct HomeView: View {
                     }.padding(.bottom, 30)
                     
                 }
-                .background(Color(hex: homeVM.wordBackgroundColor))
+                .background(Color(hex: wordListVM.wordBackgroundColor))
                 .edgesIgnoringSafeArea(.all)
                 .task {
-                    await homeVM.getWordList()
+                    await wordListVM.getWordList()
                 }
                 
-                NextButtonWidgets(selectedTabIndex: $selectedTabIndex, homeVM: homeVM)
+                NextButtonWidgets(selectedTabIndex: $selectedTabIndex, wordListVM: wordListVM)
             }
             .environment(\.locale, .init(identifier: languageManager.currentLanguage))
             .navigationDestination(isPresented: $navigateToLogin) {

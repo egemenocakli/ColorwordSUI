@@ -42,7 +42,7 @@ struct LoginView: View {
                                 TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
                                 
                                 LoginButtonWidget(action: loginButton).navigationDestination(isPresented: $loginVM.loginSucces) {
-                                    HomeView().navigationBarBackButtonHidden(true)
+                                    WordListView().navigationBarBackButtonHidden(true)
                                 }
                                 
                                 SignUpButtonWidget(action: signupButton)

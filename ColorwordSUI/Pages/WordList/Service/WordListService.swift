@@ -7,12 +7,12 @@
 
 import Foundation
 
-protocol HomeServiceInterface {
+protocol WordListServiceInterface {
     func getWordList() async throws -> [Word]
     func signOut(completion: @escaping (Bool) -> Void)
 }
 
-class HomeService: HomeServiceInterface {
+class WordListService: WordListServiceInterface {
     private let firebaseAuthService = FirebaseAuthService()
     private let firestoreService = FirestoreService()
     var words : [Word] = []

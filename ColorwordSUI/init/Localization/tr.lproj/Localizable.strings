@@ -15,7 +15,7 @@
 //Signup
 "welcome_to_signup" = "Signup Sayfasına Hoşgeldiniz";
 
-//HomePage
+//WordListPage
 "no_data" = "Kelime listenize ulaşamadık veya siz hiç kelime eklemediniz.";
 
 //MultipleChoiceTestView

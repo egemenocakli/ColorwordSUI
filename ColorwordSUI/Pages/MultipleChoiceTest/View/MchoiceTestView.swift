@@ -122,7 +122,7 @@ struct MchoiceTestView: View {
             }
             .environment(\.locale, .init(identifier: languageManager.currentLanguage))
             .navigationDestination(isPresented: $navigateToNextScreen) {
-                HomeView()
+                WordListView()
             }
             
         }
