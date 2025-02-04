@@ -9,11 +9,11 @@ import SwiftUI
 
 struct WordListTabView: View {
     @Binding var selectedTabIndex: Int
-    @ObservedObject var homePageVM: HomeViewModel
+    @ObservedObject var wordListVM: WordListViewModel
     
     var body: some View {
         TabView(selection: $selectedTabIndex) {
-            ForEach(Array(homePageVM.wordList.enumerated()), id: \.element.wordId) { index, word in
+            ForEach(Array(wordListVM.wordList.enumerated()), id: \.element.wordId) { index, word in
                 VStack {
                     Text(word.word ?? "")
                         .fontWeight(.bold)
@@ -38,5 +38,5 @@ struct WordListTabView: View {
 }
 
 #Preview {
-    WordListTabView(selectedTabIndex: .constant(0), homePageVM: HomeViewModel())
+    WordListTabView(selectedTabIndex: .constant(0), wordListVM: WordListViewModel())
 }

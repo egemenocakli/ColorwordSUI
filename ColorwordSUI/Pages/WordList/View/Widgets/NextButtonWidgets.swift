@@ -9,7 +9,7 @@ import SwiftUI
 
 struct NextButtonWidgets: View {
     @Binding var selectedTabIndex: Int
-    @ObservedObject var homeVM: HomeViewModel
+    @ObservedObject var wordListVM : WordListViewModel
     var body: some View {
         
         
@@ -33,7 +33,7 @@ struct NextButtonWidgets: View {
                        
                        Button {
                           
-                           if selectedTabIndex < self.homeVM.wordList.count - 1 {
+                           if selectedTabIndex < self.wordListVM.wordList.count - 1 {
                                selectedTabIndex += 1
                            }
                        } label: {
@@ -42,9 +42,9 @@ struct NextButtonWidgets: View {
                                .scaledToFit()
                                .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
                                .padding(.trailing, Constants.PaddingSizeConstants.xSmallSize)
-                               .foregroundColor(selectedTabIndex == homeVM.wordList.count - 1 ? .gray : .white.opacity(0.7))
+                               .foregroundColor(selectedTabIndex == wordListVM.wordList.count - 1 ? .gray : .white.opacity(0.7))
                        }
-                       .disabled(selectedTabIndex == self.homeVM.wordList.count - 1)
+                       .disabled(selectedTabIndex == self.wordListVM.wordList.count - 1)
                    }
     }
 }

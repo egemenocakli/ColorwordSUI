@@ -19,7 +19,7 @@ struct LoginButtonWidget: View {
     func loginButtonWidget() -> some View {
         Button(action: action) {
             Text("login_button")
-                .foregroundStyle(Constants.ColorConstants.whiteFont)
+                .foregroundStyle(Constants.ColorConstants.whiteColor)
                 .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
                 .background(Constants.ColorConstants.loginButtonColor)
                 .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))

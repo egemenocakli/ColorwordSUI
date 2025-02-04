@@ -1,78 +1,89 @@
 //
-//  SignupScreen.swift
+//  HomeView.swift
 //  ColorwordSUI
 //
-//  Created by Emre Ocaklı on 18.10.2024.
+//  Created by Emre Ocaklı on 4.02.2025.
 //
 
 import SwiftUI
 
+
+let categories: [CategoryItem] = [
+    CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListView())),
+    CategoryItem(title: "Multiple Choice Test", icon: "checklist", color: .purple, destination: AnyView(MchoiceTestView())),
+]
+
+let columns = [GridItem(.flexible()), GridItem(.flexible())]
+
 struct HomeView: View {
-    @EnvironmentObject var languageManager: LanguageManager
-    @StateObject private var homeVM = HomeViewModel()
-    @EnvironmentObject var themeManager: ThemeManager
-
-    @State private var selectedTabIndex = 0
-    @State private var navigateToLogin = false 
-    @State private var selectedTab = 0
-
     var body: some View {
-        ZStack (alignment: .center){
-            
+        NavigationStack {
             VStack {
-            //Loading gösterilebilir hatta yüklenmezse bu uyarı yazılabilir.
-            if homeVM.wordList.isEmpty {
-                Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
-                    .background(Color.white.opacity(0.00))
-            } else {
-                WordListTabView(selectedTabIndex: $selectedTabIndex,homePageVM: homeVM)
-                .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
-                .onAppear {
-                    if let firstWord = homeVM.wordList.first {
-                        homeVM.getWordColorForBackground(word: firstWord,themeManager: themeManager)
+                // Üst Kısım (Header)
+                ZStack {
+                    
+                            VStack {
+                                Text("Classify transaction")
+                                    .font(.title)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.white)
+                                
+                                Text("Classify this transaction into a particular category")
+                                    .font(.subheadline)
+                                    .foregroundColor(.white.opacity(0.8))
+                            }
+                            .padding()
+                       
+                }
+                
+                // Kategori Grid
+                LazyVGrid(columns: columns, spacing: 20) {
+                    ForEach(categories) { category in
+                        NavigationLink(destination: category.destination) {
+                            CategoryButton(category: category)
+                        }
                     }
                 }
-                .onChange(of: selectedTabIndex) { oldIndex, newIndex in
-                    let word = homeVM.wordList[newIndex]
-                    homeVM.getWordColorForBackground(word: word,themeManager: themeManager)
-                }
+                .padding()
+                
+                Spacer()
             }
-                //TODO: Bu buton bu sayfada gereksiz, profil veya ayarlar gibi bir yerde olmalı. Taşınacak
-                //Çıkışta veriler silinecek
-                Button {
-                    if homeVM.signOut() == true {
-                        navigateToLogin = true 
-                    }else {
-                        
-                    }
-                }
-                label: {
-                    Text("Çıkış")
-                }.padding(.bottom, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
-                    .background(Color.white.opacity(0.00))
-
-        }
-        .background(Color(hex: homeVM.wordBackgroundColor))
-        .edgesIgnoringSafeArea(.all)
-        .task {
-            await homeVM.getWordList()
-        }
-        
-            NextButtonWidgets(selectedTabIndex: $selectedTabIndex, homeVM: homeVM)
-        }
-        .environment(\.locale, .init(identifier: languageManager.currentLanguage))
-        .navigationDestination(isPresented: $navigateToLogin) {
-            LoginView().navigationBarBackButtonHidden(true)
+            .background(Color.black.edgesIgnoringSafeArea(.all))
             
         }
-        
     }
-    
 }
 
-//#Preview {
-//    
-//    HomeView().environmentObject(LanguageManager())
-//
-//}
+// Kategori Butonu Bileşeni
+struct CategoryButton: View {
+    let category: CategoryItem
+    
+    var body: some View {
+        VStack {
+            Image(systemName: category.icon)
+                .resizable()
+                .scaledToFit()
+                .frame(width: 40, height: 40)
+                .padding()
+//                .background(RoundedRectangle(cornerRadius: 20).fill(category.color.opacity(0.2)))
+            
+            Text(category.title)
+                .foregroundColor(.white)
+                .font(.headline)
+                .lineLimit(nil)
+                .multilineTextAlignment(.center)
+                .fixedSize(horizontal: false, vertical: true)
+        }
+        .frame(width: 140, height: 120)
+        .padding()
+        .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.1)))
+        .shadow(radius: 5)
+    }
+}
 
+
+
+// Önizleme
+#Preview {
+    HomeView()
+}
