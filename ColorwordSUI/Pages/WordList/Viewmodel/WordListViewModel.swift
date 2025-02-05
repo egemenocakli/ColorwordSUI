@@ -50,11 +50,5 @@ class WordListViewModel: ObservableObject {
         }
     }
     
-    func signOut() -> Bool {
-        var result: Bool = false
-        wordListService.signOut { response in
-            result = response
-        }
-        return result
-    }
+
 }

@@ -9,7 +9,7 @@ import Foundation
 
 protocol WordListServiceInterface {
     func getWordList() async throws -> [Word]
-    func signOut(completion: @escaping (Bool) -> Void)
+//    func signOut(completion: @escaping (Bool) -> Void)
 }
 
 class WordListService: WordListServiceInterface {
@@ -27,13 +27,13 @@ class WordListService: WordListServiceInterface {
         return words
     }
     
-    func signOut(completion: @escaping (Bool) -> Void) {
-        firebaseAuthService.signOut { result in
-            
-             
-            completion(result)
-        }
-
-    }
+//    func signOut(completion: @escaping (Bool) -> Void) {
+//        firebaseAuthService.signOut { result in
+//            
+//             
+//            completion(result)
+//        }
+//
+//    }
     
 }

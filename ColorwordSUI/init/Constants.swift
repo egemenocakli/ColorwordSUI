@@ -126,6 +126,7 @@ class Constants {
         static let correctButton = "checkmark.circle"
         static let wrongButton = "xmark.circle"
         static let settingsButton = "gearshape.fill"
+        static let logOutButton = "rectangle.portrait.and.arrow.right"
     }
     /// **tooShortTimer: 0.2, standardSpringAnimation: 0.5, shortTimer: 0.7, normalTimer: 1**
     class TimerTypeConstants {

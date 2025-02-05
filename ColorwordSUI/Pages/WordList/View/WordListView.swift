@@ -40,17 +40,17 @@ struct WordListView: View {
                     }
                     //TODO: Bu buton bu sayfada gereksiz, profil veya ayarlar gibi bir yerde olmalı. Taşınacak
                     //Çıkışta veriler silinecek
-                    Button {
-                        if wordListVM.signOut() == true {
-                            navigateToLogin = true
-                        }else {
-                            
-                        }
-                    }
-                    label: {
-                        Text("Çıkış")
-                    }.padding(.bottom, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
-                        .background(Color.white.opacity(0.00))
+//                    Button {
+//                        if wordListVM.signOut() == true {
+//                            navigateToLogin = true
+//                        }else {
+//                            
+//                        }
+//                    }
+//                    label: {
+//                        Text("Çıkış")
+//                    }.padding(.bottom, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
+//                        .background(Color.white.opacity(0.00))
                     NavigationLink(destination: MchoiceTestView()) {
                                         Text("Test Sayfasına Git")
                                             .font(.headline)
