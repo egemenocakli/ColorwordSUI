@@ -18,7 +18,7 @@ struct SignUpButtonWidget: View{
     
     func signupButtonWidget() -> some View {
         Button(action: action) {
-            NavigationLink(destination: SignupScreen()) {
+            NavigationLink(destination: SignupView()) {
                 Text("sign_up_button")
                     .foregroundStyle(Constants.ColorConstants.whiteColor)
                     .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)

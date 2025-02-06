@@ -7,7 +7,7 @@
 
 import SwiftUI
 
-struct SignupScreen: View {
+struct SignupView: View {
     @EnvironmentObject var languageManager: LanguageManager
     
     var body: some View {
@@ -17,5 +17,5 @@ struct SignupScreen: View {
 }
 
 #Preview {
-    SignupScreen()
+    SignupView()
 }
