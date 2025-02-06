@@ -10,6 +10,7 @@ import SwiftUI
 
 
 //TODO: Ölçü ve renkler constantstan alınacak.
+//Yeni bir alan açılacak. günlük kazanılmış puanları tutacak. günlük?
 struct DailyProgressView: View {
     @State private var progress: Double = 50
     let totalPoints: Double = 100
