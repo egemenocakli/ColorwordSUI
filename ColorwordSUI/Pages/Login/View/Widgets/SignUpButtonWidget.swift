@@ -20,7 +20,7 @@ struct SignUpButtonWidget: View{
         Button(action: action) {
             NavigationLink(destination: SignupScreen()) {
                 Text("sign_up_button")
-                    .foregroundStyle(Constants.ColorConstants.whiteFont)
+                    .foregroundStyle(Constants.ColorConstants.whiteColor)
                     .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
                     .background(Constants.ColorConstants.signUpButtonColor)
                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))

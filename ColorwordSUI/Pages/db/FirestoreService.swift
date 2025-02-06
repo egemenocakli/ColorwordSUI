@@ -11,6 +11,9 @@ import FirebaseFirestore
 class FirestoreService: FirestoreInterface {
 
     
+
+
+    
     
    private let db = Firestore.firestore()
     
@@ -37,6 +40,33 @@ class FirestoreService: FirestoreInterface {
                         
             return words.isEmpty ? [] : words
         }
+    
+    
+        func increaseWordScore(word: Word, points: Int) async throws{
+            
+            guard let userId = UserSessionManager.shared.currentUser?.userId else {
+                throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+            }
+            do {
+                try await db.collection("users").document(userId).collection("words").document(word.wordId!).updateData(word.toMap())
+            }
+            catch {
+                print(error)
+            }
+        }
+        func decreaseWordScore(word: Word, points: Int) async throws{
+            
+            guard let userId = UserSessionManager.shared.currentUser?.userId else {
+                throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+            }
+            do {
+                try await db.collection("users").document(userId).collection("words").document(word.wordId!).updateData(word.toMap())
+            }
+            catch {
+                print(error)
+            }
+        }
+    
     }
 
     

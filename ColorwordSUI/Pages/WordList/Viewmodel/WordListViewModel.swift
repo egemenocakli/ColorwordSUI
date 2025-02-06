@@ -8,10 +8,10 @@
 import Foundation
 import SwiftUI
 
-class HomeViewModel: ObservableObject {
+class WordListViewModel: ObservableObject {
     @Published var wordList: [Word] = []
     @Published var wordBackgroundColor: String = "#00FFFFFF"
-    let homepageService = HomeService()
+    let wordListService = WordListService()
 
 
     //TODO: öncesinde service eklenecek oradan buraya yönlenecek.
@@ -20,7 +20,7 @@ class HomeViewModel: ObservableObject {
         Task {
             
             do {
-                let words = try await homepageService.getWordList()
+                let words = try await wordListService.getWordList()
                     DispatchQueue.main.async {
                         self.wordList = words
                     }
@@ -50,11 +50,5 @@ class HomeViewModel: ObservableObject {
         }
     }
     
-    func signOut() -> Bool {
-        var result: Bool = false
-        homepageService.signOut { response in
-            result = response
-        }
-        return result
-    }
+
 }

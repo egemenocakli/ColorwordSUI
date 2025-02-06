@@ -20,7 +20,7 @@ struct LanguagePickerWidget: View {
                 .padding()
                 .frame(width: 80, height: 40)
                 .background(Color.gray.opacity(0.1))
-                .foregroundColor(Constants.ColorConstants.whiteFont)
+                .foregroundColor(Constants.ColorConstants.whiteColor)
                 .cornerRadius(Constants.SizeRadiusConstants.large)
         }
     }
