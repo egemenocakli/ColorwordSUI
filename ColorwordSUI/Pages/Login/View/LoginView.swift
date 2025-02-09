@@ -47,6 +47,7 @@ struct LoginView: View {
                                     HomeView().navigationBarBackButtonHidden(true)
                                     
                                 }
+
                                 
                                 SignUpButtonWidget(action: signupButton)
                                 
