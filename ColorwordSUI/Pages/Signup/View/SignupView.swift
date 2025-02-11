@@ -22,6 +22,7 @@ struct SignupView: View {
                     TextfieldWidget(text: $signUpViewModel.lastName, keyboardType: .default, hintText: "lastname")
                     TextfieldWidget(text: $signUpViewModel.email, keyboardType: .emailAddress, hintText: "email", textInputAutoCapitalization: .never)
                     TextfieldWidget(text: $signUpViewModel.password, keyboardType: .default, hintText: "password", textInputAutoCapitalization: .never)
+                    TextfieldWidget(text: $signUpViewModel.repeatPassword, keyboardType: .default, hintText: "repeat_password", textInputAutoCapitalization: .never)
 
                     //TODO: tekrar şifre almayı ekle 2 tane olsun
                     SignupPageButtonWidget(action: {

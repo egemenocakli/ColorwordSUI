@@ -16,6 +16,7 @@
 "name" = "Ad";
 "lastname" = "Soyad";
 "password" = "Şifre";
+"repeat_password" = "Şifreyi Tekrarlayın";
 
 //WordListPage
 "no_data" = "Kelime listenize ulaşamadık veya siz hiç kelime eklemediniz.";

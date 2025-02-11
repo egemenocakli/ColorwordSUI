@@ -16,6 +16,7 @@
 "name" = "Name";
 "lastname" = "Lastname";
 "password" = "Password";
+"repeat_password" = "Repeat password";
 
 //WordListPage
 "no_data" = "We were unable to access your word list or you did not add any words.";
