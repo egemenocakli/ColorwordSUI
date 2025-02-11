@@ -57,7 +57,7 @@ class Constants {
         static let whiteColor: Color = Color.white
         static let gray: Color = Color.gray
         static let placeHolderTextColor: Color = Color.white.opacity(0.40)
-        static let borderColor: Color = Color.white.opacity(0.30)
+        static let borderColor: Color = Color.white.opacity(0.50)
         static let blackHex: String = "#000000"
 
         

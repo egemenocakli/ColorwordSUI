@@ -146,7 +146,7 @@ struct MchoiceTestView: View {
         let result = mchoiceTestVM.checkAnswers()
         return ZStack {
             
-            ToastView(message: result)
+            ToastWidget(message: result)
                 .transition(.slide)
                 .onAppear {
                     DispatchQueue.main.asyncAfter(deadline: .now() + 5) {
@@ -321,19 +321,7 @@ struct MchoiceTestView: View {
         isButtonsEnabled = true
         buttonColorList = Array(repeating: Constants.ColorConstants.optionButtonBackgroundColor, count: 4)
     }
-    
-    ///**The method where we show the results to the user at the end of the test.**
-    struct ToastView: View {
-        var message: String
-        var body: some View {
-            Text(message)
-                .padding()
-                .background(Constants.ColorConstants.toastMessageBackgroundColor)
-                .foregroundColor(Constants.ColorConstants.whiteColor)
-                .cornerRadius(Constants.SizeRadiusConstants.xSmall)
-                .padding(.top, Constants.PaddingSizeConstants.lSize)
-        }
-    }
+
     ///**When the user makes a selection, a true/false icon is displayed on the screen.**
     struct AnswerIcon: View {
         @State private var isVisible = true

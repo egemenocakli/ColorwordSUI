@@ -31,7 +31,6 @@ class FirebaseAuthService: AuthServiceInterface {
                 completion(false)
                 return
             }
-            
             self.appUser = FirebaseUserModel(userId: authResult?.user.uid ?? "", email: email, name: name, lastname: lastName)
             completion(true)
         }
@@ -114,6 +113,10 @@ class FirebaseAuthService: AuthServiceInterface {
             completion(false)
         }
     }
+    
+    
+    
+    
 //
 //    func updateName(displayName: String, completion: @escaping (Bool) -> Void) {
 ////        firebaseAuth.currentUser?.updateDisplayName(displayName) { error in

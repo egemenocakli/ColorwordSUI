@@ -13,7 +13,9 @@
 "email" = "Email";
 
 //Signup
-"welcome_to_signup" = "Signup Sayfasına Hoşgeldiniz";
+"name" = "Ad";
+"lastname" = "Soyad";
+"password" = "Şifre";
 
 //WordListPage
 "no_data" = "Kelime listenize ulaşamadık veya siz hiç kelime eklemediniz.";

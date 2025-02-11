@@ -13,10 +13,10 @@ class LoginViewModel: ObservableObject {
     let loginService = LoginService()
     
     //TODO:giriş bilgileri silinip locale kaydedilen veriler ile auto giriş vs.
-    @Published  var email: String = "bobafettkimlan@gmail.com"
-    @Published  var password: String = "123456"
-    @Published  var name: String = ""
-    @Published  var lastName: String = ""
+    @Published var email: String = "bobafettkimlan@gmail.com"
+    @Published var password: String = "123456"
+    @Published var name: String = ""
+    @Published var lastName: String = ""
     @Published var showAlert = false
     @Published var loginSucces = false
     var currentAlert: CommonAlertDialog?

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct TextfieldWidget: View {
-    @State var text: String
+    @Binding var text: String
     var keyboardType: UIKeyboardType?
     var hintText: String?
     var textInputAutoCapitalization: TextInputAutocapitalization?
@@ -19,7 +19,7 @@ struct TextfieldWidget: View {
         VStack {
             ZStack(alignment: .leading) {
                 if text.isEmpty {
-                    Text(hintText ?? "")
+                    Text(LocalizedStringKey(hintText ?? ""))
                         .foregroundColor(Constants.ColorConstants.placeHolderTextColor)
                         .padding(.leading, Constants.PaddingSizeConstants.lmSize)
                 }
@@ -36,6 +36,6 @@ struct TextfieldWidget: View {
     }
 }
 
-#Preview {
-    TextfieldWidget(text: "", keyboardType: .default)
-}
+//#Preview {
+//    TextfieldWidget(text: "", keyboardType: .default)
+//}

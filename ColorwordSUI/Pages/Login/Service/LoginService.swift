@@ -12,7 +12,6 @@ protocol LoginServiceInterface {
     
     
     func loginWithEmailPassword(email: String, password: String, completion: @escaping (Bool, FirebaseUserModel?) -> Void)
-    func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (Bool) -> Void)
     
 }
 
@@ -36,10 +35,7 @@ class LoginService: FirebaseAuthService, LoginServiceInterface {
     
     
     
-    override func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (Bool) -> Void) {
-        
-    }
-    
+
     
     
     
