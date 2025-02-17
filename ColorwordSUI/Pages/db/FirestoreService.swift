@@ -11,10 +11,6 @@ import FirebaseFirestore
 class FirestoreService: FirestoreInterface {
 
     
-
-
-    
-    
    private let db = Firestore.firestore()
     
     //zaman alabilecek bir işlem await vs eklenecek. bu yüzden anasayfaya beklenmesi gerekecek şekilde uygulanacak
@@ -66,6 +62,30 @@ class FirestoreService: FirestoreInterface {
                 print(error)
             }
         }
+    
+    
+       
+    func createUserInfo(email: String, name: String, lastName: String, userUid: String, completion: @escaping (Bool) -> Void) {
+
+        let userInfo: [String: Any] = [
+            "userId": userUid,
+            "email": email,
+            "name": name,
+            "lastname": lastName,
+            "photo": "empty"
+        ]
+        
+        db.collection("users").document(userUid).collection("userInfo").addDocument(data: userInfo) { error in
+            if let error = error {
+                print("❌ Firestore createUserInfo hatası: \(error.localizedDescription)")
+                completion(false) // Hata oldu, başarısız sonucu döndür
+            } else {
+                print("✅ Kullanıcı bilgileri Firestore'a başarıyla eklendi!")
+                completion(true) // Başarıyla kaydedildi
+            }
+        }
+    }
+
     
     }
 

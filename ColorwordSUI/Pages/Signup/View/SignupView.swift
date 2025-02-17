@@ -6,73 +6,82 @@
 //
 
 import SwiftUICore
+import SwiftUI
 struct SignupView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var signUpViewModel = SignupViewModel()
-    
     @State private var showToast: Bool = false
+    @Environment(\.dismiss) private var dismiss  // ⬅️ Geri dönmek için dismiss fonksiyonunu ekledik
 
     var body: some View {
-        ZStack {
-            Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
-
-            GeometryReader { geometry in
-                VStack(spacing: 5) {
-                    TextfieldWidget(text: $signUpViewModel.name, keyboardType: .default, hintText: "name")
-                    TextfieldWidget(text: $signUpViewModel.lastName, keyboardType: .default, hintText: "lastname")
-                    TextfieldWidget(text: $signUpViewModel.email, keyboardType: .emailAddress, hintText: "email", textInputAutoCapitalization: .never)
-                    TextfieldWidget(text: $signUpViewModel.password, keyboardType: .default, hintText: "password", textInputAutoCapitalization: .never)
-                    TextfieldWidget(text: $signUpViewModel.repeatPassword, keyboardType: .default, hintText: "repeat_password", textInputAutoCapitalization: .never)
-
-                    //TODO: tekrar şifre almayı ekle 2 tane olsun
-                    SignupPageButtonWidget(action: {
-                        signUpViewModel.signup()
-                    })
-                    .padding(.bottom, geometry.size.height * 0.1)
-                    .frame(height: geometry.size.height * 0.3)
-                }
-                .padding(.top, geometry.size.height * 0.05)
+        NavigationStack {
+            ZStack {
+                Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                 
-                .overlay(
-                    Group {
-                        if let message = signUpViewModel.signupResultMessage, showToast {
-                            showResultToastMessage(message: message)
+                GeometryReader { geometry in
+                    VStack(spacing: 5) {
+                        TextfieldWidget(text: $signUpViewModel.name, keyboardType: .default, hintText: "name")
+                        TextfieldWidget(text: $signUpViewModel.lastName, keyboardType: .default, hintText: "lastname")
+                        TextfieldWidget(text: $signUpViewModel.email, keyboardType: .emailAddress, hintText: "email", textInputAutoCapitalization: .never)
+                        TextfieldWidget(text: $signUpViewModel.password, keyboardType: .default, hintText: "password", textInputAutoCapitalization: .never)
+                        TextfieldWidget(text: $signUpViewModel.repeatPassword, keyboardType: .default, hintText: "repeat_password", textInputAutoCapitalization: .never)
+                        
+                        //TODO: tekrar şifre almayı ekle 2 tane olsun
+                        SignupPageButtonWidget(action: {
+                            signUpViewModel.signup { result in
+                                if result {
+                                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                        dismiss()
+                                    }
+                                }
+                            }
+                        })
+                        .padding(.bottom, geometry.size.height * 0.1)
+                        .frame(height: geometry.size.height * 0.3)
+                    }
+                    .padding(.top, geometry.size.height * 0.05)
+                    
+                    .overlay(
+                        Group {
+                            if let message = signUpViewModel.signupResultMessage, showToast {
+                                showResultToastMessage(message: message)
+                            }
+                        }
+                            .frame(maxHeight: .infinity, alignment: .bottom)
+                            .padding(.bottom, geometry.size.height * 0.05)
+                    )
+                    
+                    .onChange(of: signUpViewModel.signupResultMessage) { _, newValue in
+                        if newValue != nil {
+                            showToast = false
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
+                                showToast = true
+                            }
+                            DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                                showToast = false
+                            }
                         }
                     }
-                        .frame(maxHeight: .infinity, alignment: .bottom)
-                        .padding(.bottom, geometry.size.height * 0.05)
-                )
+                }
+                .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                 
-                .onChange(of: signUpViewModel.signupResultMessage) { _, newValue in
-                    if newValue != nil {
-                        showToast = false
-                        DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                            showToast = true
-                        }
+                
+            }
+            
+        }
+    }
+        
+        fileprivate func showResultToastMessage(message: String) -> some View {
+            ZStack {
+                ToastWidget(message: message)
+                    .transition(.slide)
+                    .onAppear {
                         DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
                             showToast = false
                         }
                     }
-                }
             }
-            .environment(\.locale, .init(identifier: languageManager.currentLanguage))
-
-            
         }
         
-    }
-
-    fileprivate func showResultToastMessage(message: String) -> some View {
-        ZStack {
-            ToastWidget(message: message)
-                .transition(.slide)
-                .onAppear {
-                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                        showToast = false
-                    }
-                }
-        }
-    }
     
-
 }

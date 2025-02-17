@@ -19,11 +19,11 @@ class SignupViewModel: ObservableObject {
     var validationManager = ValidationManager()
     
     
-    //        // Boş alanları kontrol et
-    //        //TODO: guard mantığını incele not al yoksa
-    //        //TODO: çeviriler yapılcak
-    //        //firebase geri dönüş mesajları gösterilebilir veya kontrol altına alınıp uygun şekilde mesaj olarak verilir
-    func signup() {
+    // Boş alanları kontrol et
+    //TODO: guard mantığını incele not al yoksa
+    //TODO: çeviriler yapılcak
+    //firebase geri dönüş mesajları gösterilebilir veya kontrol altına alınıp uygun şekilde mesaj olarak verilir
+    func signup(completion: @escaping (Bool) -> Void) {
         // **1. ValidationManager ile kontrol et**
         if let validationError = validationManager.validate(email: email, password: password) {
             DispatchQueue.main.async {
@@ -39,9 +39,10 @@ class SignupViewModel: ObservableObject {
                     }
                 }
             }
+            completion(false) // ❌ Başarısız
             return
         }
-        
+
         // **2. Alanların boş olup olmadığını kontrol et**
         guard !email.isEmpty, !password.isEmpty, !name.isEmpty, !lastName.isEmpty else {
             DispatchQueue.main.async {
@@ -50,9 +51,10 @@ class SignupViewModel: ObservableObject {
                     self.signupResultMessage = "Alanlar boş bırakılamaz!"
                 }
             }
+            completion(false) // ❌ Başarısız
             return
         }
-        
+
         // **3. Şifrelerin eşleşip eşleşmediğini kontrol et**
         guard !repeatPassword.isEmpty, password == repeatPassword else {
             DispatchQueue.main.async {
@@ -61,16 +63,38 @@ class SignupViewModel: ObservableObject {
                     self.signupResultMessage = "Şifreler uyuşmuyor!"
                 }
             }
+            completion(false) // ❌ Başarısız
             return
         }
-        
+
         // **4. Tüm kontroller başarılıysa kayıt işlemini başlat**
-        signupService.signUp(email: email, password: password, name: name, lastName: lastName) { result, resultMessage in
+        signupService.signUp(email: email, password: password, name: name, lastName: lastName) { result, userId in
             DispatchQueue.main.async {
-                self.signupResultMessage = nil
-                DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.signupResultMessage = result ? "Kayıt Başarılı" : (resultMessage ?? "Kayıt Başarısız")
+                if result, let userId = userId, !userId.isEmpty {
+                    self.createUserInfo(userId: userId) { createResult in
+                        DispatchQueue.main.async {
+                            if createResult {
+                                self.signupResultMessage = "Kayıt Başarılı"
+                                completion(true) // ✅ Başarılı
+                            } else {
+                                self.signupResultMessage = "Kullanıcı bilgileri kaydedilirken hata oluştu!"
+                                completion(false) // ❌ Kullanıcı bilgileri kaydedilemedi
+                            }
+                        }
+                    }
+                } else {
+                    self.signupResultMessage = "Kayıt başarısız, lütfen tekrar deneyin."
+                    completion(false) // ❌ Kayıt başarısız
                 }
+            }
+        }
+    }
+
+    
+    func createUserInfo(userId: String, completion: @escaping (Bool) -> Void) {
+        signupService.createUserInfo(email: email, name: name, lastName: lastName, userId: userId) { success in
+            DispatchQueue.main.async {
+                completion(success)
             }
         }
     }

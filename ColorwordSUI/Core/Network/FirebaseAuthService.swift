@@ -24,15 +24,15 @@ class FirebaseAuthService: AuthServiceInterface {
         return appUser
     }
 
-    func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (Bool) -> Void) {
+    func signUpDb(email: String, password: String, name: String, lastName: String, completion: @escaping (Bool,String) -> Void) {
         firebaseAuth.createUser(withEmail: email, password: password) { authResult, error in
             if let error = error {
                 print("Sign up error: \(error)")
-                completion(false)
+                completion(false,"")
                 return
             }
             self.appUser = FirebaseUserModel(userId: authResult?.user.uid ?? "", email: email, name: name, lastname: lastName)
-            completion(true)
+            completion(true, self.appUser?.userId ?? "")
         }
     }
 

@@ -105,26 +105,7 @@ class LoginViewModel: ObservableObject {
 //  
 //    }
 //    
-    func authSignUp(email: String, password: String) {
-        
-        if (email != "" && password != "") {
-            loginService.signUp(email: email, password: password,name: name, lastName: lastName, completion: { result in
-                
-                if result == true {
-                    print("SignUp Succes")
-                    
-                    ///TODO: Alınan bilgiler ya burada tekrar bir metod ile signleton olan user a gönderilecek ya da firebase metodu içerisinde olacak.
-
-                }else {
-                    print("Signup Failed")
-                    
-                    ///TODO: Alert gösterimi - kayıt başarısız
-                }
-            })
-        }else {
-            ///TODO: Alert gösterimi - Alanlar uygun şekilde doldurulmadı ya da direkt firebaseden gelen mesaj gösterilecek
-        }
-    }
+    
     
     func changeLanguage(to language: String, languageManager: LanguageManager) {
         UserDefaults.standard.set([language], forKey: "AppleLanguages")
@@ -136,29 +117,5 @@ class LoginViewModel: ObservableObject {
         
         languageManager.currentLanguage = language
     }
-//    
-//    func login() {
-//        loginService?.loginWithEmailPassword(email: "egocakli@gmail.com", password: "123456") { [weak self] user in
-//              if let user = user {
-//                  // Başarılı login işlemi, kullanıcı bilgilerini burada işleyin
-//                  print("Login successful for user: \(user.email)")
-//                  // Burada ViewModel içinde duruma göre bir state güncellemesi yapabilirsiniz
-//                  self?.handleSuccessfulLogin(user: user)
-//              } else {
-//                  // Login başarısız oldu, hata mesajını burada işleyin
-//                  print("Login failed")
-//                  self?.handleLoginFailure()
-//              }
-//          }
-//      }
-//    private func handleSuccessfulLogin(user: FirebaseUserModel) {
-//         // Kullanıcı bilgilerini kaydedebilir veya ilgili UI güncellemesini yapabilirsiniz
-//         // Örneğin:
-//         print("Kullanıcı ID: \(user.userId), Email: \(user.email)")
-//     }
-//    private func handleLoginFailure() {
-//         // Giriş başarısız olduğunda yapılacak işlemler
-//         // Örneğin, bir hata mesajı gösterebilir veya kullanıcıya uyarı verebilirsiniz
-//         print("Giriş işlemi başarısız oldu.")
-//     }
+
 }

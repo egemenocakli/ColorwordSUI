@@ -114,7 +114,8 @@ struct LoginView: View {
 //            }
 //        }
     }
-    func signupButton() { }
+    func signupButton() {
+    }
 }
 
     
