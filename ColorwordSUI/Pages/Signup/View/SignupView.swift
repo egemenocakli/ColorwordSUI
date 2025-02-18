@@ -11,7 +11,7 @@ struct SignupView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var signUpViewModel = SignupViewModel()
     @State private var showToast: Bool = false
-    @Environment(\.dismiss) private var dismiss  // ⬅️ Geri dönmek için dismiss fonksiyonunu ekledik
+    @Environment(\.dismiss) private var dismiss
 
     var body: some View {
         NavigationStack {
@@ -20,13 +20,12 @@ struct SignupView: View {
                 
                 GeometryReader { geometry in
                     VStack(spacing: 5) {
-                        TextfieldWidget(text: $signUpViewModel.name, keyboardType: .default, hintText: "name")
-                        TextfieldWidget(text: $signUpViewModel.lastName, keyboardType: .default, hintText: "lastname")
-                        TextfieldWidget(text: $signUpViewModel.email, keyboardType: .emailAddress, hintText: "email", textInputAutoCapitalization: .never)
-                        TextfieldWidget(text: $signUpViewModel.password, keyboardType: .default, hintText: "password", textInputAutoCapitalization: .never)
-                        TextfieldWidget(text: $signUpViewModel.repeatPassword, keyboardType: .default, hintText: "repeat_password", textInputAutoCapitalization: .never)
-                        
-                        //TODO: tekrar şifre almayı ekle 2 tane olsun
+                        TextfieldWidget(text: $signUpViewModel.name, keyboardType: .default, hintKey: "name")
+                        TextfieldWidget(text: $signUpViewModel.lastName, keyboardType: .default, hintKey: "lastname")
+                        TextfieldWidget(text: $signUpViewModel.email, keyboardType: .emailAddress, hintKey: "email", textInputAutoCapitalization: .never)
+                        TextfieldWidget(text: $signUpViewModel.password, keyboardType: .default, hintKey: "password", textInputAutoCapitalization: .never)
+                        TextfieldWidget(text: $signUpViewModel.repeatPassword, keyboardType: .default, hintKey: "repeat_password", textInputAutoCapitalization: .never)
+
                         SignupPageButtonWidget(action: {
                             signUpViewModel.signup { result in
                                 if result {
@@ -63,14 +62,15 @@ struct SignupView: View {
                         }
                     }
                 }
-                .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                 
                 
             }
-            
+            .environment(\.locale, .init(identifier: languageManager.currentLanguage))
         }
+
     }
-        
+    
+
         fileprivate func showResultToastMessage(message: String) -> some View {
             ZStack {
                 ToastWidget(message: message)

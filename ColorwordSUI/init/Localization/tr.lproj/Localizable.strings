@@ -17,6 +17,15 @@
 "lastname" = "Soyad";
 "password" = "Şifre";
 "repeat_password" = "Şifreyi Tekrarlayın";
+"registration_success" = "Kayıt Başarılı";
+"register_error" = "Kullanıcı bilgileri kaydedilirken hata oluştu!";
+"registration_error" = "Kayıt başarısız, lütfen tekrar deneyin.";
+
+//Validation Messages
+"empty_fields" = "Lütfen alanları boş bırakmayın.";
+"short_password" = "Şifreniz en az 6 karakterden oluşmalıdır.";
+"email_message" = "Geçerli bir e-posta adresi giriniz.";
+"passwords_not_match" = "Şifreler uyuşmuyor!";
 
 //WordListPage
 "no_data" = "Kelime listenize ulaşamadık veya siz hiç kelime eklemediniz.";
@@ -27,3 +36,7 @@
 "auto_slide_speed" = "Otomatik Kaydırma Hızı (Normal/Hızlı)";
 "close" = "Kapat";
 "loading" = "Yükleniyor...";
+
+
+
+

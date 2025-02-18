@@ -31,15 +31,15 @@ class SignupViewModel: ObservableObject {
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
                     switch validationError {
                     case .emptyFields:
-                        self.signupResultMessage = "Lütfen alanları boş bırakmayın."
+                        self.signupResultMessage = Bundle.main.localizedString(forKey: "empty_fields", value: nil, table: nil)
                     case .shortPassword:
-                        self.signupResultMessage = "Şifreniz en az 6 karakterden oluşmalıdır."
+                        self.signupResultMessage = Bundle.main.localizedString(forKey: "short_password", value: nil, table: nil)
                     case .invalidEmail:
-                        self.signupResultMessage = "Geçerli bir e-posta adresi giriniz."
+                        self.signupResultMessage = Bundle.main.localizedString(forKey: "email_message", value: nil, table: nil)
                     }
                 }
             }
-            completion(false) // ❌ Başarısız
+            completion(false)
             return
         }
 
@@ -48,10 +48,10 @@ class SignupViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.signupResultMessage = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.signupResultMessage = "Alanlar boş bırakılamaz!"
+                    self.signupResultMessage = Bundle.main.localizedString(forKey: "empty_fields", value: nil, table: nil)
                 }
             }
-            completion(false) // ❌ Başarısız
+            completion(false)
             return
         }
 
@@ -60,10 +60,10 @@ class SignupViewModel: ObservableObject {
             DispatchQueue.main.async {
                 self.signupResultMessage = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    self.signupResultMessage = "Şifreler uyuşmuyor!"
+                    self.signupResultMessage = Bundle.main.localizedString(forKey: "passwords_not_match", value: nil, table: nil)
                 }
             }
-            completion(false) // ❌ Başarısız
+            completion(false)
             return
         }
 
@@ -74,17 +74,17 @@ class SignupViewModel: ObservableObject {
                     self.createUserInfo(userId: userId) { createResult in
                         DispatchQueue.main.async {
                             if createResult {
-                                self.signupResultMessage = "Kayıt Başarılı"
-                                completion(true) // ✅ Başarılı
+                                self.signupResultMessage = Bundle.main.localizedString(forKey: "registration_success", value: nil, table: nil)
+                                completion(true)
                             } else {
-                                self.signupResultMessage = "Kullanıcı bilgileri kaydedilirken hata oluştu!"
-                                completion(false) // ❌ Kullanıcı bilgileri kaydedilemedi
+                                self.signupResultMessage = Bundle.main.localizedString(forKey: "register_error", value: nil, table: nil)
+                                completion(false)
                             }
                         }
                     }
                 } else {
-                    self.signupResultMessage = "Kayıt başarısız, lütfen tekrar deneyin."
-                    completion(false) // ❌ Kayıt başarısız
+                    self.signupResultMessage = Bundle.main.localizedString(forKey: "registration_error", value: nil, table: nil)
+                    completion(false)
                 }
             }
         }

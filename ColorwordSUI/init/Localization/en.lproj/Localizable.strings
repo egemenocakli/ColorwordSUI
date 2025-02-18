@@ -17,6 +17,15 @@
 "lastname" = "Lastname";
 "password" = "Password";
 "repeat_password" = "Repeat password";
+"registration_success" = "Registration Succes";
+"register_error" = "An error occurred while saving user information!";
+"registration_error" = "Registration failed, please try again.";
+
+//Validation Messages
+"empty_fields" = "Please do not leave the fields empty";
+"short_password" = "Your password must be at least 6 characters long.";
+"email_message" = "Please enter a valid email address.";
+"passwords_not_match" = "Passwords do not match!";
 
 //WordListPage
 "no_data" = "We were unable to access your word list or you did not add any words.";

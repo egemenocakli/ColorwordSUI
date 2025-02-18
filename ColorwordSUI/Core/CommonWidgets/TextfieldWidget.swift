@@ -1,25 +1,16 @@
-//
-//  TextfieldWidget.swift
-//  ColorwordSUI
-//
-//  Created by Emre Ocaklı on 7.02.2025.
-//
-
 import SwiftUI
 
 struct TextfieldWidget: View {
     @Binding var text: String
     var keyboardType: UIKeyboardType?
-    var hintText: String?
+    var hintKey: LocalizedStringKey  
     var textInputAutoCapitalization: TextInputAutocapitalization?
-    
+
     var body: some View {
-        
-        
         VStack {
             ZStack(alignment: .leading) {
                 if text.isEmpty {
-                    Text(LocalizedStringKey(hintText ?? ""))
+                    Text(hintKey)
                         .foregroundColor(Constants.ColorConstants.placeHolderTextColor)
                         .padding(.leading, Constants.PaddingSizeConstants.lmSize)
                 }
@@ -32,10 +23,5 @@ struct TextfieldWidget: View {
                     .foregroundColor(.white)
             }
         }
-
     }
 }
-
-//#Preview {
-//    TextfieldWidget(text: "", keyboardType: .default)
-//}
