@@ -20,10 +20,11 @@ struct SecureTextfieldWidget: View {
                 }
                 SecureField("", text: $password)
                     .textInputAutocapitalization(.none)
-                    .padding()
+                    .padding(12)
+                    .background(Color.white.opacity(0.05).blur(radius: 50))
                     .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
                     .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
-                    .foregroundColor(.white)
+                    .foregroundColor(.white.opacity(0.8))
             }
         }
         .padding(.bottom, Constants.PaddingSizeConstants.smallSize)

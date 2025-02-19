@@ -17,10 +17,13 @@ struct TextfieldWidget: View {
                 TextField("", text: $text)
                     .keyboardType(keyboardType ?? .default)
                     .textInputAutocapitalization(textInputAutoCapitalization ?? .none)
-                    .padding()
+                    .padding(12)
+                    .background(Color.white.opacity(0.05).blur(radius: 50))
+                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                     .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
                     .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
-                    .foregroundColor(.white)
+                    .foregroundColor(.white.opacity(0.8))
+                
             }
         }
     }
