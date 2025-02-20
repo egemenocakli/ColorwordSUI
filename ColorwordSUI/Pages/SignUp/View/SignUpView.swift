@@ -7,7 +7,7 @@
 
 import SwiftUICore
 import SwiftUI
-struct SignupView: View {
+struct SignUpView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var signUpViewModel = SignupViewModel()
     @State private var showToast: Bool = false
@@ -27,11 +27,14 @@ struct SignupView: View {
                         TextfieldWidget(text: $signUpViewModel.repeatPassword, keyboardType: .default, hintKey: "repeat_password", textInputAutoCapitalization: .never)
 
                         SignupPageButtonWidget(action: {
-                            signUpViewModel.signup { result in
-                                if result {
+                            signUpViewModel.signup { success in
+                                if success {
+                                    print("✅ Kullanıcı başarıyla kaydedildi!")
                                     DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
-                                        dismiss()
-                                    }
+                                       dismiss()
+                                     }
+                                } else {
+                                    print("❌ Kayıt başarısız! Hata: \(signUpViewModel.signupResultMessage ?? "")")
                                 }
                             }
                         })

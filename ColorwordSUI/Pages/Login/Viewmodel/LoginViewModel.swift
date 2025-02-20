@@ -9,113 +9,74 @@ import Foundation
 import SwiftUI
 
 class LoginViewModel: ObservableObject {
-    
+        
+    //TODO:giriş bilgileri silinip locale kaydedilen veriler ile auto giriş vs.
     let loginService = LoginService()
     
-    //TODO:giriş bilgileri silinip locale kaydedilen veriler ile auto giriş vs.
     @Published var email: String = "bobafettkimlan@gmail.com"
-    @Published var password: String = "123456"
-    @Published var name: String = ""
-    @Published var lastName: String = ""
-    @Published var showAlert = false
-    @Published var loginSucces = false
-    var currentAlert: CommonAlertDialog?
-    var firebaseErrorMessage: String? ///TODO: firebaseden gelen mesajları buraya atıp aşağıya gönderebilirim. veya şartların hepsini karşılyorsa firebaseden gelen mesajı yazdırabilriim.
+    @Published var password: String = "12345611"
+    @Published var loginResultMessage: String?
+    @Published var loginSuccess = false
+    @Published var showToast = false
+    
+    private let validationManager = ValidationManager()
     
     
         
-        private let validationManager = ValidationManager() // ValidationManager kullanıyoruz
-        
-        func validateInputs() -> Bool {
-            if let validationError = validationManager.validate(email: email, password: password) {
-                switch validationError {
-                case .emptyFields:
-                    currentAlert = CommonAlertDialog(
-                        title: "Error",
-                        message: "Email or Password can't be empty.",
-                        primaryButtonTitle: "Ok",
-                        secondaryButtonTitle: nil,
-                        primaryAction: { },
-                        secondaryAction: {nil}
-                    )
-                    
-                case .shortPassword:
-                    currentAlert = CommonAlertDialog(
-                        title: "Error",
-                        message: "Password must be at least 6 characters long.",
-                        primaryButtonTitle: "Ok",
-                        secondaryButtonTitle: nil,
-                        primaryAction: {  },
-                        secondaryAction: {nil}
-                    )
-                    
-                case .invalidEmail:
-                    currentAlert = CommonAlertDialog(
-                        title: "Error",
-                        message: "Invalid email format.",
-                        primaryButtonTitle: "Ok",
-                        secondaryButtonTitle: nil,
-                        primaryAction: {  },
-                        secondaryAction: { nil}
-                    )
-                }
-                
-                showAlert = true
-                return false
-            }else {
-                return true
+    /// **Giriş bilgilerinin doğruluğunu kontrol eden metod**
+    func validateInputs() -> Bool {
+        if let validationError = validationManager.validate(email: email, password: password) {
+            DispatchQueue.main.async {
+                self.loginResultMessage = self.getLocalizedValidationError(validationError)
+                self.showToastMessage()
             }
+            return false
         }
-    
-    func authLogin (email: String, password: String) -> Bool{
+        return true
+    }
+
+    /// **Firebase Authentication ile giriş yapan metod**
+    func authLogin() {
+        guard validateInputs() else { return }
         
-            loginService.loginWithEmailPassword(email: email, password: password) { [weak self] success, user in
-                if success, let user = user {
-                    print("User logged in: \(user.email)")
+        loginService.loginWithEmailPassword(email: email, password: password) { [weak self] response in
+            DispatchQueue.main.async {
+                switch response {
+                case .success(let user):
+                    print("✅ Kullanıcı giriş yaptı: \(user.email)")
                     UserSessionManager.shared.updateUser(with: user)
-                    self?.loginSucces = true
-                } else {
-                    print("Login failed")
-                    self?.loginSucces = false
+                    self?.loginResultMessage = Bundle.main.localizedString(forKey: "login_success", value: nil, table: nil)
+                    self?.loginSuccess = true
+                    self?.showToastMessage()
+                    
+                case .failure(let error):
+                    print("❌ Giriş başarısız: \(error.localizedDescription)")
+                    self?.loginResultMessage = error.localizedDescription
+                    self?.showToastMessage()
                 }
             }
-        return loginSucces
-    }
-    
-    
-    ///TODO: Genel bir textfield form doldurma kontrolü yapılacak eğer şartlar sağlanıyorsa aşağıdaki metod çalışacak.
-//    func authLogin(email: String, password: String) -> Bool{
-//        
-//        
-//        if (email != "" && password != "") {
-//         
-//            loginService.loginWithEmailPassword(email: email, password: password, completion: { usermodel in
-//                print(usermodel?.userId ?? "empty name")
-//                ///TODO: burada singleton olan user modeline ulaşıp içeriği dolu mu değilmi kontrolü yapabiliriz sonuca göre sonraki sayfaya geçer
-//                
-//                
-//            })
-//            loginSucces = true
-//            return loginSucces
-//        }else {
-//            ///TODO: genel dizinde bir widget klasörü oluşturup Alert widget yapılcak
-//            loginSucces = false
-//            return loginSucces
-//        }
-//  
-//    }
-//    
-    
-    
-    func changeLanguage(to language: String, languageManager: LanguageManager) {
-        UserDefaults.standard.set([language], forKey: "AppleLanguages")
-        UserDefaults.standard.synchronize()
-        
-        if let scene = UIApplication.shared.connectedScenes.first as? UIWindowScene {
-            scene.windows.first?.rootViewController = UIHostingController(rootView: LoginView())
         }
-        
-        languageManager.currentLanguage = language
     }
+
+    /// **Hata mesajlarını döndüren yardımcı metod**
+    private func getLocalizedValidationError(_ error: ValidationError) -> String {
+        switch error {
+        case .emptyFields:
+            return Bundle.main.localizedString(forKey: "empty_fields", value: nil, table: nil)
+        case .shortPassword:
+            return Bundle.main.localizedString(forKey: "short_password", value: nil, table: nil)
+        case .invalidEmail:
+            return Bundle.main.localizedString(forKey: "email_message", value: nil, table: nil)
+        }
+    }
+
+    /// **Toast mesajını göstermek için kullanılacak metod**
+    private func showToastMessage() {
+        self.showToast = true
+        DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+            self.showToast = false
+        }
+    }
+
 
 }

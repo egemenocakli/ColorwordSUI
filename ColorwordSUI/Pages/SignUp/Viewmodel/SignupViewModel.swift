@@ -1,5 +1,5 @@
 //
-//  SignupViewmodel.swift
+//  SignupViewModel.swift
 //  ColorwordSUI
 //
 //  Created by Emre Ocaklı on 7.02.2025.
@@ -17,26 +17,14 @@ class SignupViewModel: ObservableObject {
     @Published var lastName: String = ""
     @Published var signupResultMessage: String?
     var validationManager = ValidationManager()
-    
-    
-    // Boş alanları kontrol et
-    //TODO: guard mantığını incele not al yoksa
-    //TODO: çeviriler yapılcak
-    //firebase geri dönüş mesajları gösterilebilir veya kontrol altına alınıp uygun şekilde mesaj olarak verilir
+
     func signup(completion: @escaping (Bool) -> Void) {
         // **1. ValidationManager ile kontrol et**
         if let validationError = validationManager.validate(email: email, password: password) {
             DispatchQueue.main.async {
                 self.signupResultMessage = nil
                 DispatchQueue.main.asyncAfter(deadline: .now() + 0.1) {
-                    switch validationError {
-                    case .emptyFields:
-                        self.signupResultMessage = Bundle.main.localizedString(forKey: "empty_fields", value: nil, table: nil)
-                    case .shortPassword:
-                        self.signupResultMessage = Bundle.main.localizedString(forKey: "short_password", value: nil, table: nil)
-                    case .invalidEmail:
-                        self.signupResultMessage = Bundle.main.localizedString(forKey: "email_message", value: nil, table: nil)
-                    }
+                    self.signupResultMessage = self.getLocalizedValidationError(validationError)
                 }
             }
             completion(false)
@@ -68,34 +56,32 @@ class SignupViewModel: ObservableObject {
         }
 
         // **4. Tüm kontroller başarılıysa kayıt işlemini başlat**
-        signupService.signUp(email: email, password: password, name: name, lastName: lastName) { result, userId in
+        signupService.signUp(email: email, password: password, name: name, lastName: lastName) { response in
             DispatchQueue.main.async {
-                if result, let userId = userId, !userId.isEmpty {
-                    self.createUserInfo(userId: userId) { createResult in
-                        DispatchQueue.main.async {
-                            if createResult {
-                                self.signupResultMessage = Bundle.main.localizedString(forKey: "registration_success", value: nil, table: nil)
-                                completion(true)
-                            } else {
-                                self.signupResultMessage = Bundle.main.localizedString(forKey: "register_error", value: nil, table: nil)
-                                completion(false)
-                            }
-                        }
-                    }
-                } else {
-                    self.signupResultMessage = Bundle.main.localizedString(forKey: "registration_error", value: nil, table: nil)
+                switch response {
+                case .success(let userId):
+                    print("✅ Kullanıcı başarıyla kaydedildi. Kullanıcı ID: \(userId)")
+                    self.signupResultMessage = Bundle.main.localizedString(forKey: "registration_success", value: nil, table: nil)
+                    completion(true)
+
+                case .failure(let error):
+                    print("❌ Hata oluştu: \(error.localizedDescription)")
+                    self.signupResultMessage = error.localizedDescription
                     completion(false)
                 }
             }
         }
     }
 
-    
-    func createUserInfo(userId: String, completion: @escaping (Bool) -> Void) {
-        signupService.createUserInfo(email: email, name: name, lastName: lastName, userId: userId) { success in
-            DispatchQueue.main.async {
-                completion(success)
-            }
+    /// **Validation hatalarına göre localized mesaj döndüren yardımcı fonksiyon**
+    private func getLocalizedValidationError(_ error: ValidationError) -> String {
+        switch error {
+        case .emptyFields:
+            return Bundle.main.localizedString(forKey: "empty_fields", value: nil, table: nil)
+        case .shortPassword:
+            return Bundle.main.localizedString(forKey: "short_password", value: nil, table: nil)
+        case .invalidEmail:
+            return Bundle.main.localizedString(forKey: "email_message", value: nil, table: nil)
         }
     }
 }

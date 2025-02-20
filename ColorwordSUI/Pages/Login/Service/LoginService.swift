@@ -11,34 +11,27 @@ import Foundation
 protocol LoginServiceInterface {
     
     
-    func loginWithEmailPassword(email: String, password: String, completion: @escaping (Bool, FirebaseUserModel?) -> Void)
+    func loginWithEmailPassword(email: String, password: String, completion: @escaping (ServiceResponse<FirebaseUserModel>) -> Void)
     
 }
 
-class LoginService: FirebaseAuthService, LoginServiceInterface {
+class LoginService: LoginServiceInterface {
     
-    let firebaseAuthService = FirebaseAuthService()
+    private let firebaseAuthService = FirebaseAuthService()
 
-    override func loginWithEmailPassword(email: String, password: String, completion: @escaping (Bool, FirebaseUserModel?) -> Void) {
-        firebaseAuthService.loginWithEmailPassword(email: email, password: password) { success,user in
-            if let user = user {
-                // Başarılı login işlemi
-                print("Login successful: \(user.email)")
-                completion(true, user)
-            } else {
-                // Login hatası
-                print("Login failed")
-                completion(false, nil)
+    func loginWithEmailPassword(email: String, password: String, completion: @escaping (ServiceResponse<FirebaseUserModel>) -> Void) {
+        firebaseAuthService.loginWithEmailPassword(email: email, password: password) { response in
+            switch response {
+            case .success(let user):
+                print("✅ Kullanıcı giriş yaptı: \(user.email)")
+                completion(.success(user))
+                
+            case .failure(let error):
+                print("❌ Giriş hatası: \(error.localizedDescription)")
+                completion(.failure(error))
             }
         }
     }
-    
-    
-    
-
-    
-    
-    
 }
 
 

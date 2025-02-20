@@ -41,12 +41,10 @@ struct LoginView: View {
                             VStack {
                                 TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
                                 
-                                LoginButtonWidget(action: loginButton).navigationDestination(isPresented: $loginVM.loginSucces) {
-//                                    WordListView().navigationBarBackButtonHidden(true)
-                                    
-                                    HomeView().navigationBarBackButtonHidden(true)
-                                    
-                                }
+                                LoginButtonWidget(action: loginVM.authLogin)
+                                    .navigationDestination(isPresented: $loginVM.loginSuccess) {
+                                        HomeView().navigationBarBackButtonHidden(true)
+                                    }
 
                                 
                                 SignUpButtonWidget(action: signupButton)
@@ -59,42 +57,72 @@ struct LoginView: View {
                     .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                     
                  }
-            }.alert(
-                loginVM.currentAlert?.title ?? "",
-                isPresented: $loginVM.showAlert,
-                actions: {
-                    Button(loginVM.currentAlert?.primaryButtonTitle ?? "", action: loginVM.currentAlert?.primaryAction ?? {})
-                    
-                },
-                message: {
-                    Text(loginVM.currentAlert?.message ?? "")
+            }.overlay(
+                Group {
+                    if let message = loginVM.loginResultMessage, loginVM.showToast {
+                        showResultToastMessage(message: message)
+                    }
                 }
+                .frame(maxHeight: .infinity, alignment: .bottom)
+                .padding(.bottom, 50) // Toast konumlandırma
             )
-        }
+            }
+            
+        
 
-    }
+    
     
  
-    func loginButton() {
-        
-        //egocakli@gmail.com 123456
-        
-        let validationResult = loginVM.validateInputs()
-        
-        if validationResult != false {
-            loginVM.loginSucces = loginVM.authLogin(email: loginVM.email, password: loginVM.password)
-
-        }
+//    func loginButton() {
+//        
+//        //egocakli@gmail.com 123456
+//        
+//        let validationResult = loginVM.validateInputs()
+//        
+//        if validationResult != false {
+//            loginVM.loginSucces = loginVM.authLogin(email: loginVM.email, password: loginVM.password)
+//
+//        }
         
        
             
         
         
         
+
+
+    }
+    func signupButton() {
+    }
+    
+    /// **Toast mesajını gösteren metod**
+    fileprivate func showResultToastMessage(message: String) -> some View {
+        ZStack {
+            ToastWidget(message: message)
+                .transition(.slide)
+                .onAppear {
+                    DispatchQueue.main.asyncAfter(deadline: .now() + 3) {
+                        loginVM.showToast = false
+                    }
+                }
+        }
+    }
+}
+
+    
+#Preview {
+    LoginView()
+        .environmentObject(LanguageManager())
+}
+
+
+
+
+
 //        loginVM.loginWithEmailPassword(email: "egocakli@gmail.com", password: "123456") { firebaseUsermodel in
 //            print(firebaseUsermodel?.name ?? "empty name")
 //        }
-//        
+//
 
 
 //        Auth.auth().signIn(withEmail: "egemenocakli97@gmail.com", password: "") { result, error in
@@ -113,14 +141,3 @@ struct LoginView: View {
 //                print("kayıt başarılı")
 //            }
 //        }
-    }
-    func signupButton() {
-    }
-}
-
-    
-#Preview {
-    LoginView()
-        .environmentObject(LanguageManager())
-}
-
