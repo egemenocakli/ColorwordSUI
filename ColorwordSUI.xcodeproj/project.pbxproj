@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7D2623132D6D3D89004D1B86 /* KeychainAccess in Frameworks */ = {isa = PBXBuildFile; productRef = 7D2623122D6D3D89004D1B86 /* KeychainAccess */; };
 		DB559A204E0CA168C335AB90 /* Pods_ColorwordSUI.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = B210EB17CCDFCE0CA7D836CF /* Pods_ColorwordSUI.framework */; };
 /* End PBXBuildFile section */
 
@@ -26,6 +27,7 @@
 			isa = PBXFrameworksBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				7D2623132D6D3D89004D1B86 /* KeychainAccess in Frameworks */,
 				DB559A204E0CA168C335AB90 /* Pods_ColorwordSUI.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
@@ -118,6 +120,9 @@
 				tr,
 			);
 			mainGroup = 7DA172802CC06DC100B3C6E6;
+			packageReferences = (
+				7D2623112D6D3D89004D1B86 /* XCRemoteSwiftPackageReference "KeychainAccess" */,
+			);
 			productRefGroup = 7DA1728A2CC06DC100B3C6E6 /* Products */;
 			projectDirPath = "";
 			projectRoot = "";
@@ -397,6 +402,25 @@
 			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
+
+/* Begin XCRemoteSwiftPackageReference section */
+		7D2623112D6D3D89004D1B86 /* XCRemoteSwiftPackageReference "KeychainAccess" */ = {
+			isa = XCRemoteSwiftPackageReference;
+			repositoryURL = "https://github.com/kishikawakatsumi/KeychainAccess.git";
+			requirement = {
+				kind = upToNextMajorVersion;
+				minimumVersion = 4.1.0;
+			};
+		};
+/* End XCRemoteSwiftPackageReference section */
+
+/* Begin XCSwiftPackageProductDependency section */
+		7D2623122D6D3D89004D1B86 /* KeychainAccess */ = {
+			isa = XCSwiftPackageProductDependency;
+			package = 7D2623112D6D3D89004D1B86 /* XCRemoteSwiftPackageReference "KeychainAccess" */;
+			productName = KeychainAccess;
+		};
+/* End XCSwiftPackageProductDependency section */
 	};
 	rootObject = 7DA172812CC06DC100B3C6E6 /* Project object */;
 }
