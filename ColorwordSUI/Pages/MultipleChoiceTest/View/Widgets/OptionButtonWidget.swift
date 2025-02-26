@@ -20,27 +20,33 @@ struct OptionButtonWidget: View {
     var animationDuration: Int
 
     var body: some View {
-        Button(action: action) {
-            Text(initialQuestion.options[buttonIndex].wrappedValue.optionText)
-                .padding()
-                .foregroundColor(.white)
-                .background(backgroundColor)
-                .cornerRadius(100)
-        }.onReceive(animationDuration == 1 ? timer : fastTimer) { time in
-            if timeRemaining > 0 {
-                    timeRemaining -= 1
+        
+        if(initialQuestion.options.count > 3 ) {
+            Button(action: action) {
+                Text(initialQuestion.options[buttonIndex].wrappedValue.optionText)
+                    .padding()
+                    .foregroundColor(.white)
+                    .background(backgroundColor)
+                    .cornerRadius(100)
+            }.onReceive(animationDuration == 1 ? timer : fastTimer) { time in
+                if timeRemaining > 0 {
+                        timeRemaining -= 1
+                    }
+                else if(timeRemaining == 0 && initialQuestion.options[buttonIndex].wrappedValue.optionState == .wrong){
+                    withAnimation(.easeInOut(duration: animationDuration == 3 ? Constants.TimerTypeConstants.normalTimer : Constants.TimerTypeConstants.tooShortTimer )) {
+                        opacity = 0
+                      }
+                    timer.upstream.connect().cancel()
                 }
-            else if(timeRemaining == 0 && initialQuestion.options[buttonIndex].wrappedValue.optionState == .wrong){
-                withAnimation(.easeInOut(duration: animationDuration == 3 ? Constants.TimerTypeConstants.normalTimer : Constants.TimerTypeConstants.tooShortTimer )) {
-                    opacity = 0
-                  }
+            }.onDisappear {
                 timer.upstream.connect().cancel()
             }
-        }.onDisappear {
-            timer.upstream.connect().cancel()
+            .opacity(opacity)
+            .padding(.all, 10)
         }
-        .opacity(opacity)
-        .padding(.all, 10)
+        else {
+            EmptyView()
+        }
     }
 }
 

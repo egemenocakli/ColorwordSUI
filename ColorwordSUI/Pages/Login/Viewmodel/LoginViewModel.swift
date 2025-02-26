@@ -13,13 +13,17 @@ class LoginViewModel: ObservableObject {
     //TODO:giriş bilgileri silinip locale kaydedilen veriler ile auto giriş vs.
     let loginService = LoginService()
     
-    @Published var email: String = "bobafettkimlan@gmail.com"
-    @Published var password: String = "12345611"
+    @Published var email: String = "" //"bobafettkimlan@gmail.com"
+    @Published var password: String = "" //"123456"
     @Published var loginResultMessage: String?
     @Published var loginSuccess = false
     @Published var showToast = false
+    @Published var selectedTheme : String?
     
     private let validationManager = ValidationManager()
+    let userPreferences = UserPreferences()
+    let keychainEncrpyter = KeychainEncrpyter()
+
     
     
         
@@ -48,6 +52,7 @@ class LoginViewModel: ObservableObject {
                     self?.loginResultMessage = Bundle.main.localizedString(forKey: "login_success", value: nil, table: nil)
                     self?.loginSuccess = true
                     self?.showToastMessage()
+                    self?.saveUserData()
                     
                 case .failure(let error):
                     print("❌ Giriş başarısız: \(error.localizedDescription)")
@@ -78,5 +83,13 @@ class LoginViewModel: ObservableObject {
         }
     }
 
+    private func saveUserData () {
+        userPreferences.savedEmail = email
+        userPreferences.savedTheme = selectedTheme ?? "LIGHT_MODE"
+        keychainEncrpyter.savePassword(password)
+        
+        print(userPreferences.savedEmail)
+        print(userPreferences.savedTheme)
+    }
 
 }

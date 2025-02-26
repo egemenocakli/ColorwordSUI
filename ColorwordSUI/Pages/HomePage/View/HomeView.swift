@@ -53,9 +53,9 @@ struct HomeView: View {
             .toolbar {
                 ToolbarItem(placement: .topBarTrailing) {
                     Button(action: {
-                       
                         if homeVM.signOut() == true {
                                 navigateToLogin = true
+                            
                             }else {
                                 
                             }

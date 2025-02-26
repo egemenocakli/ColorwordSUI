@@ -8,7 +8,7 @@ struct TextfieldWidgets: View {
         
         TextfieldWidget(text: $email, keyboardType: .emailAddress, hintKey: "email")
             
-        SecureTextfieldWidget(password: password)
+        SecureTextfieldWidget(password: $password)
         
     }
 }

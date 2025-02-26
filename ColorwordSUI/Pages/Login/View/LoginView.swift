@@ -14,50 +14,74 @@ struct LoginView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var loginVM = LoginViewModel()
     @State private var showAlert = false
+    let userPreferences = UserPreferences()
+    let keychainEncryption = KeychainEncrpyter()
+    @StateObject var homeVM = HomeViewModel()
+
+
 
     var body: some View {
+        
         NavigationStack {
             ZStack {
                 Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                 GeometryReader { geometry in
                     VStack {
-                        
-                        HStack {
-                            ThemeSelectToggleButton(isDarkMode: Binding(
-                                get: { themeManager.selectedTheme == Constants.AppTheme.dark_mode.rawValue },
-                                set: { _ in themeManager.toggleTheme() }
-                            ))
-                            
-                            Spacer()
-                            
-                            LanguagePickerWidget()
-                        }.preferredColorScheme(themeManager.colorScheme)
-                            .padding(10)
-                        
-
-                        AppNameWidget(geometry: geometry)
-                        
-                        GeometryReader { geometry in
-                            VStack {
-                                TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
-                                
-                                LoginButtonWidget(action: loginVM.authLogin)
-                                    .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                        HomeView().navigationBarBackButtonHidden(true)
-                                    }
-
-                                
-                                SignUpButtonWidget(action: signupButton)
-                                
-                            }
-                            .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
-                            .frame(height: geometry.size.height * 0.6)
+                        if (userPreferences.savedEmail != "" && keychainEncryption.loadPassword() != "") {
+                            ProgressView("loading")
+                                .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
+                                .navigationDestination(isPresented: $loginVM.loginSuccess) {
+                                    
+                                    HomeView().navigationBarBackButtonHidden(true)
+                                }
                         }
-                    }
-                    .environment(\.locale, .init(identifier: languageManager.currentLanguage))
-                    
-                 }
-            }.overlay(
+                        else {
+                            
+                            HStack {
+                                ThemeSelectToggleButton(isDarkMode: Binding(
+                                    get: {
+                                        themeManager.selectedTheme == Constants.AppTheme.dark_mode.rawValue
+                                    },
+                                    set: { _ in themeManager.toggleTheme()
+                                        loginVM.selectedTheme = themeManager.selectedTheme
+                                    }
+                                ))
+                                
+                                Spacer()
+                                
+                                LanguagePickerWidget()
+                            }.preferredColorScheme(themeManager.colorScheme)
+                                .padding(10)
+                            
+                            
+                            AppNameWidget(geometry: geometry)
+                            
+                            GeometryReader { geometry in
+                                VStack {
+                                    TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
+                                    
+                                    LoginButtonWidget(action: loginVM.authLogin)
+                                        .navigationDestination(isPresented: $loginVM.loginSuccess) {
+                                            
+                                            HomeView().navigationBarBackButtonHidden(true)
+                                        }
+                                    
+                                    
+                                    SignUpButtonWidget(action: signupButton)
+                                    
+                                }
+                                .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
+                                .frame(height: geometry.size.height * 0.6)
+                            }
+                        }
+                        
+                    }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
+
+                }
+            }.onAppear(){
+                autoLoginCheck()
+            }
+            .overlay(
                 Group {
                     if let message = loginVM.loginResultMessage, loginVM.showToast {
                         showResultToastMessage(message: message)
@@ -105,6 +129,16 @@ struct LoginView: View {
                         loginVM.showToast = false
                     }
                 }
+        }
+    }
+    
+    fileprivate func autoLoginCheck () {
+        if (userPreferences.savedEmail != "" && keychainEncryption.loadPassword() != "") {
+            loginVM.email = userPreferences.savedEmail
+            loginVM.password = keychainEncryption.loadPassword()!
+            loginVM.authLogin()
+            loginVM.loginSuccess = true
+            
         }
     }
 }

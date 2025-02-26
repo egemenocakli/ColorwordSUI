@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct SecureTextfieldWidget: View {
-    @State var password: String
+    @Binding var password: String
     
     var body: some View {
         VStack {
@@ -31,6 +31,6 @@ struct SecureTextfieldWidget: View {
     }
 }
 
-#Preview {
-    SecureTextfieldWidget(password: "")
-}
+//#Preview {
+//    SecureTextfieldWidget(password: "")
+//}
