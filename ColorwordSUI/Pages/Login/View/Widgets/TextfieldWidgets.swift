@@ -6,7 +6,7 @@ struct TextfieldWidgets: View {
 
     var body: some View {
         
-        TextfieldWidget(text: $email, keyboardType: .emailAddress, hintKey: "email")
+        TextfieldWidget(text: $email, keyboardType: .emailAddress, hintKey: "email",textInputAutoCapitalization: .never)
             
         SecureTextfieldWidget(password: $password)
         

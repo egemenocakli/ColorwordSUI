@@ -10,7 +10,7 @@ import SwiftUI
 
 class WordListViewModel: ObservableObject {
     @Published var wordList: [Word] = []
-    @Published var wordBackgroundColor: String = "#00FFFFFF"
+    @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
     let wordListService = WordListService()
 
 

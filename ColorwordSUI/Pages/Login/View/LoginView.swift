@@ -59,6 +59,7 @@ struct LoginView: View {
                             GeometryReader { geometry in
                                 VStack {
                                     TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
+                                        
                                     
                                     LoginButtonWidget(action: loginVM.authLogin)
                                         .navigationDestination(isPresented: $loginVM.loginSuccess) {
@@ -92,27 +93,6 @@ struct LoginView: View {
             )
             }
             
-        
-
-    
-    
- 
-//    func loginButton() {
-//        
-//        //egocakli@gmail.com 123456
-//        
-//        let validationResult = loginVM.validateInputs()
-//        
-//        if validationResult != false {
-//            loginVM.loginSucces = loginVM.authLogin(email: loginVM.email, password: loginVM.password)
-//
-//        }
-        
-       
-            
-        
-        
-        
 
 
     }

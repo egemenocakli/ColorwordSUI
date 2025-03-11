@@ -19,12 +19,14 @@ struct WordListView: View {
     var body: some View {
         NavigationView {
             ZStack (alignment: .center){
-            
+                Color(hex: wordListVM.wordBackgroundColor)
+                    .animation(.easeInOut(duration: Constants.TimerTypeConstants.standardSpringAnimation), value: wordListVM.wordBackgroundColor)
+                    .edgesIgnoringSafeArea(.all)
                 VStack {
                     //Loading gösterilebilir hatta yüklenmezse bu uyarı yazılabilir.
                     if wordListVM.wordList.isEmpty {
-                        Text("no_data").padding(.horizontal, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
-                            .background(Color.white.opacity(0.00))
+                        ProgressView("loading")
+                            .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
                     } else {
                         WordListTabView(selectedTabIndex: $selectedTabIndex,wordListVM: wordListVM)
                             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
@@ -38,31 +40,13 @@ struct WordListView: View {
                                 wordListVM.getWordColorForBackground(word: word,themeManager: themeManager)
                             }
                     }
-                    //TODO: Bu buton bu sayfada gereksiz, profil veya ayarlar gibi bir yerde olmalı. Taşınacak
-                    //Çıkışta veriler silinecek
-//                    Button {
-//                        if wordListVM.signOut() == true {
-//                            navigateToLogin = true
-//                        }else {
-//                            
-//                        }
-//                    }
-//                    label: {
-//                        Text("Çıkış")
-//                    }.padding(.bottom, Constants.PaddingSizeConstants.lmSize).frame(alignment: .center)
-//                        .background(Color.white.opacity(0.00))
-                    NavigationLink(destination: MchoiceTestView()) {
-                                        Text("Test Sayfasına Git")
-                                            .font(.headline)
-                                            .foregroundColor(.white)
-                                            .padding()
-                                            .background(.white.opacity(0.3))
-                                            .cornerRadius(Constants.SizeRadiusConstants.medium)
-                    }.padding(.bottom, 30)
+
                     
                 }
-                .background(Color(hex: wordListVM.wordBackgroundColor))
-                .edgesIgnoringSafeArea(.all)
+                .background(
+                    Color(Color(hex: wordListVM.wordBackgroundColor)!)
+                        .animation(.easeInOut(duration: Constants.TimerTypeConstants.standardSpringAnimation), value: Color(hex: wordListVM.wordBackgroundColor))
+                )                .edgesIgnoringSafeArea(.all)
                 .task {
                     await wordListVM.getWordList()
                 }
