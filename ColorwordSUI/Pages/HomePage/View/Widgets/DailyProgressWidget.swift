@@ -16,28 +16,32 @@ struct DailyProgressView: View {
     let totalPoints: Double = 100
 
     var body: some View {
-        VStack {
-            Text("Daily Progress")
-                .font(.headline)
-                .foregroundColor(.white)
-
-            ZStack(alignment: .leading) {
-                // Arka Plan Çubuğu
-                RoundedRectangle(cornerRadius: 12)
-                    .frame(width: 300, height: 20) // Buradan çizginin yüksekliğini artırabilirsin
-                    .foregroundColor(Color.gray.opacity(0.3))
-
-                // İlerleme Çubuğu
-                RoundedRectangle(cornerRadius: 12)
-                    .frame(width: CGFloat(progress / totalPoints) * 300, height: 20)
-                    .foregroundColor(.green)
+        GeometryReader { geometry in
+            
+            VStack {
+                Text("Daily Progress")
+                    .font(.headline)
+                    .foregroundColor(.white)
+                
+                ZStack(alignment: .leading) {
+                    // Arka Plan Çubuğu
+                    RoundedRectangle(cornerRadius: 12)
+                        .frame(width: 300, height: 20) // Buradan çizginin yüksekliğini artırabilirsin
+                        .foregroundColor(Color.black.opacity(0.3))
+                    
+                    // İlerleme Çubuğu
+                    RoundedRectangle(cornerRadius: 12)
+                        .frame(width: CGFloat(progress / totalPoints) * 300, height: 20)
+                        .foregroundColor(.green)
+                }
+                
+                Text("\(Int(progress))/\(Int(totalPoints))")
+                    .font(.subheadline)
+                    .foregroundColor(.white)
             }
-            .padding()
-
-            Text("\(Int(progress))/\(Int(totalPoints))")
-                .font(.subheadline)
-                .foregroundColor(.white)
+            .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
         }
+        .frame(height: 100)
     }
 }
 

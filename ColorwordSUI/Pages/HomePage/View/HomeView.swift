@@ -12,6 +12,7 @@ import SwiftUI
 //TODO: Arka plan rengi kalıcı siyah yerine temaya göre değişecek
 struct HomeView: View {
     
+    @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var homeVM = HomeViewModel()
     let categories: [CategoryItem] = [
@@ -28,51 +29,58 @@ struct HomeView: View {
     
     var body: some View {
         NavigationStack {
-            VStack {
-
-                //TODO: Günlük kazanılan puan tutulacak. Belki girişten bile +10 puan verilebilir. Ancak hangi kelimeye
-                //TODO: yansıyacak o kısım dert.
-                // ilk girişte 0/10 olacak. 10 u aşarsa 10/25 falan 25 i aşarsa 25/100 olacak şeklinde devam edecek.
-                //Renkler açık temaya da uyarlanacak
-                DailyProgressView()
-                
-                
-                // Kategori Grid
-                LazyVGrid(columns: columns, spacing: 20) {
-                    ForEach(categories) { category in
-                        NavigationLink(destination: category.destination) {
-                            CategoryButton(category: category)
-                        }
-                    }
-                }
-                .padding()
-                
-                Spacer()
-            }
-            .background(Color.black.edgesIgnoringSafeArea(.all))
-            .toolbar {
-                ToolbarItem(placement: .topBarTrailing) {
-                    Button(action: {
-                        if homeVM.signOut() == true {
-                                navigateToLogin = true
-                            
-                            }else {
-                                
+            ZStack{
+                Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
+                GeometryReader { geometry in
+                    
+                    VStack {
+                        
+                        //TODO: Günlük kazanılan puan tutulacak. Belki girişten bile +10 puan verilebilir. Ancak hangi kelimeye
+                        //TODO: yansıyacak o kısım dert.
+                        // ilk girişte 0/10 olacak. 10 u aşarsa 10/25 falan 25 i aşarsa 25/100 olacak şeklinde devam edecek.
+                        //Renkler açık temaya da uyarlanacak
+                        DailyProgressView()
+                        
+                        
+                        // Kategori Grid
+                        LazyVGrid(columns: columns, spacing: 20) {
+                            ForEach(categories) { category in
+                                NavigationLink(destination: category.destination) {
+                                    CategoryButton(category: category)
+                                }
                             }
+                        }
+                        .padding()
                         
+                        Spacer()
+                    }
+                    //                .background(Color.black.edgesIgnoringSafeArea(.all))
+                    .toolbar {
+                        ToolbarItem(placement: .topBarTrailing) {
+                            Button(action: {
+                                if homeVM.signOut() == true {
+                                    navigateToLogin = true
+                                    
+                                }else {
+                                    
+                                }
+                                
+                                
+                            }) {
+                                Image(systemName: Constants.IconTextConstants.logOutButton)
+                                    .font(.system(size: Constants.FontSizeConstants.x2Large))
+                                    .foregroundColor(Constants.ColorConstants.grayButtonColor)
+                            }
+                        }
                         
-                    }) {
-                        Image(systemName: Constants.IconTextConstants.logOutButton)
-                            .font(.system(size: Constants.FontSizeConstants.x2Large))
-                            .foregroundColor(Constants.ColorConstants.grayButtonColor)
+                    }
+                    .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+                    .preferredColorScheme(themeManager.colorScheme)
+                    .navigationDestination(isPresented: $navigateToLogin) {
+                        LoginView().navigationBarBackButtonHidden(true)
+                        
                     }
                 }
-                
-            }
-            .environment(\.locale, .init(identifier: languageManager.currentLanguage))
-            .navigationDestination(isPresented: $navigateToLogin) {
-                LoginView().navigationBarBackButtonHidden(true)
-                
             }
         }
     }
@@ -88,6 +96,7 @@ struct HomeView: View {
                     .scaledToFit()
                     .frame(width: 40, height: 40)
                     .padding()
+                    .foregroundStyle(Color(.white))
                 //                .background(RoundedRectangle(cornerRadius: 20).fill(category.color.opacity(0.2)))
                 
                 Text(category.title)
@@ -99,7 +108,7 @@ struct HomeView: View {
             }
             .frame(width: 140, height: 120)
             .padding()
-            .background(RoundedRectangle(cornerRadius: 20).fill(Color.white.opacity(0.1)))
+            .background(RoundedRectangle(cornerRadius: 20).fill(Constants.ColorConstants.homeCardBackgroundColor))
             .shadow(radius: 5)
         }
     }

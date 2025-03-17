@@ -71,6 +71,7 @@ class Constants {
         static let toastMessageBackgroundColor: Color = Color.black.opacity(0.7)
         static let optionButtonBackgroundColor: Color = Color.black.opacity(0.12)
         static let grayButtonColor: Color = Color.white.opacity(0.6)
+        static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
         
     }
     /// **xSmallSize: 10, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
