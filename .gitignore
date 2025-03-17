@@ -4,6 +4,7 @@
 
 ## User settings
 xcuserdata/
+ColorwordSUI/GoogleService-Info.plist
 
 ## Obj-C/Swift specific
 *.hmap
