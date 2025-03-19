@@ -14,7 +14,7 @@ struct HomeView: View {
     
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var languageManager: LanguageManager
-    @StateObject private var homeVM = HomeViewModel()
+    @StateObject private var homeVM = HomeViewModel.shared
     let categories: [CategoryItem] = [
     CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListView())),
     CategoryItem(title: "Multiple Choice Test", icon: "checklist", color: .purple, destination: AnyView(MchoiceTestView())),
@@ -39,8 +39,8 @@ struct HomeView: View {
                         //TODO: yansıyacak o kısım dert.
                         // ilk girişte 0/10 olacak. 10 u aşarsa 10/25 falan 25 i aşarsa 25/100 olacak şeklinde devam edecek.
                         //Renkler açık temaya da uyarlanacak
-                        DailyProgressView()
-                        
+                        DailyProgressView(progress: Double(homeVM.dailyProgressBarPoint))
+
                         
                         // Kategori Grid
                         LazyVGrid(columns: columns, spacing: 20) {
@@ -53,17 +53,19 @@ struct HomeView: View {
                         .padding()
                         
                         Spacer()
+
                     }
                     //                .background(Color.black.edgesIgnoringSafeArea(.all))
                     .toolbar {
                         ToolbarItem(placement: .topBarTrailing) {
                             Button(action: {
-                                if homeVM.signOut() == true {
-                                    navigateToLogin = true
-                                    
-                                }else {
-                                    
-                                }
+                                homeVM.signOut { success in
+                                        if success {
+                                            navigateToLogin = true
+                                        } else {
+                                            
+                                        }
+                                    }
                                 
                                 
                             }) {
@@ -82,7 +84,20 @@ struct HomeView: View {
                     }
                 }
             }
+            
         }
+
+        .onAppear {
+            if homeVM.loginSuccess {
+            homeVM.fetchUserDailyPoint()
+            }
+        }
+        .onChange(of: homeVM.loginSuccess, initial: false) { oldValue, newValue in
+            if newValue {
+            homeVM.fetchUserDailyPoint()
+           }
+        }
+
     }
     
     // Kategori Butonu Bileşeni

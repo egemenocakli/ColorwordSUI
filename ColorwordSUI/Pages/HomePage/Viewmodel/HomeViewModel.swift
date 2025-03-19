@@ -7,22 +7,46 @@
 
 import Foundation
 
-class HomeViewModel: ObservableObject {
+final class HomeViewModel: ObservableObject {
     let homeService = HomeService()
     let userPreferences = UserPreferences()
     let keychainEncrpyter = KeychainEncrpyter()
+    @Published var dailyProgressBarPoint: Int = 0
+    @Published var loginSuccess: Bool = false
+
+    //Burada autologinden userId içeriği henüz dolmadan fetchUserDailyPoint çağrılıyor o sebepten signletona çevirdim.
+    static let shared = HomeViewModel()
     
-    func signOut() -> Bool {
-        var result: Bool = false
+    func changeLoginSuccesState () {
+        loginSuccess = !loginSuccess
+    }
+    
+    func signOut(completion: @escaping (Bool) -> Void) {
         homeService.signOut { response in
-            result = response
-            
-            if(result) {
-                self.userPreferences.savedEmail = ""
-                self.keychainEncrpyter.deletePassword()
+            if response {
+                DispatchQueue.main.async {
+                    self.userPreferences.savedEmail = ""
+                    self.keychainEncrpyter.deletePassword()
+                    self.loginSuccess = false 
+                    completion(true)
+                }
+            } else {
+                completion(false)
             }
-            
         }
-        return result
+    }
+    
+    
+    func fetchUserDailyPoint ()  {
+       
+        guard let userId =  UserSessionManager.shared.currentUser?.userId else {
+            dailyProgressBarPoint = 0
+            return
+        }
+        homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
+            DispatchQueue.main.async {
+                self.dailyProgressBarPoint = userInfoModel?.dailyScore ?? 0
+            }
+        }
     }
 }

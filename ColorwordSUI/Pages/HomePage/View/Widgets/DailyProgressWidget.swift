@@ -9,30 +9,30 @@
 import SwiftUI
 
 
-//TODO: Ölçü ve renkler constantstan alınacak.
+//TODO: Ölçü ve renkler constantstan alınacak. language eklenecek
 //Yeni bir alan açılacak. günlük kazanılmış puanları tutacak. günlük?
 struct DailyProgressView: View {
-    @State private var progress: Double = 50
+    var progress: Double
     let totalPoints: Double = 100
 
     var body: some View {
         GeometryReader { geometry in
-            
             VStack {
                 Text("Daily Progress")
                     .font(.headline)
                     .foregroundColor(.white)
-                
+
                 ZStack(alignment: .leading) {
                     // Arka Plan Çubuğu
                     RoundedRectangle(cornerRadius: 12)
-                        .frame(width: 300, height: 20) // Buradan çizginin yüksekliğini artırabilirsin
+                        .frame(width: 300, height: 20)
                         .foregroundColor(Color.black.opacity(0.3))
                     
-                    // İlerleme Çubuğu
+                    // İlerleme Çubuğu: progress değeri değiştiğinde animasyonla genişliğini günceller.
                     RoundedRectangle(cornerRadius: 12)
                         .frame(width: CGFloat(progress / totalPoints) * 300, height: 20)
                         .foregroundColor(.green)
+                        .animation(.easeInOut(duration: 1), value: progress)
                 }
                 
                 Text("\(Int(progress))/\(Int(totalPoints))")
@@ -43,8 +43,4 @@ struct DailyProgressView: View {
         }
         .frame(height: 100)
     }
-}
-
-#Preview {
-    DailyProgressView()
 }

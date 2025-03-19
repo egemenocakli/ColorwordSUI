@@ -11,6 +11,8 @@ protocol FirestoreInterface {
     func getWordList() async throws -> [Word]
     func increaseWordScore(word: Word, points: Int) async throws
     func decreaseWordScore(word: Word, points: Int) async throws
-    func createUserInfo(email: String, name: String, lastName: String, userUid: String, completion: @escaping (Bool) -> Void)
+    func createOrUpdateUserInfo(user: UserInfoModel, completion: @escaping (Bool) -> Void)
+    func fetchUserInfo (userId: String, completion: @escaping (UserInfoModel?) -> Void)
+//    func createOrUpdateUserInfo(userUid: String, email: String, name: String, lastName: String, completion: @escaping (Bool) -> Void)
 
 }

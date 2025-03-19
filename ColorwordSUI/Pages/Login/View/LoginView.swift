@@ -16,7 +16,6 @@ struct LoginView: View {
     @State private var showAlert = false
     let userPreferences = UserPreferences()
     let keychainEncryption = KeychainEncrpyter()
-    @StateObject var homeVM = HomeViewModel()
 
 
 
@@ -31,7 +30,6 @@ struct LoginView: View {
                             ProgressView("loading")
                                 .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
                                 .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                    
                                     HomeView().navigationBarBackButtonHidden(true)
                                 }
                         }

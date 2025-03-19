@@ -39,10 +39,10 @@ class SignupService: FirebaseAuthService, SignupInterface {
         }
     }
 
-    /// **Kullanıcı bilgilerini Firestore’a ekler**
+    /// **Kullanıcı bilgilerini Firestore’a ekler. UserInfo bilgisi olarak bir model daha tutuluyor, bu bilgileri burada model içeriğini dolduruyoruz**
     func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void) {
         
-        firestoreService.createUserInfo(email: email, name: name, lastName: lastName, userUid: userId) { success in
+        firestoreService.createOrUpdateUserInfo(user: UserInfoModel(userId: userId, email: email, name: name, lastname: lastName)) { success in
             if success {
                 print("✅ Firestore'da kullanıcı bilgileri başarıyla kaydedildi.")
                 completion(.success(true))
@@ -52,20 +52,20 @@ class SignupService: FirebaseAuthService, SignupInterface {
             }
         }
     }
+//        /// **Kullanıcı bilgilerini Firestore’a ekler**
+//    func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void) {
+//        
+//        firestoreService.createOrUpdateUserInfo(userUid: userId, email: email, name: name, lastName: lastName) { success in
+//            if success {
+//                print("✅ Firestore'da kullanıcı bilgileri başarıyla kaydedildi.")
+//                completion(.success(true))
+//            } else {
+//                print("❌ Firestore'da kullanıcı bilgileri kaydedilemedi!")
+//                completion(.failure(.firestoreError("Kullanıcı bilgileri kaydedilemedi.")))
+//            }
+//        }
+//    }
+//
 }
 
 
-
-//    func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (Bool, String?) -> Void) {
-//
-//        firebaseAuthService.signUpDb(email: email, password: password, name: name, lastName: lastName) { result,uid  in
-//
-//            if result {
-//                completion(true, uid)
-//            } else {
-//                completion(false, "Something went wrong")
-//            }
-//        }
-//
-//    }
-//

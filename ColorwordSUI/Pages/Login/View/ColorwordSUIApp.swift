@@ -14,6 +14,7 @@ struct ColorwordSUIApp: App {
     @StateObject private var themeManager = ThemeManager()
     @StateObject private var languageManager = LanguageManager()
 
+
     @UIApplicationDelegateAdaptor(AppDelegate.self) var appDelegate
     var body: some Scene {
         WindowGroup {
