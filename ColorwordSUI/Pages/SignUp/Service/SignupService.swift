@@ -52,20 +52,7 @@ class SignupService: FirebaseAuthService, SignupInterface {
             }
         }
     }
-//        /// **Kullanıcı bilgilerini Firestore’a ekler**
-//    func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void) {
-//        
-//        firestoreService.createOrUpdateUserInfo(userUid: userId, email: email, name: name, lastName: lastName) { success in
-//            if success {
-//                print("✅ Firestore'da kullanıcı bilgileri başarıyla kaydedildi.")
-//                completion(.success(true))
-//            } else {
-//                print("❌ Firestore'da kullanıcı bilgileri kaydedilemedi!")
-//                completion(.failure(.firestoreError("Kullanıcı bilgileri kaydedilemedi.")))
-//            }
-//        }
-//    }
-//
+
 }
 
 

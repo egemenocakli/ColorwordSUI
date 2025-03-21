@@ -53,6 +53,13 @@ struct HomeView: View {
                         .padding()
                         
                         Spacer()
+                        
+                        Button {
+                            homeVM.increaseUserInfoPoints(increaseBy: 10)
+                        } label: {
+                            Text("DailyPoint arttır")
+                        }
+
 
                     }
                     //                .background(Color.black.edgesIgnoringSafeArea(.all))

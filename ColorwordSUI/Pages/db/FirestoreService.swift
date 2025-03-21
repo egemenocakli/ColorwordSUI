@@ -9,13 +9,9 @@ import Foundation
 import FirebaseFirestore
 
 class FirestoreService: FirestoreInterface {
-
-    
-
     
    private let db = Firestore.firestore()
     
-    //zaman alabilecek bir işlem await vs eklenecek. bu yüzden anasayfaya beklenmesi gerekecek şekilde uygulanacak
         
         func getWordList() async throws -> [Word] {
             // Kullanıcı ID'si kontrolü
@@ -113,7 +109,7 @@ class FirestoreService: FirestoreInterface {
         }
     }
 
-    
+    //UserInfo bilgisini çek eğer yoksa oluştur dedik.
     func fetchUserInfo (userId: String, completion: @escaping (UserInfoModel?) -> Void) {
         let docRef = db.collection("users").document(userId).collection("userInfo").document("userInfo")
         
@@ -124,7 +120,18 @@ class FirestoreService: FirestoreInterface {
                 return
             }
             guard let data = snapshot?.data() else {
-                print("❌ Belge bulunamadı.")
+                print("❌ Belge bulunamadı. Oluşturulacak metoda yönlendirildi.")
+                
+                self.createOrUpdateUserInfo(user: UserInfoModel(userId: UserSessionManager.shared.currentUser!.userId, email: UserSessionManager.shared.currentUser!.email, name: UserSessionManager.shared.currentUser!.name, lastname: UserSessionManager.shared.currentUser!.lastname)) { success in
+                    
+                    if success {
+                        completion(nil)
+                    }
+                    else {
+                        completion(nil)
+                    }
+                }
+                
                 completion(nil)
                 return
             }
@@ -137,33 +144,67 @@ class FirestoreService: FirestoreInterface {
         }
     }
 
-
-
+    func increaseDailyPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
+        
+        guard !userInfo.userId.isEmpty else {
+            print("❌ Geçersiz userInfo, userId boş!")
+            completion(false)
+            return
+        }
+        
+        let docRef = db.collection("users").document(userInfo.userId)
+            .collection("userInfo")
+            .document("userInfo")
+        
+        let updates : [String : Any] = [
+            "dailyScore" : userInfo.dailyScore,
+            "totalScore" : userInfo.totalScore,
+            "dailyScoreDate" : FieldValue.serverTimestamp()
+            ]
+        docRef.updateData(updates) { error in
+            
+            if let error = error {
+                print("❌ Update error: \(error.localizedDescription)")
+                completion(false)
+            }else {
+                print("✅ Skor bilgileri başarıyla güncellendi.")
+                completion(true)
+                }
+            
+            }
+        
+        }
     
-//    //UpdatecreateUserInfo
-//    func updateCreateUserInfo(email: String, name: String, lastName: String, userUid: String, completion: @escaping (Bool) -> Void) {
-//        let userInfo: [String: Any] = [
-//            "userId": userUid,
-//            "email": email,
-//            "name": name,
-//            "lastname": lastName,
-//            "photo": "empty",
-//            "totalScore": 0,           // Başlangıçta toplam puan 0
-//            "dailyScore": 0,           // Günlük puan 0
-//            "dailyScoreDate": FieldValue.serverTimestamp() // Günlük puan başlangıcını temsil eden zaman damgası
-//        ]
-//        
-//        db.collection("users").document(userUid).collection("userInfo").document().updateData(data: userInfo) { error in
-//            if let error = error {
-//                print("❌ Firestore createUserInfo hatası: \(error.localizedDescription)")
-//                completion(false) // Hata durumunda false döndür
-//            } else {
-//                print("✅ Kullanıcı bilgileri Firestore'a başarıyla eklendi!")
-//                completion(true)  // Başarı durumunda true döndür
-//            }
-//        }
-//    }
-    
+    func resetDailyScore(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
+        
+        guard !userInfo.userId.isEmpty else {
+            print("❌ Geçersiz userInfo, userId boş!")
+            completion(false)
+            return
+        }
+        
+        let docRef = db.collection("users").document(userInfo.userId)
+            .collection("userInfo")
+            .document("userInfo")
+        
+        let updates : [String : Any] = [
+            "dailyScore" : userInfo.dailyScore,
+            "totalScore" : userInfo.totalScore
+            ]
+        docRef.updateData(updates) { error in
+            
+            if let error = error {
+                print("❌ Update error: \(error.localizedDescription)")
+                completion(false)
+            }else {
+                print("✅ Skor bilgileri başarıyla güncellendi.")
+                completion(true)
+                }
+            
+            }
+        
+        }
+
     }
 
     
