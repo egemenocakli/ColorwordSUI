@@ -30,9 +30,13 @@ struct DailyProgressView: View {
                     
                     // İlerleme Çubuğu: progress değeri değiştiğinde animasyonla genişliğini günceller.
                     RoundedRectangle(cornerRadius: 12)
-                        .frame(width: CGFloat(progress / totalPoints) * 300, height: 20)
-                        .foregroundColor(.green)
+                        .frame(width: min(CGFloat(progress / totalPoints) * 300, 300), height: 20)
+                        .foregroundColor(progress <= 100 ? .green : .yellow.opacity(0.9))
                         .animation(.easeInOut(duration: 1), value: progress)
+                        .shadow(color: progress >= totalPoints ? Color.yellow : Color.clear,
+                                                        radius: progress >= totalPoints ? 10 : 0,
+                                                        x: 0,
+                                                        y: 0)
                 }
                 
                 Text("\(Int(progress))/\(Int(totalPoints))")
@@ -43,4 +47,8 @@ struct DailyProgressView: View {
         }
         .frame(height: 100)
     }
+}
+
+#Preview {
+    DailyProgressView(progress: 120)
 }

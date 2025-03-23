@@ -188,9 +188,8 @@ class FirestoreService: FirestoreInterface {
             .document("userInfo")
         
         let updates : [String : Any] = [
-            "dailyScore" : userInfo.dailyScore,
-            "totalScore" : userInfo.totalScore
-            ]
+            "dailyScore" : userInfo.dailyScore
+        ]
         docRef.updateData(updates) { error in
             
             if let error = error {

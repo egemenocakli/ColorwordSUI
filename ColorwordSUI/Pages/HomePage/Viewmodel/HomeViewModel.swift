@@ -13,7 +13,7 @@ final class HomeViewModel: ObservableObject {
     let keychainEncrpyter = KeychainEncrpyter()
     @Published var dailyProgressBarPoint: Int = 0
     @Published var loginSuccess: Bool = false
-    var userInfoModel: UserInfoModel?
+    @Published var userInfoModel: UserInfoModel?
 
     //Burada autologinden userId içeriği henüz dolmadan fetchUserDailyPoint çağrılıyor o sebepten signletona çevirdim.
     static let shared = HomeViewModel()
@@ -48,9 +48,9 @@ final class HomeViewModel: ObservableObject {
             self.userInfoModel = userInfoModel
             self.resetDailyScoreIfFirstTime()
 
-                    DispatchQueue.main.async {
-                        self.dailyProgressBarPoint = userInfoModel?.dailyScore ?? 0
-                    }
+//                    DispatchQueue.main.async {
+//                        self.dailyProgressBarPoint = userInfoModel?.dailyScore ?? 0
+//                    }
         }
     }
     
@@ -91,6 +91,11 @@ final class HomeViewModel: ObservableObject {
                     }
             }
         }
+        else {
+            DispatchQueue.main.async {
+                self.dailyProgressBarPoint = self.userInfoModel?.dailyScore ?? 0
+            }
+        }
     }
     
     //Eğer kullanıcı o gün ilk defa giriyorsa +10 puan vericez.
@@ -111,23 +116,25 @@ final class HomeViewModel: ObservableObject {
             return
         }
         
-        guard let userInfoModel = self.userInfoModel else {
+        guard self.userInfoModel != nil else {
             print("userInfoModel bulunamadı")
             return
         }
+
         
-        var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname)
+        var currentUserInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname)
         
-        userInfo.dailyScore = userInfoModel.dailyScore + increaseBy
-        userInfo.totalScore = userInfoModel.totalScore + increaseBy
+        currentUserInfo.dailyScore += self.userInfoModel!.dailyScore + increaseBy
+        currentUserInfo.totalScore += self.userInfoModel!.totalScore + increaseBy
         
-        print("userInfoModel dailyscore: \(userInfo.dailyScore)")
-        print("userInfoModel dailyscore: \(userInfo.totalScore)")
-        print("userInfo dailyscore: \(userInfo.dailyScore)")
-        print("userInfo dailyscore: \(userInfo.totalScore)")
+        print("Yeni dailyScore: \(currentUserInfo.dailyScore)")
+        print("Yeni totalScore: \(currentUserInfo.totalScore)")
         print("dailyscore: \(increaseBy)")
-            homeService.increaseUserInfoPoints(for: userInfo) { result in
+        
+            homeService.increaseUserInfoPoints(for: currentUserInfo) { result in
                 if result {
+                    self.userInfoModel = currentUserInfo
+                    self.dailyProgressBarPoint = currentUserInfo.dailyScore
                     print("Kullanıcı puanları başarılı şekilde güncellendi.")
                 }else {
                     print("Puan güncelleme işlemi başarısız oldu.")
