@@ -21,31 +21,36 @@ struct DailyProgressView: View {
                 Text("Daily Progress")
                     .font(.headline)
                     .foregroundColor(.white)
+                ZStack{
+                    ZStack(alignment: .leading) {
+                        // Arka Plan Çubuğu
+                        RoundedRectangle(cornerRadius: 12)
+                            .frame(width: 300, height: 20)
+                            .foregroundColor(Color.black.opacity(0.3))
+                        
+                        RoundedRectangle(cornerRadius: 12)
+                            .frame(width: min(CGFloat(progress / totalPoints) * 300, 300), height: 20)
+                            .foregroundColor(progress <= 99 ? .green : .yellow.opacity(0.9))
+                            .animation(.easeInOut(duration: 1), value: progress)
+                            .shadow(color: progress >= totalPoints ? Color.yellow : Color.clear,
+                                    radius: progress >= totalPoints ? 10 : 0,
+                                    x: 0,
+                                    y: 0)
+                        
+                        
+                    }
+                    Text("\(Int(progress))/\(Int(totalPoints))")
+                        .font(.subheadline.bold())
+                        .foregroundColor(.white)
 
-                ZStack(alignment: .leading) {
-                    // Arka Plan Çubuğu
-                    RoundedRectangle(cornerRadius: 12)
-                        .frame(width: 300, height: 20)
-                        .foregroundColor(Color.black.opacity(0.3))
-                    
-                    // İlerleme Çubuğu: progress değeri değiştiğinde animasyonla genişliğini günceller.
-                    RoundedRectangle(cornerRadius: 12)
-                        .frame(width: min(CGFloat(progress / totalPoints) * 300, 300), height: 20)
-                        .foregroundColor(progress <= 100 ? .green : .yellow.opacity(0.9))
-                        .animation(.easeInOut(duration: 1), value: progress)
-                        .shadow(color: progress >= totalPoints ? Color.yellow : Color.clear,
-                                                        radius: progress >= totalPoints ? 10 : 0,
-                                                        x: 0,
-                                                        y: 0)
                 }
                 
-                Text("\(Int(progress))/\(Int(totalPoints))")
-                    .font(.subheadline)
-                    .foregroundColor(.white)
+                
             }
             .frame(width: geometry.size.width, height: geometry.size.height, alignment: .center)
+
         }
-        .frame(height: 100)
+        .frame(height: 80)
     }
 }
 
