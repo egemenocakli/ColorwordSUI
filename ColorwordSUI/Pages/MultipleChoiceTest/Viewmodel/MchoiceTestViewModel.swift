@@ -8,6 +8,10 @@
 import Foundation
 import SwiftUI
 
+//Service methods:
+//      -> getWordList
+//      -> getUserAnswer
+//      -> increaseDailyAndTotalScore
 
 class MchoiceTestViewModel: ObservableObject {
     @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
@@ -198,10 +202,6 @@ class MchoiceTestViewModel: ObservableObject {
                 }
             }
         }
-        
-
-        
-        
 
         
     }
@@ -273,6 +273,7 @@ class MchoiceTestViewModel: ObservableObject {
         """
     }
 
+        
 }
 
 
