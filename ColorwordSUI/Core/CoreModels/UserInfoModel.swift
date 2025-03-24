@@ -12,7 +12,6 @@ import FirebaseFirestore
 
 struct UserInfoModel: Identifiable {
     var id: String = "userInfo"
-    
     var userId: String
     var email: String
     var name: String

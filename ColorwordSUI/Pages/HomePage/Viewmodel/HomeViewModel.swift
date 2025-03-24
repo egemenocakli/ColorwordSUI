@@ -45,12 +45,10 @@ final class HomeViewModel: ObservableObject {
             return
         }
         homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
+            UserSessionManager.shared.updateUserInfoModel(with: userInfoModel!)
             self.userInfoModel = userInfoModel
             self.resetDailyScoreIfFirstTime()
 
-//                    DispatchQueue.main.async {
-//                        self.dailyProgressBarPoint = userInfoModel?.dailyScore ?? 0
-//                    }
         }
     }
     
