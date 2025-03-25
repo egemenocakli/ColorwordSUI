@@ -189,8 +189,8 @@ class MchoiceTestViewModel: ObservableObject {
         
         
         if var userInfoModel = UserSessionManager.shared.userInfoModel {
-            userInfoModel.dailyScore = UserSessionManager.shared.userInfoModel!.dailyScore + 5
-            userInfoModel.totalScore = UserSessionManager.shared.userInfoModel!.totalScore + 5
+            userInfoModel.dailyScore = UserSessionManager.shared.userInfoModel!.dailyScore + Constants.ScoreConstants.multipleChoiceQuestionScore
+            userInfoModel.totalScore = UserSessionManager.shared.userInfoModel!.totalScore + Constants.ScoreConstants.multipleChoiceQuestionScore
             
             UserSessionManager.shared.updateUserInfoModel(with: userInfoModel)
             

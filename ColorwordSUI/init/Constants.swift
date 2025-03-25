@@ -69,7 +69,7 @@ class Constants {
         static let wrongButtonColor: Color = Color(hex: "C62828")!
         
         static let toastMessageBackgroundColor: Color = Color.black.opacity(0.7)
-        static let optionButtonBackgroundColor: Color = Color.black.opacity(0.12)
+        static let optionButtonBackgroundColor: Color = Color.mChoiceButtonBackground
         static let grayButtonColor: Color = Color.white.opacity(0.6)
         static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
         
@@ -135,6 +135,13 @@ class Constants {
         static let standardSpringAnimation: TimeInterval = 0.5
         static let shortTimer: TimeInterval = 0.7
         static let normalTimer: TimeInterval = 1
+    }
+    
+    class ScoreConstants {
+        static let dailyLoginScoreBonus: Int = 10
+        static let dailyMaxScore: Double = 100
+        static let multipleChoiceQuestionScore: Int = 5
+        
     }
 }
 

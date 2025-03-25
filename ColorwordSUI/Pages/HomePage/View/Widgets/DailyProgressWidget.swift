@@ -12,7 +12,7 @@ import SwiftUI
 //TODO: Ölçü ve renkler constantstan alınacak. language eklenecek
 struct DailyProgressView: View {
     var progress: Double
-    let totalPoints: Double = 100
+    let totalPoints: Double = Constants.ScoreConstants.dailyMaxScore
 
     var body: some View {
         GeometryReader { geometry in

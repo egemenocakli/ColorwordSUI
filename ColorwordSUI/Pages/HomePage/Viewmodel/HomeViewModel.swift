@@ -76,14 +76,14 @@ final class HomeViewModel: ObservableObject {
             
             var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname)
             
-            userInfo.dailyScore = 10
-            userInfo.totalScore = userInfoModel.totalScore + 10
+            userInfo.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
+            userInfo.totalScore = userInfoModel.totalScore + Constants.ScoreConstants.dailyLoginScoreBonus
                 
                 self.homeService.increaseUserInfoPoints(for: userInfo) { result in
                     if result {
                         print("Kullanıcı puanları başarılı şekilde sıfırlandı.")
-                        self.userInfoModel?.dailyScore = 10
-                        self.dailyProgressBarPoint = 10
+                        self.userInfoModel?.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
+                        self.dailyProgressBarPoint = Constants.ScoreConstants.dailyLoginScoreBonus
                     }else {
                         print("Puan sıfırlama işlemi başarısız oldu.")
                     }
