@@ -35,11 +35,7 @@ struct HomeView: View {
                     
                     VStack {
                         
-                        //TODO: Günlük kazanılan puan tutulacak. Belki girişten bile +10 puan verilebilir. Ancak hangi kelimeye
-                        //TODO: yansıyacak o kısım dert.
-                        // ilk girişte 0/10 olacak. 10 u aşarsa 10/25 falan 25 i aşarsa 25/100 olacak şeklinde devam edecek.
-                        //Renkler açık temaya da uyarlanacak
-                        DailyProgressView(progress: Double(homeVM.dailyProgressBarPoint))
+                        DailyProgressView(progress: Double(homeVM.dailyProgressBarPoint),dailyTarget: Double(homeVM.dailyTarget))
 
                         
                         // Kategori Grid

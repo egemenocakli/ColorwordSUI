@@ -122,17 +122,15 @@ class FirestoreService: FirestoreInterface {
             guard let data = snapshot?.data() else {
                 print("❌ Belge bulunamadı. Oluşturulacak metoda yönlendirildi.")
                 
-                self.createOrUpdateUserInfo(user: UserInfoModel(userId: UserSessionManager.shared.currentUser!.userId, email: UserSessionManager.shared.currentUser!.email, name: UserSessionManager.shared.currentUser!.name, lastname: UserSessionManager.shared.currentUser!.lastname)) { success in
-                    
-                    if success {
-                        completion(nil)
-                    }
-                    else {
-                        completion(nil)
-                    }
+                self.createOrUpdateUserInfo(user: UserInfoModel(
+                    userId: UserSessionManager.shared.currentUser!.userId,
+                    email: UserSessionManager.shared.currentUser!.email,
+                    name: UserSessionManager.shared.currentUser!.name,
+                    lastname: UserSessionManager.shared.currentUser!.lastname,
+                    dailyTarget: Constants.ScoreConstants.dailyTargetScore, dailyScore: 10
+                )) { success in
+                    completion(nil)
                 }
-                
-                completion(nil)
                 return
             }
             
@@ -204,6 +202,36 @@ class FirestoreService: FirestoreInterface {
         
         }
 
+    
+    func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
+        
+        
+        guard !userInfo.userId.isEmpty else {
+            print("❌ Geçersiz userInfo, userId boş!")
+            completion(false)
+            return
+        }
+        
+        let docRef = db.collection("users").document(userInfo.userId)
+            .collection("userInfo")
+            .document("userInfo")
+        
+        let updates : [String : Any] = [
+            "dailyTarget" : userInfo.dailyTarget,
+            ]
+        docRef.updateData(updates) { error in
+            
+            if let error = error {
+                print("❌ Update error: \(error.localizedDescription)")
+                completion(false)
+            }else {
+                print("✅ Günlük skor hedefiniz \(userInfo.dailyTarget) olarak başarıyla güncellendi.")
+                completion(true)
+                }
+            
+            }
+        
+        }
     }
 
     

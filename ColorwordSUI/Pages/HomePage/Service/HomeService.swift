@@ -10,6 +10,8 @@ protocol HomeServiceInterface {
     func fetchUserDailyPoint(userId: String, completion: @escaping (UserInfoModel?) -> Void)
     func increaseUserInfoPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func resetDailyScoreIfFirstTime(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
+    func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
+    
 }
 
 class HomeService {
@@ -43,4 +45,10 @@ class HomeService {
         }
     }
     
+    func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
+        
+        firestoreService.changeDailyTarget(for: userInfo) { result in
+            completion(result)
+        }
+    }
 }

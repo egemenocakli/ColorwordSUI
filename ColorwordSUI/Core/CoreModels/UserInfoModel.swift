@@ -17,8 +17,9 @@ struct UserInfoModel: Identifiable {
     var name: String
     var lastname: String
     var photo: String
-    var totalScore: Int
-    var dailyScore: Int
+    var totalScore: Int       //Kullanıcının genel scoru
+    var dailyScore: Int       //Günlük kullanıcının yaptığı score
+    var dailyTarget: Int      // Günlük hedef puan
     var dailyScoreDate: Date? // Sunucu zamanını Date olarak saklamak
     
     // Firestore’a yazarken sözlüğe dönüştürmek için
@@ -31,7 +32,7 @@ struct UserInfoModel: Identifiable {
             "photo": photo,
             "totalScore": totalScore,
             "dailyScore": dailyScore,
-            // Firestore’da tarih saklarken FieldValue.serverTimestamp() ya da Date -> Timestamp kullanabilirsin
+            "dailyTarget": dailyTarget,
             "dailyScoreDate": dailyScoreDate ?? FieldValue.serverTimestamp()
         ]
     }
@@ -44,6 +45,7 @@ struct UserInfoModel: Identifiable {
               let lastname = dictionary["lastname"] as? String,
               let photo = dictionary["photo"] as? String,
               let totalScore = dictionary["totalScore"] as? Int,
+              let dailyTarget = dictionary["dailyTarget"] as? Int,
               let dailyScore = dictionary["dailyScore"] as? Int
         else {
             return nil
@@ -62,6 +64,7 @@ struct UserInfoModel: Identifiable {
         self.lastname = lastname
         self.photo = photo
         self.totalScore = totalScore
+        self.dailyTarget = dailyTarget
         self.dailyScore = dailyScore
         self.dailyScoreDate = dateValue
     }
@@ -73,6 +76,7 @@ struct UserInfoModel: Identifiable {
          lastname: String,
          photo: String = "empty",
          totalScore: Int = 0,
+         dailyTarget: Int,
          dailyScore: Int = 0,
          dailyScoreDate: Date? = nil,
          id: String = "userInfo") {
@@ -84,6 +88,7 @@ struct UserInfoModel: Identifiable {
         self.lastname = lastname
         self.photo = photo
         self.totalScore = totalScore
+        self.dailyTarget = dailyTarget
         self.dailyScore = dailyScore
         self.dailyScoreDate = dailyScoreDate
     }

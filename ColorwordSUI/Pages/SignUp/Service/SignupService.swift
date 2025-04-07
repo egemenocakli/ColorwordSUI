@@ -42,7 +42,7 @@ class SignupService: FirebaseAuthService, SignupInterface {
     /// **Kullanıcı bilgilerini Firestore’a ekler. UserInfo bilgisi olarak bir model daha tutuluyor, bu bilgileri burada model içeriğini dolduruyoruz**
     func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void) {
         
-        firestoreService.createOrUpdateUserInfo(user: UserInfoModel(userId: userId, email: email, name: name, lastname: lastName)) { success in
+        firestoreService.createOrUpdateUserInfo(user: UserInfoModel(userId: userId, email: email, name: name, lastname: lastName, dailyTarget: 100)) { success in
             if success {
                 print("✅ Firestore'da kullanıcı bilgileri başarıyla kaydedildi.")
                 completion(.success(true))

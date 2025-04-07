@@ -15,5 +15,6 @@ protocol FirestoreInterface {
     func fetchUserInfo (userId: String, completion: @escaping (UserInfoModel?) -> Void)
     func increaseDailyPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func resetDailyScore(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
+    func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
 
 }

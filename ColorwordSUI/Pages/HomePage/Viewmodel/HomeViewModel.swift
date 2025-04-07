@@ -12,8 +12,10 @@ final class HomeViewModel: ObservableObject {
     let userPreferences = UserPreferences()
     let keychainEncrpyter = KeychainEncrpyter()
     @Published var dailyProgressBarPoint: Int = 0
+    @Published var dailyTarget: Int = 100
     @Published var loginSuccess: Bool = false
     @Published var userInfoModel: UserInfoModel?
+    
 
     //Burada autologinden userId içeriği henüz dolmadan fetchUserDailyPoint çağrılıyor o sebepten signletona çevirdim.
     static let shared = HomeViewModel()
@@ -44,18 +46,19 @@ final class HomeViewModel: ObservableObject {
             dailyProgressBarPoint = 0
             return
         }
+        
         homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
             UserSessionManager.shared.updateUserInfoModel(with: userInfoModel!)
             self.userInfoModel = userInfoModel
             self.resetDailyScoreIfFirstTime()
+            self.dailyTarget = userInfoModel?.dailyTarget ?? Constants.ScoreConstants.dailyTargetScore
 
         }
     }
     
 
     
-    //TODO: Şuanda tek sorun: Geçmişte kullanıcı 40 puandaysa bar önce 40 a gidiyo sonra yeni gün olduğundan 10 a düşüyor
-    //Eğer o gün ilk defa giriş yapıyorsa +10 verecek method
+
     //Alert olacak +10 sebebi olarak bir bildirim olabilir
     func resetDailyScoreIfFirstTime () {
         
@@ -74,7 +77,7 @@ final class HomeViewModel: ObservableObject {
             }
             
             
-            var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname)
+            var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname, dailyTarget: userInfoModel.dailyTarget)
             
             userInfo.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
             userInfo.totalScore = userInfoModel.totalScore + Constants.ScoreConstants.dailyLoginScoreBonus
@@ -120,7 +123,7 @@ final class HomeViewModel: ObservableObject {
         }
 
         
-        var currentUserInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname)
+        var currentUserInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname, dailyTarget: userInfoModel?.dailyTarget ?? Constants.ScoreConstants.dailyTargetScore)
         
         currentUserInfo.dailyScore += self.userInfoModel!.dailyScore + increaseBy
         currentUserInfo.totalScore += self.userInfoModel!.totalScore + increaseBy
@@ -140,4 +143,36 @@ final class HomeViewModel: ObservableObject {
             }
         
     }
+    
+    
+    func updateDailyTarget (dailyTarget: Int) {
+        
+
+        guard let currentUser = UserSessionManager.shared.currentUser else {
+            print("UserSessionManager.shared.currentUser bulunamadı")
+            return
+        }
+        
+        guard self.userInfoModel != nil else {
+            print("userInfoModel bulunamadı")
+            return
+        }
+            
+        var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname, dailyTarget: Constants.ScoreConstants.dailyTargetScore)
+            
+        userInfo.dailyTarget = dailyTarget
+                
+        self.homeService.changeDailyTarget (for: userInfo) { result in
+                    if result {
+                        print("Hedef skor güncellendi." )
+                        self.userInfoModel?.dailyTarget = Constants.ScoreConstants.dailyTargetScore
+                        self.fetchUserDailyPoint()
+                    }else {
+                        print("Hedef skor güncellenemedi.")
+                    }
+            }
+        }
+
+    
+    
 }
