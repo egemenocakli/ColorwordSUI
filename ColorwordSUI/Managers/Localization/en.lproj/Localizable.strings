@@ -37,3 +37,5 @@
 "close" = "Close";
 "loading" = "Loading...";
 
+//HomePage
+"daily_target" = "Daily Target";

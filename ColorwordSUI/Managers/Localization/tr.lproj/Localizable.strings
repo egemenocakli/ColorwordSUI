@@ -37,6 +37,8 @@
 "close" = "Kapat";
 "loading" = "Yükleniyor...";
 
+//HomePage
+"daily_target" = "Günlük Hedef";
 
 
 

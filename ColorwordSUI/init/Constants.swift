@@ -54,7 +54,9 @@ class Constants {
         
         //Main
         static let blackColor: Color = Color.black
+        static let blackTextColor: Color = Color.black
         static let whiteColor: Color = Color.white
+        static let whiteTextColor: Color = Color.white
         static let gray: Color = Color.gray
         static let placeHolderTextColor: Color = Color.white.opacity(0.40)
         static let borderColor: Color = Color.white.opacity(0.50)
@@ -128,6 +130,7 @@ class Constants {
         static let wrongButton = "xmark.circle"
         static let settingsButton = "gearshape.fill"
         static let logOutButton = "rectangle.portrait.and.arrow.right"
+        static let okButtonRectangle = "checkmark.rectangle.fill"
     }
     /// **tooShortTimer: 0.2, standardSpringAnimation: 0.5, shortTimer: 0.7, normalTimer: 1**
     class TimerTypeConstants {

@@ -50,11 +50,11 @@ struct HomeView: View {
                         
                         Spacer()
                         
-                        Button {
-                            homeVM.increaseUserInfoPoints(increaseBy: 10)
-                        } label: {
-                            Text("DailyPoint arttır")
-                        }
+//                        Button {
+//                            homeVM.increaseUserInfoPoints(increaseBy: 10)
+//                        } label: {
+//                            Text("DailyPoint arttır")
+//                        }
 
 
                     }
