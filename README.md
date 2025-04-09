@@ -4,8 +4,8 @@
 </a>
 
 <!-- Ekran Görüntüsü 2 -->
-<a href="https://ibb.co/HLwzj7GG">
-    <img src="https://i.ibb.co/dsC2RBkk/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-28-09.png" width="200">
+<a href="https://postimg.cc/GBfh1cHs">
+    <img src="https://i.postimg.cc/qRJtyqrQ/Simulator.png" width="200">
 </a>
 
 <!-- Ekran Görüntüsü 3 -->
