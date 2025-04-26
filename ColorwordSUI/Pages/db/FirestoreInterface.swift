@@ -9,7 +9,7 @@ import Foundation
 
 protocol FirestoreInterface {
     func getWordList() async throws -> [Word]
-    func increaseWordScore(word: Word, points: Int) async throws
+//    func increaseWordScore(word: Word, points: Int) async throws
     func decreaseWordScore(word: Word, points: Int) async throws
     func createOrUpdateUserInfo(user: UserInfoModel, completion: @escaping (Bool) -> Void)
     func fetchUserInfo (userId: String, completion: @escaping (UserInfoModel?) -> Void)
