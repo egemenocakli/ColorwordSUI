@@ -94,6 +94,8 @@ class Constants {
         static let xlSize: CGFloat = 100
         static let xxlSize: CGFloat = 150
         static let xxxlSize: CGFloat = 200
+        static let fabButtonTrailing: CGFloat = 20
+        static let fabButtonBottom: CGFloat = 5
     }
     
     /// **xxSmall: 8, xSmall: 10, small: 12, medium: 15, large: 20, xLarge: 30**
@@ -131,6 +133,8 @@ class Constants {
         static let settingsButton = "gearshape.fill"
         static let logOutButton = "rectangle.portrait.and.arrow.right"
         static let okButtonRectangle = "checkmark.rectangle.fill"
+        static let addButtonRectangle = "plus"
+        static let deleteButtonRectangle = "trash"
     }
     /// **tooShortTimer: 0.2, standardSpringAnimation: 0.5, shortTimer: 0.7, normalTimer: 1**
     class TimerTypeConstants {

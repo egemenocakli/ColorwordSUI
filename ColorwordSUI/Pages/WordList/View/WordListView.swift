@@ -13,7 +13,7 @@ struct WordListView: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     @State private var selectedTabIndex = 0
-    @State private var navigateToLogin = false 
+    @State private var navigateToLogin = false
     @State private var selectedTab = 0
 
     var body: some View {
@@ -41,7 +41,7 @@ struct WordListView: View {
                             }
                     }
 
-                    
+
                 }
                 .background(
                     Color(Color(hex: wordListVM.wordBackgroundColor)!)
@@ -49,6 +49,46 @@ struct WordListView: View {
                 )                .edgesIgnoringSafeArea(.all)
                 .task {
                     await wordListVM.getWordList()
+                }
+                
+                //TODO: constants vs düzenlenecek.
+                VStack {
+                    
+                    Spacer()
+                    
+                        HStack {
+                            Spacer()
+                            Button(action: {
+                                // FAB'a tıklanınca olacaklar
+                            }) {
+                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
+                                    .foregroundColor(.white)
+                                    .padding()
+                                    .background(.green)
+                                    .clipShape(RoundedRectangle(cornerRadius: 15))
+                                    .shadow(radius: 4)
+                            }
+                            .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
+                            .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+                        }
+                    
+                    HStack {
+                        Spacer()
+                        //TODO: kelime silme eklenecek ve silmeden önce alert ile sorulacak.
+                        //Hatta belki tüm listeyi silme eklenecek ve silmeden önce yine sorulacak.
+                        Button(action: {
+                            // FAB'a tıklanınca olacaklar
+                        }) {
+                            Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
+                                .foregroundColor(.white)
+                                .padding()
+                                .background(.red)
+                                .clipShape(RoundedRectangle(cornerRadius: 15))
+                                .shadow(radius: 4)
+                        }
+                        .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
+                        .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+                    }
                 }
                 
                 NextButtonWidgets(selectedTabIndex: $selectedTabIndex, wordListVM: wordListVM)
@@ -64,7 +104,7 @@ struct WordListView: View {
 }
 
 //#Preview {
-//    
+//
 //    HomeView().environmentObject(LanguageManager())
 //
 //}
