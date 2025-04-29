@@ -74,6 +74,7 @@ class Constants {
         static let optionButtonBackgroundColor: Color = Color.mChoiceButtonBackground
         static let grayButtonColor: Color = Color.white.opacity(0.6)
         static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
+        static let buttonForegroundColor: Color = Color.white
         
     }
     /// **xSmallSize: 10, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
@@ -100,6 +101,7 @@ class Constants {
     
     /// **xxSmall: 8, xSmall: 10, small: 12, medium: 15, large: 20, xLarge: 30**
     class SizeRadiusConstants {
+        static let buttonShadowRadius: CGFloat = 4
         static let xxSmall: CGFloat = 8
         static let xSmall: CGFloat = 10
         static let small: CGFloat = 12

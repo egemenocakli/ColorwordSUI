@@ -15,6 +15,8 @@ struct WordListView: View {
     @State private var selectedTabIndex = 0
     @State private var navigateToLogin = false
     @State private var selectedTab = 0
+    
+    @State private var showAddWordView = false
 
     var body: some View {
         NavigationView {
@@ -52,6 +54,7 @@ struct WordListView: View {
                 }
                 
                 //TODO: constants vs düzenlenecek.
+                //button genel bir fab buton olarak common widgets için eklenebilir.
                 VStack {
                     
                     Spacer()
@@ -60,16 +63,20 @@ struct WordListView: View {
                             Spacer()
                             Button(action: {
                                 // FAB'a tıklanınca olacaklar
+                                showAddWordView = true
                             }) {
                                 Image(systemName: Constants.IconTextConstants.addButtonRectangle)
-                                    .foregroundColor(.white)
+                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
                                     .padding()
-                                    .background(.green)
-                                    .clipShape(RoundedRectangle(cornerRadius: 15))
-                                    .shadow(radius: 4)
+                                    .background(.addFabButton)
+                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
                             }
                             .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
                             .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+                        }
+                        .navigationDestination(isPresented: $showAddWordView) {
+                            AddNewWordView()
                         }
                     
                     HStack {
@@ -80,11 +87,11 @@ struct WordListView: View {
                             // FAB'a tıklanınca olacaklar
                         }) {
                             Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
-                                .foregroundColor(.white)
+                                .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
                                 .padding()
-                                .background(.red)
-                                .clipShape(RoundedRectangle(cornerRadius: 15))
-                                .shadow(radius: 4)
+                                .background(.deleteFabButton)
+                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
                         }
                         .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
                         .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
