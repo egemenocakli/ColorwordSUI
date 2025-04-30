@@ -76,7 +76,11 @@ struct WordListView: View {
                             .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
                         }
                         .navigationDestination(isPresented: $showAddWordView) {
-                            AddNewWordView()
+                            if #available(iOS 18.0, *) {
+                                AddNewWordView()
+                            } else {
+                                // Fallback on earlier versions
+                            }
                         }
                     
                     HStack {
