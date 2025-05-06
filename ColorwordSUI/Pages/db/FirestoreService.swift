@@ -244,6 +244,18 @@ class FirestoreService: FirestoreInterface {
             }
         
         }
+    
+    func getAzureK() async throws -> String? {
+        let documentRef = db.collection("infos").document("sUbzxOQNmxGTATsDfh35")
+        
+        let documentSnapshot = try await documentRef.getDocument()
+        
+        if let data = documentSnapshot.data(), let azureK = data["azureK"] as? String {
+            return azureK
+        } else {
+            return nil
+            }
+        }
     }
 
     

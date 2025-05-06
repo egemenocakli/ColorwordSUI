@@ -16,6 +16,11 @@ struct AddNewWordView: View {
 
                 GeometryReader { geometry in
                     VStack {
+                        Button{
+                            addNewWordVM.cacheverisil()
+                        }label: {
+                            Text("cachedeki veriyi sil")
+                        }
                         Text("Hedef dil seçiniz")
                             .padding(.top, 100)
 
@@ -64,7 +69,15 @@ struct AddNewWordView: View {
                             .limitTextEditorCharacters($addNewWordVM.enteredWord, limit: 40)
                         Button(action: {
                             // Çeviri butonuna tıklandığında işlem yapılır.
-                            addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
+                            Task{
+                                addNewWordVM.loadAzureKFromKeychain()
+                                
+                                addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
+                            }
+                            
+//                            Task{
+//                                await $addNewWordVM.getAzureK
+//                            }
                         }) {
                             Text("Çevir")
                                 
@@ -90,6 +103,8 @@ struct AddNewWordView: View {
                     }
                     .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                     .preferredColorScheme(themeManager.colorScheme)
+                    
+                    
                 }
             }
         }

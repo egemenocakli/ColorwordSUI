@@ -17,6 +17,9 @@ class SignupViewModel: ObservableObject {
     @Published var lastName: String = ""
     @Published var signupResultMessage: String?
     var validationManager = ValidationManager()
+    
+    let userPreferences = UserPreferences()
+    let keychainEncrpyter = KeychainEncrpyter()
 
     func signup(completion: @escaping (Bool) -> Void) {
         // **1. ValidationManager ile kontrol et**
@@ -62,6 +65,13 @@ class SignupViewModel: ObservableObject {
                 case .success(let userId):
                     print("✅ Kullanıcı başarıyla kaydedildi. Kullanıcı ID: \(userId)")
                     self.signupResultMessage = Bundle.main.localizedString(forKey: "registration_success", value: nil, table: nil)
+                    Task{
+                        do{
+                            try await self.getAzureK()
+                        }catch{
+                            throw error
+                        }
+                    }
                     completion(true)
 
                 case .failure(let error):
@@ -83,5 +93,18 @@ class SignupViewModel: ObservableObject {
         case .invalidEmail:
             return Bundle.main.localizedString(forKey: "email_message", value: nil, table: nil)
         }
+    }
+    func getAzureK() async throws -> String? {
+        let azureK: String?
+        do{
+            azureK = try await signupService.getAzureK() ?? ""
+//            userPreferences.savedAzureK = azureK ?? ""
+            keychainEncrpyter.saveAzureK(azureK ?? "")
+            
+            print(userPreferences.savedAzureK)
+        }catch{
+            throw error
+        }
+        return azureK
     }
 }
