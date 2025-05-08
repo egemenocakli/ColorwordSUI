@@ -56,8 +56,13 @@ class KeychainEncrpyter {
     }
     
     func saveAzureK(_ userAzureK: String) {
+        let trimmed = userAzureK.trimmingCharacters(in: .whitespacesAndNewlines)
+        guard !trimmed.isEmpty else {
+            print("Boş AzureK kaydedilmedi.")
+            return
+        }
         do {
-            try keychain.set(userAzureK, key: "userAzureK")
+            try keychain.set(trimmed, key: "userAzureK")
             print("userAzureK keychain'e kaydedildi.")
         } catch let error {
             print("Keychain'e kaydetme hatası: \(error)")

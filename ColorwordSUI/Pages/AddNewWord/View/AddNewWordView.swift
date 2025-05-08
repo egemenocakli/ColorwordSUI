@@ -7,8 +7,10 @@ struct AddNewWordView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var addNewWordVM = AddNewWordViewModel()
     
+    @State var showPicker = false
 
 
+//TODO: localization eklenecek
     var body: some View {
         NavigationStack {
             ZStack {
@@ -16,13 +18,11 @@ struct AddNewWordView: View {
 
                 GeometryReader { geometry in
                     VStack {
-                        Button{
-                            addNewWordVM.cacheverisil()
-                        }label: {
-                            Text("cachedeki veriyi sil")
-                        }
+
                         Text("Hedef dil seçiniz")
-                            .padding(.top, 100)
+                            .fontWeight(.bold)
+                            .padding(.top, 50)
+                            .foregroundStyle(.white)
 
                         HStack {
                             Button {
@@ -30,9 +30,10 @@ struct AddNewWordView: View {
                                 addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
                             } label: {
                                 Text("TR")
-                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.blue)
                                     .padding()
-                                    .background(Constants.ColorConstants.signUpButtonColor)
+                                    .background(Constants.ColorConstants.whiteColor)
                                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
                                     .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
                             }
@@ -40,14 +41,23 @@ struct AddNewWordView: View {
                             .padding(.horizontal, 50)
                             .padding(.vertical, 10)
 
+                            //iki dil seçeneğini değiştir.
+                            Button{
+                                
+                            }label: {
+                                Image(systemName: "arrow.left.arrow.right")
+                                    .frame(width: 60,height: 60)
+                                    .foregroundStyle(.white.opacity(0.8))
+                            }
                             Button {
                                 // Dili İngilizce yap
                                 addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "tr", to: "en")
                             } label: {
                                 Text("EN")
-                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
+                                    .fontWeight(.bold)
+                                    .foregroundColor(.blue)
                                     .padding()
-                                    .background(Constants.ColorConstants.signUpButtonColor)
+                                    .background(Constants.ColorConstants.whiteColor)
                                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
                                     .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
                             }
@@ -70,7 +80,7 @@ struct AddNewWordView: View {
                         Button(action: {
                             // Çeviri butonuna tıklandığında işlem yapılır.
                             Task{
-                                addNewWordVM.loadAzureKFromKeychain()
+//                                addNewWordVM.loadAzureKFromKeychain()
                                 
                                 addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
                             }
@@ -101,9 +111,22 @@ struct AddNewWordView: View {
 
                         Spacer()
                     }
+                    .onAppear(){
+                        addNewWordVM.loadAzureKFromKeychain()
+                    }
                     .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                     .preferredColorScheme(themeManager.colorScheme)
+                    .onTapGesture {
+                        showPicker.toggle()
+                    }
+                    .sheet(isPresented: $showPicker, content: {
+                        BottomSheetPicker(showPicker: $showPicker, viewModel: addNewWordVM)
+                            .presentationDetents([.fraction(0.1)])
+                            .presentationCornerRadius(Constants.SizeRadiusConstants.large)
+
+                    })
                     
+                    .frame(height: 80)
                     
                 }
             }

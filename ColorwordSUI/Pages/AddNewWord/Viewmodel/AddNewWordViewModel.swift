@@ -14,29 +14,24 @@ class AddNewWordViewModel: ObservableObject {
     @Published var enteredWord: String = ""
     @Published var translatedText: String = ""
     @Published var errorMessage: String?
-    
     @Published var savedAzureK: String = ""
-
-    let region = "westeurope"
-    let endPoint = "https://turkiye-avrupa.cognitiveservices.azure.com"
     
-    private let firestoreService = FirestoreService()
+    private let addNewWordService = AddNewWordService()
+    
 
-//TODO: istek atarken kayıt esnasında alınamamış key için ekstra bir yöntem.
-    func cacheverisil(){
-        keychainEncrypter.deleteAzureK()
-    }
+    //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
     func loadAzureKFromKeychain()  {
         // Keychain'den AzureK'yi al
         if let loadedAzureK = keychainEncrypter.loadAzureK() {
             self.savedAzureK = loadedAzureK
             debugPrint("AzureK Keychain'den çekildi.")
+
         } else {
             // Eğer Keychain'den alınamıyorsa, Firestore'dan çek ve kaydet
             Task {
                 do {
-                    let azureKFromFirestore = try await firestoreService.getAzureK() ?? ""
+                    let azureKFromFirestore = try await addNewWordService.getAzureK() ?? ""
                     self.savedAzureK = azureKFromFirestore
                     // Keychain'e kaydet
                     keychainEncrypter.saveAzureK(savedAzureK)
@@ -52,10 +47,9 @@ class AddNewWordViewModel: ObservableObject {
     
     func translate(text: String, from sourceLang: String, to targetLang: String) {
         
-        //Dil bilgilerini modeldeki path ile al
         let translationRequest = TranslationRequest(text: text, sourceLang: sourceLang, targetLang: targetLang)
         
-        guard let url = URL(string: endPoint + translationRequest.path) else {
+        guard let url = URL(string: AzureAPIConstants.endPoint + translationRequest.path) else {
             errorMessage = "Geçersiz URL"
             return
         }

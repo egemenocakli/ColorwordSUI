@@ -17,4 +17,7 @@ struct AzureAPIConstants {
     static let contentTypeHTTPHeaderField = "Content-Type"
     static let contentTypeValue = "application/json"
     
+    static let endPoint = "https://turkiye-avrupa.cognitiveservices.azure.com"
+
+    
 }
