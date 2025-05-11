@@ -1,11 +1,11 @@
-struct Language: Identifiable {
+struct Language: Identifiable, Hashable {
     let id: String // ISO kod
     let name: String // Türkçe ad
     let nameEn: String // English ad
 }
 
 let supportedLanguages: [Language] = [
-    Language(id: "af", name: "Afrikaanca", nameEn: "Afrikaans"),
+    Language(id: "af", name: "Afrikanca", nameEn: "Afrikaans"),
     Language(id: "de", name: "Almanca", nameEn: "German"),
     Language(id: "sq", name: "Arnavutça", nameEn: "Albanian"),
     Language(id: "ar", name: "Arapça", nameEn: "Arabic"),
@@ -132,11 +132,11 @@ let supportedLanguages: [Language] = [
     Language(id: "el", name: "Yunanca", nameEn: "Greek"),
     Language(id: "xh", name: "Zosa Dili", nameEn: "Xhosa"),
     Language(id: "zu", name: "Zuluca", nameEn: "Zulu"),
-    Language(id: "kn", name: "kannada Dili", nameEn: "Kannada"),
-    Language(id: "km", name: "khmer Dili", nameEn: "Khmer"),
+    Language(id: "kn", name: "Kannada Dili", nameEn: "Kannada"),
+    Language(id: "km", name: "Khmer Dili", nameEn: "Khmer"),
     Language(id: "tlh-Piqd", name: "klingonca (Latin)", nameEn: "Klingon"),
     Language(id: "ug", name: "Uygur Dili (Arapça)", nameEn: "Uyghur Arabic"),
-    Language(id: "am", name: "‘Amharca", nameEn: "Amharic"),
-    Language(id: "as", name: "‘Assamca", nameEn: "Assamca"),
-    Language(id: "az", name: "‘Azerbaycan Dili", nameEn: "Azerbaijani"),
+    Language(id: "am", name: "Amharca", nameEn: "Amharic"),
+    Language(id: "as", name: "Assamca", nameEn: "Assamca"),
+    Language(id: "az", name: "Azerbaycan Dili", nameEn: "Azerbaijani"),
 ]
