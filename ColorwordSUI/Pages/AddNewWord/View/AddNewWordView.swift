@@ -10,10 +10,9 @@ struct AddNewWordView: View {
     @State var showPicker = false
 
 
-    @State private var selectedValue = "One"
-    let counts = ["One", "Two", "Three"]
     
 //TODO: localization eklenecek
+    //widgetlar dağıtılacak ve temizlenecek.
     var body: some View {
         NavigationStack {
             ZStack {
@@ -25,63 +24,13 @@ struct AddNewWordView: View {
                         
                         Text("Hedef dil seçiniz")
                             .fontWeight(.bold)
-                            .padding(.top, 200)
+                            .padding(.top, 100)
                             .foregroundStyle(.white)
                         
-                        ContentView(selectedLanguage: supportedLanguages[45], targetLanguage: supportedLanguages[116])
+                        LanguagePicker(selectedLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[46], targetLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[117], addNewWordVM: addNewWordVM)
+                            .padding(10)
                         
-                        
-//                        HStack {
-                            //                            ContentView(selectedLanguage: supportedLanguages[45])
-                            //                                .frame(width: 130, height: 50)
-                            
-                            //
-                            //                            Button {
-                            //                                // Dili Türkçe yap
-                            ////                                addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
-                            //
-                            //                                    showPicker.toggle()
-                            //
-                            //                            } label: {
-                            //                                Text("TR")
-                            //                                    .fontWeight(.bold)
-                            //                                    .foregroundColor(.blue)
-                            //                                    .padding()
-                            //                                    .background(Constants.ColorConstants.whiteColor)
-                            //                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                            //                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                            //                            }
-                            //
-                            //                            .padding(.horizontal, 50)
-                            //                            .padding(.vertical, 10)
-                            //
-                            //iki dil seçeneğini değiştir.
-                            //                            Button{
-                            //
-                            //                            }label: {
-                            //                                Image(systemName: "arrow.left.arrow.right")
-                            //                                    .frame(width: 60,height: 60)
-                            //                                    .foregroundStyle(.white.opacity(0.8))
-                            //                            }
-                            //
-                            
-                            //                            Button {
-                            //                                // Dili İngilizce yap
-                            ////                                addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "tr", to: "en")
-                            //                                showPicker.toggle()
-                            //                            } label: {
-                            //                                Text("EN")
-                            //                                    .fontWeight(.bold)
-                            //                                    .foregroundColor(.blue)
-                            //                                    .padding()
-                            //                                    .background(Constants.ColorConstants.whiteColor)
-                            //                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                            //                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                            //                            }
-                            //                            .padding(.horizontal, 50)
-                            //                            .padding(.vertical, 10)
-                            //                        }
-                            
+
                             TextEditor(text: $addNewWordVM.enteredWord)
                                 .fontWeight(.bold)
                                 .font(.system(size: Constants.FontSizeConstants.x2Large))
@@ -99,7 +48,7 @@ struct AddNewWordView: View {
                                 Task{
                                     //                                addNewWordVM.loadAzureKFromKeychain()
                                     
-                                    addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
+                                    addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
                                 }
                                 
                                 //                            Task{
@@ -119,11 +68,16 @@ struct AddNewWordView: View {
                                 Text("Hata: \(errorMessage)")
                                     .foregroundColor(.red)
                             } else {
+                                
+                                DetectedLangText(addNewWordVM: addNewWordVM)
+
                                 Text(addNewWordVM.translatedText)
                                     .fontWeight(.bold)
                                     .font(.system(size: Constants.FontSizeConstants.x4Large))
                                     .foregroundStyle(Color.textColorWhite)
-                                    .padding()
+                                    .padding(10)
+                                
+                                
                             }
                             
                             Spacer()
@@ -154,10 +108,14 @@ struct AddNewWordView: View {
     //Target lang
     //fav lang lerin en üstte olması max 5 olsun mesela
     //yukarıya çevir butonuna eklencek bu seçimler. nasıl olcak?
-        struct ContentView: View {
+    //kişi hiç seçmediği durumda en son kayıt edileni çekip atamak lazım. içeriği nil se yani atama yapsın cache ten.
+        struct LanguagePicker: View {
             @State  var selectedLanguage: Language? //= supportedLanguages[0]
             @State  var targetLanguage: Language? //= supportedLanguages[0]
             let counts = supportedLanguages
+            
+            @ObservedObject var addNewWordVM: AddNewWordViewModel
+
             
             
             var body: some View {
@@ -174,15 +132,23 @@ struct AddNewWordView: View {
                                 .foregroundStyle(.white)
                         }
                     }
-                    .background(Constants.ColorConstants.whiteColor)
+                    .background(.pickerButton)
+                    .accentColor(.pickerButtonText)
                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
                     .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
                     .font(.subheadline)
                     .foregroundStyle(.white)
-                    
+                    .onChange(of: selectedLanguage) { oldValue, newValue in
+                        addNewWordVM.mainLanguage = selectedLanguage ?? supportedLanguages[46]
+                        debugPrint("değiştirdim", selectedLanguage?.id as Any)
+                    }
                     
                     Button{
-                        
+                        //TODO: başlangıçta içeriklerinin nill olması sıkıntı cacheten son seçilen olarak gelecek.
+                        selectedLanguage = addNewWordVM.targetLanguage ?? supportedLanguages[117]
+                        targetLanguage = addNewWordVM.mainLanguage ?? supportedLanguages[46]
+                        addNewWordVM.mainLanguage = targetLanguage
+                        addNewWordVM.targetLanguage = selectedLanguage
                     }label: {
                         Image(systemName: "arrow.left.arrow.right")
                             .frame(width: 60,height: 60)
@@ -199,15 +165,41 @@ struct AddNewWordView: View {
                                 .foregroundStyle(.white)
                         }
                     }
-                    .background(Constants.ColorConstants.whiteColor)
+                    
+                    .background(.pickerButton)
+                    .accentColor(.pickerButtonText)
                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
                     .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
                     .font(.subheadline)
                     .foregroundStyle(.white)
+                    .onChange(of: targetLanguage) { oldValue, newValue in
+                        addNewWordVM.targetLanguage = targetLanguage ?? supportedLanguages[117]
+                        debugPrint("değiştirdim", targetLanguage?.id as Any)
+
+                    }
                 }
             }
         }
     
+    //Gelen güven değerini de ekleyeceğim.
+    struct DetectedLangText: View {
+        @ObservedObject var addNewWordVM: AddNewWordViewModel
+
+        
+        var body: some View {
+
+            if (addNewWordVM.detectedLanguageId != nil && addNewWordVM.mainLanguage?.id == "") {
+                Text("Detected Language: " + "\(addNewWordVM.detectedLanguage ?? "")")
+                    .font(.system(size: Constants.FontSizeConstants.x2Large))
+                    .foregroundStyle(Color.textColorWhite)
+                    .padding()
+
+            }else {
+                EmptyView()
+            }
+            
+        }
+    }
 }
 
 #Preview {

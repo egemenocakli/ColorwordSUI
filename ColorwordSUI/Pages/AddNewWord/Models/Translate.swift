@@ -7,7 +7,12 @@
 
 
 struct TranslationResponse: Codable {
+    let detectedLanguage: DetectedLanguage?
     let translations: [Translation]
+}
+struct DetectedLanguage: Codable {
+    let language: String
+    let score: Double
 }
 
 struct Translation: Codable {
@@ -21,7 +26,6 @@ struct TranslationRequest: Codable {
     let sourceLang: String
     let targetLang: String
     
-    // Bu, URL path'ini oluşturmak için bir computed property olacak
     var path: String {
         return "/translator/text/v3.0/translate?from=\(sourceLang)&to=\(targetLang)"
     }

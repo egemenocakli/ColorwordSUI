@@ -5,6 +5,8 @@ struct Language: Identifiable, Hashable {
 }
 
 let supportedLanguages: [Language] = [
+    
+    Language(id: "", name: "Dili Algıla", nameEn: "Detect Language"),
     Language(id: "af", name: "Afrikanca", nameEn: "Afrikaans"),
     Language(id: "de", name: "Almanca", nameEn: "German"),
     Language(id: "sq", name: "Arnavutça", nameEn: "Albanian"),

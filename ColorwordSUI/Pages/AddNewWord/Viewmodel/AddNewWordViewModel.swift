@@ -18,6 +18,11 @@ class AddNewWordViewModel: ObservableObject {
     
     private let addNewWordService = AddNewWordService()
     
+    @Published var mainLanguage: Language?
+    @Published var targetLanguage: Language?
+    @Published var detectedLanguageId: String?
+    @Published var detectedLanguage: String?
+    
 
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
@@ -45,14 +50,16 @@ class AddNewWordViewModel: ObservableObject {
         }
     }
     
-    func translate(text: String, from sourceLang: String, to targetLang: String) {
+    func translate(text: String, from sourceLang: Language, to targetLang: Language) {
         
-        let translationRequest = TranslationRequest(text: text, sourceLang: sourceLang, targetLang: targetLang)
+        let translationRequest = TranslationRequest(text: text, sourceLang: sourceLang.id, targetLang: targetLang.id)
         
         guard let url = URL(string: AzureAPIConstants.endPoint + translationRequest.path) else {
             errorMessage = "Geçersiz URL"
             return
         }
+        debugPrint("ana dil", mainLanguage?.id as Any )
+        debugPrint("hedef dil",targetLanguage?.id as Any )
         
         var request = URLRequest(url: url)
         request.httpMethod = RequestType.post.rawValue
@@ -77,8 +84,30 @@ class AddNewWordViewModel: ObservableObject {
             }
             
             do {
-                //Cevabı decode etme
+
+//                //TODO: Uyarı düzeltilecek
+//                let decodedResponse = try JSONDecoder().decode([TranslationResponse].self, from: data)
+//                if let detectLang = decodedResponse.first {
+//                    if let detected = detectLang.detectedLanguage {
+//                        
+//                        self.detectedLanguageId = detected.language
+//                    }
+//                }
+                 //TODO: Uyarı düzeltilecek
                 let decodedResponse = try JSONDecoder().decode([TranslationResponse].self, from: data)
+                if let detectLang = decodedResponse.first {
+                    if let detected = detectLang.detectedLanguage {
+                        
+                        if let matchedLanguage = supportedLanguages.first(where: { $0.id == detected.language }) {
+                            self.detectedLanguage = matchedLanguage.name
+                            print("Bulunan dil: \(matchedLanguage.name)")  // Ukraynaca
+                        } else {
+                            print("Dil bulunamadı.")
+                        }
+                        self.detectedLanguageId = detected.language
+                    }
+                }
+                
                 if let translatedText = decodedResponse.first?.translations.first?.text {
                     DispatchQueue.main.async {
                         self.translatedText = translatedText
