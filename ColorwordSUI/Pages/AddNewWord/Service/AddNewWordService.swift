@@ -23,5 +23,12 @@ class AddNewWordService: AddNewWordServiceProtocol {
         }
     }
     
+    func saveFavLanguages(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws {
+        do{
+            try await firestoreService.saveFavoriteLanguages(for: languages, for: userInfo)
+        }catch{
+            throw error
+        }
+    }
     
 }

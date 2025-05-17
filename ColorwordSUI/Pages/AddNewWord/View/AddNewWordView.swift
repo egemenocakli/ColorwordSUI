@@ -44,11 +44,10 @@ struct AddNewWordView: View {
                                 .frame(minHeight: 60, maxHeight: 110)
                                 .limitTextEditorCharacters($addNewWordVM.enteredWord, limit: 40)
                             Button(action: {
-                                // Çeviri butonuna tıklandığında işlem yapılır.
                                 Task{
                                     //                                addNewWordVM.loadAzureKFromKeychain()
                                     
-                                    addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
+                                    await addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
                                 }
                                 
                                 //                            Task{
@@ -60,7 +59,7 @@ struct AddNewWordView: View {
                             }
                             .foregroundStyle(Constants.ColorConstants.whiteColor)
                             .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
-                            .background(Constants.ColorConstants.loginButtonColor)
+                            .background(.translateButton)
                             .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                             Spacer()
                             
@@ -87,16 +86,7 @@ struct AddNewWordView: View {
                         }
                         .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                         .preferredColorScheme(themeManager.colorScheme)
-                        
-                        //                    .sheet(isPresented: $showPicker, content: {
-                        //                        BottomSheetPicker(showPicker: $showPicker, viewModel: addNewWordVM)
-                        //                            .presentationDetents([.fraction(0.1)])
-                        //                            .presentationCornerRadius(Constants.SizeRadiusConstants.large)
-                        //
-                        //                    })
-                        //
-                        //                    .frame(height: 80)
-                        
+
                     }
                     
                 }
@@ -144,7 +134,7 @@ struct AddNewWordView: View {
                     }
                     
                     Button{
-                        //TODO: başlangıçta içeriklerinin nill olması sıkıntı cacheten son seçilen olarak gelecek.
+                        //TODO: başlangıçta içeriklerinin nill olması sıkıntı. cacheten son seçilen olarak gelecek.
                         selectedLanguage = addNewWordVM.targetLanguage ?? supportedLanguages[117]
                         targetLanguage = addNewWordVM.mainLanguage ?? supportedLanguages[46]
                         addNewWordVM.mainLanguage = targetLanguage
@@ -155,9 +145,9 @@ struct AddNewWordView: View {
                             .foregroundStyle(.white.opacity(0.8))
                     }
                     
-                    
+                    //TODO: fav list eklencek veritabanına
                     Picker("Selection", selection: $targetLanguage) {
-                        ForEach(counts, id: \.id) { language in
+                        ForEach(addNewWordVM.targetLangList, id: \.id) { language in
                             Text(language.name)
                                 .tag(language)
                                 .font(.subheadline)

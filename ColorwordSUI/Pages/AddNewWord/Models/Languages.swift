@@ -1,9 +1,12 @@
-struct Language: Identifiable, Hashable {
+struct Language: Identifiable, Hashable, Codable {
     let id: String // ISO kod
     let name: String // Türkçe ad
     let nameEn: String // English ad
 }
 
+struct LanguageListWrapper: Codable {
+    let languages: [Language]
+}
 let supportedLanguages: [Language] = [
     
     Language(id: "", name: "Dili Algıla", nameEn: "Detect Language"),

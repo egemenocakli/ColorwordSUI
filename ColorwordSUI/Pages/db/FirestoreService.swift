@@ -10,9 +10,11 @@ import FirebaseFirestore
 
 class FirestoreService: FirestoreInterface {
     
-   private let db = Firestore.firestore()
+    
+    private let db = Firestore.firestore()
     
     //TODO: Yeni oluşturulan dizin için yeni kelime ekle sayfası vs. yapılacak.
+    //TODO: Asenkron metodlara geçilecek
     func getWordList() async throws -> [Word] {
         // Kullanıcı ID'si kontrolü
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
@@ -21,7 +23,7 @@ class FirestoreService: FirestoreInterface {
         
         var words: [Word] = []
         
-
+        
         let snapshot = try await db.collection("users")
             .document(userId)
             .collection("wordLists")
@@ -39,73 +41,44 @@ class FirestoreService: FirestoreInterface {
     }
     
     
-        func increaseWordScore(word: Word, points: Int) async throws{
-            
-            guard let userId = UserSessionManager.shared.currentUser?.userId else {
-                throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
-            }
-            do {
-                try await db.collection("users").document(userId)
-                    .collection("wordLists")
-                    .document("wordLists")
-                    .collection("userWords")
-                    .document(word.wordId!).updateData(word.toMap())
-            }
-            catch {
-                debugPrint(error)
-            }
+    func increaseWordScore(word: Word, points: Int) async throws{
+        
+        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
-        func decreaseWordScore(word: Word, points: Int) async throws{
-            
-            guard let userId = UserSessionManager.shared.currentUser?.userId else {
-                throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
-            }
-            do {
-                try await db.collection("users").document(userId)
-                    .collection("wordLists")
-                    .document("wordLists")
-                    .collection("userWords")
-                    .document(word.wordId!).updateData(word.toMap())
-            }
-            catch {
-                debugPrint(error)
-            }
+        do {
+            try await db.collection("users").document(userId)
+                .collection("wordLists")
+                .document("wordLists")
+                .collection("userWords")
+                .document(word.wordId!).updateData(word.toMap())
         }
+        catch {
+            debugPrint(error)
+        }
+    }
+    func decreaseWordScore(word: Word, points: Int) async throws{
+        
+        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        do {
+            try await db.collection("users").document(userId)
+                .collection("wordLists")
+                .document("wordLists")
+                .collection("userWords")
+                .document(word.wordId!).updateData(word.toMap())
+        }
+        catch {
+            debugPrint(error)
+        }
+    }
     
-    
-       
-//    func createOrUpdateUserInfo(userUid: String, email: String, name: String, lastName: String, completion: @escaping (Bool) -> Void) {
-//        
-//        let docRef = db.collection("users").document(userUid)
-//                       .collection("userInfo")
-//                       .document("userInfo") 
-//        
-//        let data: [String: Any] = [
-//            "userId": userUid,
-//            "email": email,
-//            "name": name,
-//            "lastname": lastName,
-//            "photo": "empty",
-//            "totalScore": 0,
-//            "dailyScore": 0,
-//            "dailyScoreDate": FieldValue.serverTimestamp()
-//        ]
-//        
-//        docRef.setData(data) { error in
-//            if let error = error {
-//                debugPrint("❌ Firestore hata: \(error.localizedDescription)")
-//                completion(false)
-//            } else {
-//                debugPrint("✅ userInfo belgesi başarıyla oluşturuldu/güncellendi.")
-//                completion(true)
-//            }
-//        }
-//    }
     func createOrUpdateUserInfo(user: UserInfoModel, completion: @escaping (Bool) -> Void) {
         
         let docRef = db.collection("users").document(user.userId)
-                       .collection("userInfo")
-                       .document("userInfo")
+            .collection("userInfo")
+            .document("userInfo")
         
         let data = user.toDictionary()
         
@@ -119,7 +92,7 @@ class FirestoreService: FirestoreInterface {
             }
         }
     }
-
+    
     //UserInfo bilgisini çek eğer yoksa oluştur dedik.
     func fetchUserInfo (userId: String, completion: @escaping (UserInfoModel?) -> Void) {
         let docRef = db.collection("users").document(userId).collection("userInfo").document("userInfo")
@@ -152,7 +125,7 @@ class FirestoreService: FirestoreInterface {
             }
         }
     }
-
+    
     func increaseDailyPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
         
         guard !userInfo.userId.isEmpty else {
@@ -169,7 +142,7 @@ class FirestoreService: FirestoreInterface {
             "dailyScore" : userInfo.dailyScore,
             "totalScore" : userInfo.totalScore,
             "dailyScoreDate" : FieldValue.serverTimestamp()
-            ]
+        ]
         docRef.updateData(updates) { error in
             
             if let error = error {
@@ -178,11 +151,11 @@ class FirestoreService: FirestoreInterface {
             }else {
                 debugPrint("✅ Skor bilgileri başarıyla güncellendi.")
                 completion(true)
-                }
-            
             }
-        
+            
         }
+        
+    }
     
     func resetDailyScore(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
         
@@ -207,12 +180,12 @@ class FirestoreService: FirestoreInterface {
             }else {
                 debugPrint("✅ Skor bilgileri başarıyla güncellendi.")
                 completion(true)
-                }
-            
             }
-        
+            
         }
-
+        
+    }
+    
     
     func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
         
@@ -229,7 +202,7 @@ class FirestoreService: FirestoreInterface {
         
         let updates : [String : Any] = [
             "dailyTarget" : userInfo.dailyTarget,
-            ]
+        ]
         docRef.updateData(updates) { error in
             
             if let error = error {
@@ -239,11 +212,11 @@ class FirestoreService: FirestoreInterface {
                 
                 debugPrint("✅ Günlük skor hedefiniz \(userInfo.dailyTarget) olarak başarıyla güncellendi.")
                 completion(true)
-                }
-            
             }
-        
+            
         }
+        
+    }
     
     func getAzureK() async throws -> String? {
         let documentRef = db.collection("infos").document("sUbzxOQNmxGTATsDfh35")
@@ -254,11 +227,45 @@ class FirestoreService: FirestoreInterface {
             return azureK
         } else {
             return nil
-            }
         }
     }
-
     
+    func saveFavoriteLanguages(for languageWrapper: LanguageListWrapper, for userInfo: UserInfoModel?) async throws {
+        
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        
+        let docRef = db.collection("users")
+            .document(userId)
+            .collection("userFavoriteLanguages")
+            .document("userFavoriteLanguages")
+        
+        let snapshot = try await docRef.getDocument()
+        var existingLanguages: [Language] = []
+        
+        if snapshot.exists {
+            if let decodedWrapper = try? snapshot.data(as: LanguageListWrapper.self) {
+                existingLanguages = decodedWrapper.languages
+            }
+        }
+        
+        // Yeni dillerden zaten eklenmiş olanları filtrele
+        let existingIDs = Set(existingLanguages.map { $0.id })
+        let filteredNewLanguages = languageWrapper.languages.filter { !existingIDs.contains($0.id) }
+        
+        guard !filteredNewLanguages.isEmpty else {
+            debugPrint("Yeni eklenecek dil yok.")
+            return
+        }
+        
+        let merged = existingLanguages + filteredNewLanguages
+        let mergedWrapper = LanguageListWrapper(languages: merged)
+        try await docRef.setData(from: mergedWrapper)
+        debugPrint("favori dil \(filteredNewLanguages.count) eklendi")
+    }
+}
+
     
     
 
