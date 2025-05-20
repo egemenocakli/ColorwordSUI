@@ -81,9 +81,19 @@ struct AddNewWordView: View {
                             
                             Spacer()
                         }
-                        .onAppear(){
-                            addNewWordVM.loadAzureKFromKeychain()
+                    
+                    .onAppear(){
+                        addNewWordVM.loadAzureKFromKeychain()
+                        
+                        Task{
+                            do {
+                                try await addNewWordVM.getFavLanguages()
+                            }catch{
+                                throw error
+                            }
                         }
+                    }
+                        
                         .environment(\.locale, .init(identifier: languageManager.currentLanguage))
                         .preferredColorScheme(themeManager.colorScheme)
 
@@ -94,15 +104,11 @@ struct AddNewWordView: View {
             }
         }
         
-    // cache e eklenecekler:
-    //Target lang
-    //fav lang lerin en üstte olması max 5 olsun mesela
-    //yukarıya çevir butonuna eklencek bu seçimler. nasıl olcak?
-    //kişi hiç seçmediği durumda en son kayıt edileni çekip atamak lazım. içeriği nil se yani atama yapsın cache ten.
+
+
         struct LanguagePicker: View {
             @State  var selectedLanguage: Language? //= supportedLanguages[0]
             @State  var targetLanguage: Language? //= supportedLanguages[0]
-            let counts = supportedLanguages
             
             @ObservedObject var addNewWordVM: AddNewWordViewModel
 
@@ -114,7 +120,7 @@ struct AddNewWordView: View {
                     
                     
                     Picker("Selection", selection: $selectedLanguage) {
-                        ForEach(counts, id: \.id) { language in
+                        ForEach(addNewWordVM.mainLangList, id: \.id) { language in
                             Text(language.name)
                                 .tag(language)
                                 .font(.subheadline)

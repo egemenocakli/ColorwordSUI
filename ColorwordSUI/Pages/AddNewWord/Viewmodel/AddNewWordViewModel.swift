@@ -23,9 +23,12 @@ class AddNewWordViewModel: ObservableObject {
     @Published var detectedLanguageId: String?
     @Published var detectedLanguage: String?
     
-    @Published var targetLangList = Array(supportedLanguages.dropFirst())
+    @Published var mainLangList: [Language] = Array(supportedLanguages)
+    @Published var targetLangList = Array(supportedLanguages)
     @Published var favoriteLanguageList: [Language] = []
     
+    //TODO: favoriye kaydedilen dilleri bu sayfaya gelince dilleri çekerken favorileri üste alacak şekilde ayarlanacak.
+    //Dili algıla her zaman en üstte olmalı.
 
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
@@ -62,13 +65,11 @@ class AddNewWordViewModel: ObservableObject {
             return
         }
         do {
-            try await self.getFavLanguages(for: sourceLang, for: targetLang, for: UserSessionManager.shared.userInfoModel)
+            try await self.getTranslatedLanguages(for: sourceLang, for: targetLang, for: UserSessionManager.shared.userInfoModel)
         }catch{
             self.errorMessage = "Favori Dil Kaydedilemedi."
         }
         
-        debugPrint("ana dil", mainLanguage?.id as Any )
-        debugPrint("hedef dil",targetLanguage?.id as Any )
         
         var request = URLRequest(url: url)
         request.httpMethod = RequestType.post.rawValue
@@ -93,8 +94,6 @@ class AddNewWordViewModel: ObservableObject {
             }
             
             do {
-
-                
 
                 let decodedResponse = try JSONDecoder().decode([TranslationResponse].self, from: data)
                 if let detectLang = decodedResponse.first {
@@ -131,7 +130,7 @@ class AddNewWordViewModel: ObservableObject {
         task.resume()
     }
     //Gönderilen dilleri source ve target olarak alıp dizi haline getirir
-    func getFavLanguages (for sourceLang: Language, for targetLang: Language, for userInfo: UserInfoModel?) async throws {
+    func getTranslatedLanguages (for sourceLang: Language, for targetLang: Language, for userInfo: UserInfoModel?) async throws {
         
         var favLangSet: Set<Language> = []
         
@@ -142,40 +141,87 @@ class AddNewWordViewModel: ObservableObject {
         do {
             let wrapper = LanguageListWrapper(languages: favLangArray)
             try await saveFavLanguage(for: wrapper, for: userInfo)
-            debugPrint("oldu")
+            debugPrint("FavLanguage Kaydedildi1.")
             debugPrint(favLangArray)
         }catch {
-            debugPrint("olmadı abi")
+            debugPrint("FavLanguage Kaydedilemedi1.")
 
             self.errorMessage = error.localizedDescription
             debugPrint(error)
         }
     }
     
-    //Kullanılacak yerden dil bilgisi alıncak 2 ayrı parametre olarak. sonra yuakrdan çağrılcak.
     func saveFavLanguage(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws {
-//        var favLang: [Language] = []
-//    
-//        favLang = languages
+
         
         do {
             try await addNewWordService.saveFavLanguages(for: languages, for: userInfo)
-            debugPrint("oldu2")
+            debugPrint("FavLanguage Kaydedildi2")
             
 
         }catch {
-            debugPrint("olmadı2")
+            debugPrint("FavLanguage Kaydedilemedi.2")
             self.errorMessage = error.localizedDescription
             debugPrint(error)
         }
     }
-    
+    //genel olarak işliyor ancak bu dili algılaya da müdahale ediyor iyice test edilmeli.
+    func getFavLanguages() async throws {
+        do {
+            let favLanguages = try await addNewWordService.getFavLanguages(for: UserSessionManager.shared.userInfoModel)
+            let detectLanguageId = ""
+
+            let mainList = reorderLanguagesWithFavorites(
+                favorites: favLanguages.languages,
+                in: supportedLanguages,
+                includeDetectLanguageAtTop: true,
+                detectLanguageId: detectLanguageId
+            )
+
+            let targetList = reorderLanguagesWithFavorites(
+                favorites: favLanguages.languages,
+                in: supportedLanguages,
+                includeDetectLanguageAtTop: false,
+                detectLanguageId: detectLanguageId
+            )
+
+            DispatchQueue.main.async {
+                self.mainLangList = mainList
+                self.targetLangList = targetList
+                self.favoriteLanguageList = favLanguages.languages
+            }
+        } catch {
+            throw error
+        }
+    }
+
+    //Dili algıla ve favori dilleri en üstte olacak şekilde sırala.
+    //Buradaki kodlar ve mantık incelencek.
+    func reorderLanguagesWithFavorites(
+        favorites: [Language],
+        in fullList: [Language],
+        includeDetectLanguageAtTop: Bool = false,
+        detectLanguageId: String = ""
+    ) -> [Language] {
+        var favoriteIDs = Set(favorites.map { $0.id })
+
+        // detectLanguage'ı özel olarak başa alacağız, o yüzden diğer listelerden çıkar
+        if includeDetectLanguageAtTop {
+            favoriteIDs.remove(detectLanguageId)
+        }
+
+        let reorderedFavorites = favorites.filter { $0.id != detectLanguageId }
+        let remainingLanguages = fullList.filter { !favoriteIDs.contains($0.id) && $0.id != detectLanguageId }
+
+        var result = reorderedFavorites + remainingLanguages
+
+        if includeDetectLanguageAtTop, let detectLang = fullList.first(where: { $0.id == detectLanguageId }) {
+            result.insert(detectLang, at: 0)
+        }
+
+        return result
+    }
+
+
 }
 
-
-
-/*
- Lang picker da en çok kullanılan dilleri başa ekleyebilirim ingilizce türkçe almanca vs.
- favori diller eklenecek listenin başında yer alacak. maks 5 falan seçtirebilirim.
- kelime/cümle kaydı yapılacak.
- */

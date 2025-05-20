@@ -17,5 +17,5 @@ protocol FirestoreInterface {
     func resetDailyScore(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func saveFavoriteLanguages(for languages: LanguageListWrapper,for userInfo: UserInfoModel?) async throws
-
+    func getFavoriteLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper
 }

@@ -31,4 +31,14 @@ class AddNewWordService: AddNewWordServiceProtocol {
         }
     }
     
+    func getFavLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper {
+        let favoriteLanguages: LanguageListWrapper
+        do{
+            favoriteLanguages = try await firestoreService.getFavoriteLanguages(for: userInfo)
+            
+        }catch{
+            throw error
+        }
+        return favoriteLanguages
+    }
 }

@@ -9,6 +9,8 @@ import Foundation
 import FirebaseFirestore
 
 class FirestoreService: FirestoreInterface {
+
+    
     
     
     private let db = Firestore.firestore()
@@ -263,6 +265,25 @@ class FirestoreService: FirestoreInterface {
         let mergedWrapper = LanguageListWrapper(languages: merged)
         try await docRef.setData(from: mergedWrapper)
         debugPrint("favori dil \(filteredNewLanguages.count) eklendi")
+    }
+    
+    
+    func getFavoriteLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper {
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        
+        let docRef = db.collection("users")
+            .document(userId)
+            .collection("userFavoriteLanguages")
+            .document("userFavoriteLanguages")
+        
+        let snapshot = try await docRef.getDocument()
+        if snapshot.exists, let decodedWrapper = try? snapshot.data(as: LanguageListWrapper.self) {
+            return decodedWrapper
+        }else {
+            return LanguageListWrapper(languages: [])
+        }
     }
 }
 
