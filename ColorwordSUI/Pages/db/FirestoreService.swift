@@ -6,6 +6,7 @@
 //
 
 import Foundation
+import SwiftUI
 import FirebaseFirestore
 
 class FirestoreService: FirestoreInterface {
@@ -285,6 +286,73 @@ class FirestoreService: FirestoreInterface {
             return LanguageListWrapper(languages: [])
         }
     }
+    //TODO: kişinin başka kelime listesi var mı?
+    //Aşağıdakini sadece başka kelime listesi yoksa diye yapıyorum. bir benzerini daha yapıp onda parametre falan almalıyım hangi listeye ekleyeceğine dair.
+    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws {
+        
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        
+        let collectionRef = db.collection("users")
+            .document(userId)
+            .collection("wordLists")
+            .document("wordLists")
+            .collection("userWords")
+        
+        let newDoc = collectionRef.document()
+        var toSave = word
+        let randomColor = Color.random              // RGB olarak Color
+//        let hexOfRandom = randomColor.toHex()
+        
+        
+        toSave.wordId = newDoc.documentID
+        let now = Timestamp(date: Date())
+        toSave.addDate = now
+        toSave.lastUpdateDate = now
+        toSave.color = randomColor
+        toSave.photoURL = ""
+        try await newDoc.setData(toSave.toMap())
+        debugPrint("🔥 Yeni kelime eklendi: \(toSave.wordId ?? "")")
+        debugPrint("🔥 Yeni kelime translatedWords: \(toSave.translatedWords?[0] ?? "")")
+        
+
+    }
+    
+//    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws {
+//        // 1) Kullanıcı ID’si kontrolü
+//        guard let userId = userInfo?.userId else {
+//            throw NSError(
+//                domain: "FirestoreService",
+//                code: -1,
+//                userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."]
+//            )
+//        }
+//
+//        // 2) Koleksiyon referansı
+//        let collectionRef = db
+//            .collection("users")
+//            .document(userId)
+//            .collection("wordLists")
+//            .document("wordLists")
+//            .collection("userWords")
+//
+//        // 3) Yeni belge referansı (otomatik ID)
+//        let newDoc = collectionRef.document()
+//        var toSave = word
+//
+//        // 4) Modelin içinde eksik olan alanları tamamla
+//        toSave.wordId = newDoc.documentID
+//        let now = Timestamp(date: Date())
+//        toSave.addDate = now
+//        toSave.lastUpdateDate = now
+//
+//        // 5) Firestore’a yaz
+//        try await newDoc.setData(toSave.toMap())
+//
+//        print("🔥 Yeni kelime eklendi: \(toSave.wordId ?? "")")
+//    }
+
 }
 
     

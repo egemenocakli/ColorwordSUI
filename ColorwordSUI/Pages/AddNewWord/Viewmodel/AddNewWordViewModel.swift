@@ -20,6 +20,7 @@ class AddNewWordViewModel: ObservableObject {
     
     @Published var mainLanguage: Language?
     @Published var targetLanguage: Language?
+    
     @Published var detectedLanguageId: String?
     @Published var detectedLanguage: String?
     
@@ -27,9 +28,6 @@ class AddNewWordViewModel: ObservableObject {
     @Published var targetLangList = Array(supportedLanguages)
     @Published var favoriteLanguageList: [Language] = []
     
-    //TODO: favoriye kaydedilen dilleri bu sayfaya gelince dilleri çekerken favorileri üste alacak şekilde ayarlanacak.
-    //Dili algıla her zaman en üstte olmalı.
-
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
     func loadAzureKFromKeychain()  {
@@ -55,7 +53,6 @@ class AddNewWordViewModel: ObservableObject {
             debugPrint("AzureK Keychain'den alınamadı.")
         }
     }
-    
     func translate(text: String, from sourceLang: Language, to targetLang: Language) async{
         
         let translationRequest = TranslationRequest(text: text, sourceLang: sourceLang.id, targetLang: targetLang.id)
@@ -64,7 +61,12 @@ class AddNewWordViewModel: ObservableObject {
             errorMessage = "Geçersiz URL"
             return
         }
+        
+        self.mainLanguage = sourceLang
+        self.targetLanguage = targetLang
+        
         do {
+
             try await self.getTranslatedLanguages(for: sourceLang, for: targetLang, for: UserSessionManager.shared.userInfoModel)
         }catch{
             self.errorMessage = "Favori Dil Kaydedilemedi."
@@ -156,7 +158,7 @@ class AddNewWordViewModel: ObservableObject {
         
         do {
             try await addNewWordService.saveFavLanguages(for: languages, for: userInfo)
-            debugPrint("FavLanguage Kaydedildi2")
+            debugPrint("FavLanguage Kaydedildi.2")
             
 
         }catch {
@@ -165,7 +167,6 @@ class AddNewWordViewModel: ObservableObject {
             debugPrint(error)
         }
     }
-    //genel olarak işliyor ancak bu dili algılaya da müdahale ediyor iyice test edilmeli.
     func getFavLanguages() async throws {
         do {
             let favLanguages = try await addNewWordService.getFavLanguages(for: UserSessionManager.shared.userInfoModel)
@@ -196,13 +197,7 @@ class AddNewWordViewModel: ObservableObject {
     }
 
     //Dili algıla ve favori dilleri en üstte olacak şekilde sırala.
-    //Buradaki kodlar ve mantık incelencek.
-    func reorderLanguagesWithFavorites(
-        favorites: [Language],
-        in fullList: [Language],
-        includeDetectLanguageAtTop: Bool = false,
-        detectLanguageId: String = ""
-    ) -> [Language] {
+    func reorderLanguagesWithFavorites( favorites: [Language], in fullList: [Language], includeDetectLanguageAtTop: Bool = false, detectLanguageId: String = "" ) -> [Language] {
         var favoriteIDs = Set(favorites.map { $0.id })
 
         // detectLanguage'ı özel olarak başa alacağız, o yüzden diğer listelerden çıkar
@@ -222,6 +217,30 @@ class AddNewWordViewModel: ObservableObject {
         return result
     }
 
-
+    func addNewWord() async throws {
+        
+        guard !enteredWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+              !translatedText.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty else {
+            throw NSError(domain: "AddWordError", code: -1, userInfo: [NSLocalizedDescriptionKey: "Kelime veya çeviri boş olamaz."])
+        }
+        
+        debugPrint(enteredWord)
+        debugPrint(translatedText)
+        
+        var newWord = Word()
+        newWord.word = enteredWord
+        newWord.translatedWords = [translatedText]
+        newWord.sourceLanguageId = mainLanguage?.id ?? ""
+        newWord.translateLanguageId = targetLanguage?.id ?? ""
+        do {
+            try await addNewWordService.addNewWord(for: newWord, for: UserSessionManager.shared.userInfoModel)
+            debugPrint("kelime ekleme başarılı")
+        }catch{
+            debugPrint("kelime ekleme başarısız")
+            throw error
+            
+        }
+        
+    }
 }
 

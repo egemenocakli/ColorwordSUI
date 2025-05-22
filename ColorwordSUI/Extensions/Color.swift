@@ -49,4 +49,20 @@ extension Color {
         )
         return hexString
     }
+    
+        static var random: Color {
+            let min: UInt32 = 0
+            let max: UInt32 = 200
+
+            func randomComponent() -> Double {
+                Double(min + arc4random_uniform(max - min)) / 255.0
+            }
+
+            return Color(
+                red: randomComponent(),
+                green: randomComponent(),
+                blue: randomComponent()
+            )
+        }
+    
 }

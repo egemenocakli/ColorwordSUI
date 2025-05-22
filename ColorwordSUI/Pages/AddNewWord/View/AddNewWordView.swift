@@ -21,10 +21,10 @@ struct AddNewWordView: View {
                 GeometryReader { geometry in
                     VStack {
                         
-                        
                         Text("Hedef dil seçiniz")
+                            .font(.largeTitle)
                             .fontWeight(.bold)
-                            .padding(.top, 100)
+                            .padding(.top, 50)
                             .foregroundStyle(.white)
                         
                         LanguagePicker(selectedLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[46], targetLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[117], addNewWordVM: addNewWordVM)
@@ -45,14 +45,10 @@ struct AddNewWordView: View {
                                 .limitTextEditorCharacters($addNewWordVM.enteredWord, limit: 40)
                             Button(action: {
                                 Task{
-                                    //                                addNewWordVM.loadAzureKFromKeychain()
-                                    
+                                    //TODO: en son kullanılan hangisiyse onu al. fav listten
                                     await addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
                                 }
-                                
-                                //                            Task{
-                                //                                await $addNewWordVM.getAzureK
-                                //                            }
+
                             }) {
                                 Text("Çevir")
                                 
@@ -80,6 +76,18 @@ struct AddNewWordView: View {
                             }
                             
                             Spacer()
+                        FabButton(action: {
+                            Task {
+                                do{
+                                    try await addNewWordVM.addNewWord()
+                                }catch {
+                                    
+                                }
+                            }
+                        }, backgroundColor: .addFabButton,
+                            foregroundColor: Constants.ColorConstants.buttonForegroundColor,
+                            cornerRadius: Constants.SizeRadiusConstants.medium,
+                            buttonImageName: Constants.IconTextConstants.addButtonRectangle)
                         }
                     
                     .onAppear(){

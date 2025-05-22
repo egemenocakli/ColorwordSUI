@@ -58,48 +58,63 @@ struct WordListView: View {
                 VStack {
                     
                     Spacer()
+                    FabButton(action: {
+                        showAddWordView = true
+
+                    }, backgroundColor: .addFabButton,
+                        foregroundColor: Constants.ColorConstants.buttonForegroundColor,
+                        cornerRadius: Constants.SizeRadiusConstants.medium,
+                        buttonImageName: Constants.IconTextConstants.addButtonRectangle)
                     
-                        HStack {
-                            Spacer()
-                            Button(action: {
-                                // FAB'a tıklanınca olacaklar
-                                showAddWordView = true
-                            }) {
-                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
-                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
-                                    .padding()
-                                    .background(.addFabButton)
-                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                            }
-                            .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
-                            .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
-                        }
+//                        HStack {
+//                            Spacer()
+//                            // FAB button
+//                            Button(action: {
+//                                showAddWordView = true
+//                            }) {
+//                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
+//                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
+//                                    .padding()
+//                                    .background(.addFabButton)
+//                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+//                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+//                            }
+//                            .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
+//                            .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+//                        }
                         .navigationDestination(isPresented: $showAddWordView) {
                             if #available(iOS 18.0, *) {
                                 AddNewWordView()
                             } else {
-                                // Fallback on earlier versions
+
                             }
                         }
                     
-                    HStack {
-                        Spacer()
-                        //TODO: kelime silme eklenecek ve silmeden önce alert ile sorulacak.
-                        //Hatta belki tüm listeyi silme eklenecek ve silmeden önce yine sorulacak.
-                        Button(action: {
-                            // FAB'a tıklanınca olacaklar
-                        }) {
-                            Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
-                                .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
-                                .padding()
-                                .background(.deleteFabButton)
-                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                        }
-                        .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
-                        .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
-                    }
+//                    HStack {
+//                        Spacer()
+//                        //TODO: kelime silme eklenecek ve silmeden önce alert ile sorulacak.
+//                        //Hatta belki tüm listeyi silme eklenecek ve silmeden önce yine sorulacak.
+//                        Button(action: {
+//                            // FAB'a tıklanınca olacaklar
+//                        }) {
+//                            Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
+//                                .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
+//                                .padding()
+//                                .background(.deleteFabButton)
+//                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+//                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+//                        }
+//                        .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
+//                        .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+//                    }
+
+                    FabButton(action: {
+                        //TODO: silme eklenecek. alert ile silmeden önce sorulacak.
+                    }, backgroundColor: .deleteFabButton,
+                        foregroundColor: Constants.ColorConstants.buttonForegroundColor,
+                        cornerRadius: Constants.SizeRadiusConstants.medium,
+                        buttonImageName: Constants.IconTextConstants.deleteButtonRectangle)
+                    
                 }
                 
                 NextButtonWidgets(selectedTabIndex: $selectedTabIndex, wordListVM: wordListVM)
