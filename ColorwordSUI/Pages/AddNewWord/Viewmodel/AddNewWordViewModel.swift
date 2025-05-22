@@ -7,7 +7,6 @@
 import Foundation
 import SwiftUI
 
-
 class AddNewWordViewModel: ObservableObject {
     let keychainEncrypter = KeychainEncrpyter()
 
@@ -62,9 +61,11 @@ class AddNewWordViewModel: ObservableObject {
             return
         }
         
-        self.mainLanguage = sourceLang
-        self.targetLanguage = targetLang
-        
+        await MainActor.run {
+            self.mainLanguage = sourceLang
+            self.targetLanguage = targetLang
+        }
+
         do {
 
             try await self.getTranslatedLanguages(for: sourceLang, for: targetLang, for: UserSessionManager.shared.userInfoModel)
