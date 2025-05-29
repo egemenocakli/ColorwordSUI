@@ -27,6 +27,9 @@ class AddNewWordViewModel: ObservableObject {
     @Published var targetLangList = Array(supportedLanguages)
     @Published var favoriteLanguageList: [Language] = []
     
+    @Published var selectedUserWordGroup: String = "UserWordList"
+    @Published var userWordGroups = ["UserWordList"]
+    
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
     func loadAzureKFromKeychain()  {
@@ -242,6 +245,38 @@ class AddNewWordViewModel: ObservableObject {
             
         }
         
+    }
+    
+    func getWordGroups() async throws {
+        var userWordGroupDb: [String]?
+        var selectedUserWordGroupDb: String?
+        do {
+            userWordGroupDb = try await addNewWordService.getWordGroups(for: UserSessionManager.shared.userInfoModel)
+            selectedUserWordGroupDb = userWordGroupDb?.first
+        } catch {
+            throw error
+        }
+
+        DispatchQueue.main.async {
+            if let userWordGroups = userWordGroupDb {
+                self.userWordGroups = userWordGroups
+                if let selected = selectedUserWordGroupDb, userWordGroups.contains(selected) {
+                    self.selectedUserWordGroup = selected
+                } else {
+                    self.selectedUserWordGroup = userWordGroups.first ?? "UserWordList"
+                }
+            }
+        }
+    }
+    
+    func createWordGroup(languageListName: String) async throws {
+        
+        
+        do {
+            try await addNewWordService.createWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+        }catch {
+            throw error
+        }
     }
 }
 

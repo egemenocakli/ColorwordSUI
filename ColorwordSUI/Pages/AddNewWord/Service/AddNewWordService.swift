@@ -10,6 +10,8 @@ protocol AddNewWordServiceProtocol {
     func saveFavLanguages(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws
     func getFavLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper
     func addNewWord(for word: Word, for userInfo: UserInfoModel?) async throws
+    func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String]
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
 }
 
 class AddNewWordService: AddNewWordServiceProtocol {
@@ -49,6 +51,24 @@ class AddNewWordService: AddNewWordServiceProtocol {
         do{
             try await firestoreService.addNewWord(word: word, userInfo: userInfo)
         }catch{
+            throw error
+        }
+    }
+    func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String] {
+        let wordGroups: [String]
+        do{
+          wordGroups = try await firestoreService.getWordGroups(userInfo: userInfo)
+        }catch{
+            throw error
+        }
+        return wordGroups
+    }
+    
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws {
+        
+        do {
+            try await firestoreService.createWordGroup(languageListName: languageListName, userInfo: userInfo)
+        }catch {
             throw error
         }
     }

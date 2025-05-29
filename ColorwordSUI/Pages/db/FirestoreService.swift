@@ -16,7 +16,6 @@ class FirestoreService: FirestoreInterface {
     
     private let db = Firestore.firestore()
     
-    //TODO: Yeni oluşturulan dizin için yeni kelime ekle sayfası vs. yapılacak.
     //TODO: Asenkron metodlara geçilecek
     func getWordList() async throws -> [Word] {
         // Kullanıcı ID'si kontrolü
@@ -302,9 +301,7 @@ class FirestoreService: FirestoreInterface {
         
         let newDoc = collectionRef.document()
         var toSave = word
-        let randomColor = Color.random              // RGB olarak Color
-//        let hexOfRandom = randomColor.toHex()
-        
+        let randomColor = Color.random
         
         toSave.wordId = newDoc.documentID
         let now = Timestamp(date: Date())
@@ -318,6 +315,80 @@ class FirestoreService: FirestoreInterface {
         
 
     }
+    //User word groups
+    func getWordGroups(userInfo: UserInfoModel?) async throws -> [String] {
+        
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        
+        let collectionRef = db.collection("users")
+            .document(userId)
+            .collection("wordLists")
+            
+
+        let snapshot = try await collectionRef.getDocuments()
+       
+        let documentIDs = snapshot.documents.map{ $0.documentID}
+        debugPrint(documentIDs)
+        return documentIDs
+    }
+    
+    
+    //User word groups
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws  {
+        
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        
+        let collectionRef = db.collection("users")
+            .document(userId)
+            .collection("wordLists")
+            .document(languageListName)
+            .collection(languageListName)
+        
+        
+        let newWord = Word(word: "First Word")
+        let newDoc = collectionRef.document()
+        var toSave = newWord
+        let randomColor = Color.random
+        
+        toSave.wordId = newDoc.documentID
+        let now = Timestamp(date: Date())
+        toSave.addDate = now
+        toSave.lastUpdateDate = now
+        toSave.color = randomColor
+        toSave.photoURL = ""
+        try await newDoc.setData(toSave.toMap())
+            
+    }
+    
+    //Kayıtlı favori dil listelerini silebilecek.
+    func deleteWordGroup(named languageListName: String,userInfo: UserInfoModel?) async throws  {
+        
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+        
+        let documentRef = db.collection("users")
+            .document(userId)
+            .collection("wordLists")
+            .document(languageListName)
+        
+        //Alt dizindeki bilgileri sil
+        let subCollectionRef = documentRef.collection(languageListName)
+        
+        let snapshot = try await subCollectionRef.getDocuments()
+        for doc in snapshot.documents {
+            try await subCollectionRef.document(doc.documentID).delete()
+        }
+        
+        try await documentRef.delete()
+        debugPrint("'\(languageListName)' adlı kelime grubu silindi.")
+    }
+    
+    
     
 //    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws {
 //        // 1) Kullanıcı ID’si kontrolü

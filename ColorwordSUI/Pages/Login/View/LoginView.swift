@@ -17,6 +17,8 @@ struct LoginView: View {
     let userPreferences = UserPreferences()
     let keychainEncryption = KeychainEncrpyter()
 
+    @State private var isAutoLoginInProgress = true
+
 
 
     var body: some View {
@@ -26,9 +28,10 @@ struct LoginView: View {
                 Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                 GeometryReader { geometry in
                     VStack {
-                        if (userPreferences.savedEmail != "" && keychainEncryption.loadPassword() != "") {
+                        if (isAutoLoginInProgress) {
                             ProgressView("loading")
                                 .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
+                                
                                 .navigationDestination(isPresented: $loginVM.loginSuccess) {
                                     HomeView().navigationBarBackButtonHidden(true)
                                 }
@@ -78,7 +81,13 @@ struct LoginView: View {
 
                 }
             }.onAppear(){
-                autoLoginCheck()
+                isAutoLoginInProgress = true
+                Task {
+                    let succes = autoLoginCheck()
+                    if !succes {
+                        isAutoLoginInProgress = false
+                    }
+                }
             }
             .overlay(
                 Group {
@@ -94,6 +103,7 @@ struct LoginView: View {
 
 
     }
+    
     func signupButton() {
     }
     
@@ -110,14 +120,22 @@ struct LoginView: View {
         }
     }
     
-    fileprivate func autoLoginCheck () {
-        if (userPreferences.savedEmail != "" && keychainEncryption.loadPassword() != "") {
-            loginVM.email = userPreferences.savedEmail
-            loginVM.password = keychainEncryption.loadPassword()!
-            loginVM.authLogin()
-            loginVM.loginSuccess = true
-            
+    @discardableResult
+    fileprivate func autoLoginCheck () -> Bool {
+        guard
+            !userPreferences.savedEmail.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
+            let password = keychainEncryption.loadPassword(),
+            !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
+        else {
+            loginVM.loginSuccess = false
+            return false
         }
+        loginVM.email = userPreferences.savedEmail
+        loginVM.password = password
+        loginVM.authLogin()
+        loginVM.loginSuccess = true
+        
+        return true
     }
 }
 

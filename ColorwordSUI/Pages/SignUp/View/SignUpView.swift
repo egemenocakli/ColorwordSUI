@@ -41,21 +41,6 @@ struct SignUpView: View {
                         .padding(.bottom, geometry.size.height * 0.1)
                         .frame(height: geometry.size.height * 0.3)
                         
-                        Button(action: {
-                            // Çeviri butonuna tıklandığında işlem yapılır.
-//                            addNewWordVM.translate(text: addNewWordVM.enteredWord, from: "en", to: "tr")
-                            Task{
-                                do{
-                                    try await signUpViewModel.getAzureK()
-
-                                }catch{
-                                    
-                                }
-                            }
-                        }) {
-                            Text("Çevir")
-                                
-                        }
                     }
                     .padding(.top, geometry.size.height * 0.05)
                     

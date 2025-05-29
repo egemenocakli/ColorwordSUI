@@ -10,8 +10,10 @@ struct AddNewWordView: View {
     @State var showPicker = false
 
 
+    //TODO: yeni kelime eklenirken çekilen dil listeleri gösterilceki kelime seçilenin altına eklenece
+    //TODO: Yeni liste ekle yeri olacak bu metod oraya çağırılacak
     
-//TODO: localization eklenecek
+    //TODO: localization eklenecek
     //widgetlar dağıtılacak ve temizlenecek.
     var body: some View {
         NavigationStack {
@@ -20,6 +22,71 @@ struct AddNewWordView: View {
                 
                 GeometryReader { geometry in
                     VStack {
+                        
+                        //Geçerli dil listesi
+                        
+                        HStack {
+                            
+                            Text("Seçili Dil Listeniz:")
+                                .font(.system(size: 20))
+                                .fontWeight(.bold)
+                                .foregroundStyle(.white)
+                            
+                            Picker("Selection", selection: Binding<String>(
+                                get: { addNewWordVM.selectedUserWordGroup },
+                                set: { addNewWordVM.selectedUserWordGroup = $0 }
+                            )) {
+                                ForEach(addNewWordVM.userWordGroups, id: \.self) { userWordGroup in
+                                    Text(userWordGroup)
+                                        .tag(userWordGroup)
+                                        .font(.subheadline)
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.white)
+                                }
+                            }
+                            .background(.pickerButton)
+                            .accentColor(.pickerButtonText)
+                            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+                            .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+                            .font(.subheadline)
+                            .foregroundStyle(.white)
+                            //                        .onChange(of: selectedLanguage) { oldValue, newValue in
+                            //                            addNewWordVM.mainLanguage = selectedLanguage ?? supportedLanguages[46]
+                            //                            debugPrint("değiştirdim", selectedLanguage?.id as Any)
+                            //                        }
+                            
+                            
+                            //Tıklanınca bir alan açılsın text girilsin aşağıdaki metoda verilsin.
+                            Button( action:  {
+                                do {
+                                    Task{
+                                        try await addNewWordVM.createWordGroup(languageListName: "asd")
+                                    }
+                                }catch {
+                                    debugPrint("Yeni kelime grubu eklenemedi")
+                                }
+                            }) {
+                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
+                                    .resizable()
+                                    .scaledToFit()
+                                    .frame(width: 16, height: 16) // doğrudan ikon boyutu
+                                    .foregroundColor(.white)
+                                    .padding(8)
+                                    .background(.green.opacity(1))
+                                    .clipShape(Circle())
+                            }
+
+                        }
+
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
+                        
                         
                         Text("Hedef dil seçiniz")
                             .font(.largeTitle)
@@ -77,6 +144,7 @@ struct AddNewWordView: View {
                             
                             Spacer()
                         FabButton(action: {
+                            
                             Task {
                                 do{
                                     try await addNewWordVM.addNewWord()
@@ -96,9 +164,13 @@ struct AddNewWordView: View {
                         Task{
                             do {
                                 try await addNewWordVM.getFavLanguages()
+                                try await addNewWordVM.getWordGroups()
                             }catch{
                                 throw error
                             }
+                        }
+                        if !addNewWordVM.userWordGroups.contains(addNewWordVM.selectedUserWordGroup) {
+                            addNewWordVM.selectedUserWordGroup = addNewWordVM.userWordGroups.first ?? ""
                         }
                     }
                         
@@ -113,7 +185,7 @@ struct AddNewWordView: View {
         }
         
 
-
+        //TODO: taşınacak mümkünse
         struct LanguagePicker: View {
             @State  var selectedLanguage: Language? //= supportedLanguages[0]
             @State  var targetLanguage: Language? //= supportedLanguages[0]
