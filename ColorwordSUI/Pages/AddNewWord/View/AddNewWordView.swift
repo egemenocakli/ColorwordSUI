@@ -8,6 +8,9 @@ struct AddNewWordView: View {
     @StateObject private var addNewWordVM = AddNewWordViewModel()
     
     @State var showPicker = false
+    
+    @State private var showNewWordGroupWidget = false
+
 
 
     //TODO: yeni kelime eklenirken çekilen dil listeleri gösterilceki kelime seçilenin altına eklenece
@@ -24,67 +27,118 @@ struct AddNewWordView: View {
                     VStack {
                         
                         //Geçerli dil listesi
+                        //TODO: burada seçilen eski seçilen ile aynı değilse listedeki sıralamada en başa gelsin
                         
-                        HStack {
+                        if(!showNewWordGroupWidget) {
+                            HStack {
+                                
+                                Text("Seçili Dil Listeniz:")
+                                    .font(.system(size: 20))
+                                    .fontWeight(.bold)
+                                    .foregroundStyle(.white)
+                                
+                                Picker("Selection", selection: Binding<String>(
+                                    get: { addNewWordVM.selectedUserWordGroup },
+                                    set: { addNewWordVM.selectedUserWordGroup = $0 }
+                                )) {
+                                    ForEach(addNewWordVM.userWordGroups, id: \.self) { userWordGroup in
+                                        Text(userWordGroup)
+                                            .tag(userWordGroup)
+                                            .font(.subheadline)
+                                            .fontWeight(.bold)
+                                            .foregroundStyle(.white)
+                                    }
+                                }
+                                .background(.pickerButton)
+                                .accentColor(.pickerButtonText)
+                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+                                .font(.subheadline)
+                                .foregroundStyle(.white)
+                                .onChange(of: addNewWordVM.selectedUserWordGroup) { oldValue, newValue in
+                                    Task {
+                                      try await  addNewWordVM.orderWordGroup(languageListName: newValue)
+                                    }
+                                    debugPrint("değiştiii")
+                                }
+                                
+                                
+                                //Tıklanınca bir alan açılsın text girilsin aşağıdaki metoda verilsin.
+                                Button( action:  {
+                                    showNewWordGroupWidget = true
+                                }) {
+                                    Image(systemName: Constants.IconTextConstants.addButtonRectangle)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 16, height: 16) // doğrudan ikon boyutu
+                                        .foregroundColor(.white)
+                                        .padding(8)
+                                        .background(.green.opacity(1))
+                                        .clipShape(Circle())
+                                }
+
+                            }
+                        }else {
+                            //TODO: Bu alan yeni liste ekleye tıklanınca gelecek. belki hatta liste seçiminin yerine gelebilir
                             
-                            Text("Seçili Dil Listeniz:")
+                            Text("Yeni Kelime Listenizin Adını Giriniz")
                                 .font(.system(size: 20))
                                 .fontWeight(.bold)
                                 .foregroundStyle(.white)
                             
-                            Picker("Selection", selection: Binding<String>(
-                                get: { addNewWordVM.selectedUserWordGroup },
-                                set: { addNewWordVM.selectedUserWordGroup = $0 }
-                            )) {
-                                ForEach(addNewWordVM.userWordGroups, id: \.self) { userWordGroup in
-                                    Text(userWordGroup)
-                                        .tag(userWordGroup)
-                                        .font(.subheadline)
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(.white)
-                                }
-                            }
-                            .background(.pickerButton)
-                            .accentColor(.pickerButtonText)
-                            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                            .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                            .font(.subheadline)
-                            .foregroundStyle(.white)
-                            //                        .onChange(of: selectedLanguage) { oldValue, newValue in
-                            //                            addNewWordVM.mainLanguage = selectedLanguage ?? supportedLanguages[46]
-                            //                            debugPrint("değiştirdim", selectedLanguage?.id as Any)
-                            //                        }
-                            
-                            
-                            //Tıklanınca bir alan açılsın text girilsin aşağıdaki metoda verilsin.
-                            Button( action:  {
-                                do {
-                                    Task{
-                                        try await addNewWordVM.createWordGroup(languageListName: "asd")
+                            HStack{
+                                
+                                
+                                //TODO: bu text editorler common widgeta eklenecek
+                                
+                                TextEditor(text: $addNewWordVM.newWordGroupName)
+                                    .fontWeight(.bold)
+                                    .font(.system(size: Constants.FontSizeConstants.large))
+                                    .foregroundStyle(Color.textColorWhite)
+                                    .padding(16)
+                                    .scrollContentBackground(.hidden)
+                                    .background(Color.white.opacity(0.05).blur(radius: 50))
+                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
+                                    .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
+                                    .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                                    .frame(minHeight: 40, maxHeight: 70)
+                                    .limitTextEditorCharacters($addNewWordVM.newWordGroupName, limit: 15)
+                                
+                                
+                                
+                                Button( action:  {
+                                    if(!addNewWordVM.newWordGroupName.isEmpty){
+                                        
+                                        do {
+                                            Task{
+                                                try await addNewWordVM.createWordGroup(languageListName: addNewWordVM.newWordGroupName)
+                                            }
+                                        }catch {
+                                            debugPrint("Yeni kelime grubu eklenemedi")
+                                        }
+                                        
+                                        showNewWordGroupWidget = false
                                     }
-                                }catch {
-                                    debugPrint("Yeni kelime grubu eklenemedi")
+                                    
+                                }) {
+                                    Image(systemName: Constants.IconTextConstants.correctFillButton)
+                                        .resizable()
+                                        .scaledToFit()
+                                        .frame(width: 32, height: 32) // doğrudan ikon boyutu
+                                        .foregroundColor(.green)
+    //                                    .padding(8)
+                                        .background(.white)
+                                        .clipShape(Circle())
                                 }
-                            }) {
-                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
-                                    .resizable()
-                                    .scaledToFit()
-                                    .frame(width: 16, height: 16) // doğrudan ikon boyutu
-                                    .foregroundColor(.white)
-                                    .padding(8)
-                                    .background(.green.opacity(1))
-                                    .clipShape(Circle())
+                                .padding(.trailing, 16)
+                                
                             }
-
                         }
 
+
                         
                         
-                        
-                        
-                        
-                        
-                        
+
                         
                         
                         
@@ -157,6 +211,7 @@ struct AddNewWordView: View {
                             cornerRadius: Constants.SizeRadiusConstants.medium,
                             buttonImageName: Constants.IconTextConstants.addButtonRectangle)
                         }
+                    .animation(.easeInOut, value: showNewWordGroupWidget)
                     
                     .onAppear(){
                         addNewWordVM.loadAzureKFromKeychain()

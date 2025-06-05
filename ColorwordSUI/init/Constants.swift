@@ -131,6 +131,7 @@ class Constants {
         static let leftButton = "chevron.left"
         static let rightButton = "chevron.right"
         static let correctButton = "checkmark.circle"
+        static let correctFillButton = "checkmark.circle.fill"
         static let wrongButton = "xmark.circle"
         static let settingsButton = "gearshape.fill"
         static let logOutButton = "rectangle.portrait.and.arrow.right"

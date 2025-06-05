@@ -27,8 +27,11 @@ class AddNewWordViewModel: ObservableObject {
     @Published var targetLangList = Array(supportedLanguages)
     @Published var favoriteLanguageList: [Language] = []
     
-    @Published var selectedUserWordGroup: String = "UserWordList"
-    @Published var userWordGroups = ["UserWordList"]
+    @Published var selectedUserWordGroup: String = "Word List"
+    @Published var userWordGroups = ["Word List"] //Başlangıçta atadığım değer sonradan veri gelince biraz kötü görünüyor
+    @Published var newWordGroupName: String = ""
+//    @Published var selectedLanguageGroup: String = ""
+
     
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
@@ -274,6 +277,15 @@ class AddNewWordViewModel: ObservableObject {
         
         do {
             try await addNewWordService.createWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+        }catch {
+            throw error
+        }
+    }
+    
+    func orderWordGroup(languageListName: String) async throws {
+        
+        do {
+            try await addNewWordService.orderWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
         }catch {
             throw error
         }

@@ -315,6 +315,7 @@ class FirestoreService: FirestoreInterface {
         
 
     }
+    
     //User word groups
     func getWordGroups(userInfo: UserInfoModel?) async throws -> [String] {
         
@@ -322,18 +323,46 @@ class FirestoreService: FirestoreInterface {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         
-        let collectionRef = db.collection("users")
+        let snapshot = try await db.collection("users")
             .document(userId)
             .collection("wordLists")
-            
+            .order(by: "order")
+            .getDocuments()
 
-        let snapshot = try await collectionRef.getDocuments()
-       
-        let documentIDs = snapshot.documents.map{ $0.documentID}
+
+        let documentIDs = snapshot.documents.map { $0.documentID }
         debugPrint(documentIDs)
         return documentIDs
     }
     
+    func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws {
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+
+        let collectionRef = db.collection("users")
+            .document(userId)
+            .collection("wordLists")
+
+        // 1️⃣ Tüm belgeleri çek
+        let snapshot = try await collectionRef.getDocuments()
+
+        // 2️⃣ Batch ile toplu güncelleme başlat
+        let batch = db.batch()
+
+        for doc in snapshot.documents {
+            let ref = doc.reference
+            let orderValue = (doc.documentID == languageListName) ? 0 : 1
+
+            batch.setData([
+                "order": orderValue
+            ], forDocument: ref, merge: true) // merge: true → mevcut alanları silmez
+        }
+
+        // 3️⃣ Toplu işlemi gönder
+        try await batch.commit()
+        debugPrint("çalıştı")
+    }
     
     //User word groups
     func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws  {
@@ -342,15 +371,21 @@ class FirestoreService: FirestoreInterface {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         
-        let collectionRef = db.collection("users")
+        let parentDocRef = db.collection("users")
             .document(userId)
             .collection("wordLists")
             .document(languageListName)
-            .collection(languageListName)
+
+        // En az bir alan set et (örneğin tarih veya isim)
+        try await parentDocRef.setData([
+            "name": languageListName,
+            "order": 1
+        ])
         
+        let subCollectionRef = parentDocRef.collection(languageListName)
+        let newDoc = subCollectionRef.document()
         
         let newWord = Word(word: "First Word")
-        let newDoc = collectionRef.document()
         var toSave = newWord
         let randomColor = Color.random
         
@@ -360,6 +395,12 @@ class FirestoreService: FirestoreInterface {
         toSave.lastUpdateDate = now
         toSave.color = randomColor
         toSave.photoURL = ""
+        
+        
+        toSave.translatedWords = ["ilk kelime"]
+        toSave.sourceLanguageId = "tr"
+        toSave.translateLanguageId = "en"
+        
         try await newDoc.setData(toSave.toMap())
             
     }

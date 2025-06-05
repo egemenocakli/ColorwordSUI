@@ -12,6 +12,7 @@ protocol AddNewWordServiceProtocol {
     func addNewWord(for word: Word, for userInfo: UserInfoModel?) async throws
     func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String]
     func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
+    func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws
 }
 
 class AddNewWordService: AddNewWordServiceProtocol {
@@ -72,4 +73,13 @@ class AddNewWordService: AddNewWordServiceProtocol {
             throw error
         }
     }
+    
+    func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws {
+        do{
+            try await firestoreService.orderWordGroup(languageListName: languageListName, userInfo: userInfo)
+        }catch {
+            throw error
+        }
+    }
+    
 }
