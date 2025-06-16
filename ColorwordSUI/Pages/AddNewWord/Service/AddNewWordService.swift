@@ -9,7 +9,7 @@ protocol AddNewWordServiceProtocol {
     func getAzureK() async throws -> String?
     func saveFavLanguages(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws
     func getFavLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper
-    func addNewWord(for word: Word, for userInfo: UserInfoModel?) async throws
+    func addNewWord(word: Word, userInfo: UserInfoModel?,selectedUserWordList: String?) async throws
     func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String]
     func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
     func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws
@@ -48,9 +48,9 @@ class AddNewWordService: AddNewWordServiceProtocol {
         return favoriteLanguages
     }
     
-    func addNewWord(for word: Word, for userInfo: UserInfoModel?) async throws {
+    func addNewWord(word: Word, userInfo: UserInfoModel?,selectedUserWordList: String?) async throws {
         do{
-            try await firestoreService.addNewWord(word: word, userInfo: userInfo)
+            try await firestoreService.addNewWord(word: word, userInfo: userInfo, selectedUserWordList: selectedUserWordList)
         }catch{
             throw error
         }

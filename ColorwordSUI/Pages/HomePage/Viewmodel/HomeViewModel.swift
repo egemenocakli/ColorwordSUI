@@ -46,6 +46,8 @@ final class HomeViewModel: ObservableObject {
             dailyProgressBarPoint = 0
             return
         }
+        print(userId)
+        print(UserSessionManager.shared.currentUser?.name ?? "bulamadım")
         
         homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
             UserSessionManager.shared.updateUserInfoModel(with: userInfoModel!)

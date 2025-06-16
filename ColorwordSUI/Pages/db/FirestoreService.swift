@@ -287,7 +287,7 @@ class FirestoreService: FirestoreInterface {
     }
     //TODO: kişinin başka kelime listesi var mı?
     //Aşağıdakini sadece başka kelime listesi yoksa diye yapıyorum. bir benzerini daha yapıp onda parametre falan almalıyım hangi listeye ekleyeceğine dair.
-    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws {
+    func addNewWord(word: Word, userInfo: UserInfoModel?, selectedUserWordList: String?) async throws {
         
         guard let userId = userInfo?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -296,8 +296,9 @@ class FirestoreService: FirestoreInterface {
         let collectionRef = db.collection("users")
             .document(userId)
             .collection("wordLists")
-            .document("wordLists")
+            .document(selectedUserWordList ?? "wordLists")
             .collection("userWords")
+
         
         let newDoc = collectionRef.document()
         var toSave = word
@@ -312,9 +313,10 @@ class FirestoreService: FirestoreInterface {
         try await newDoc.setData(toSave.toMap())
         debugPrint("🔥 Yeni kelime eklendi: \(toSave.wordId ?? "")")
         debugPrint("🔥 Yeni kelime translatedWords: \(toSave.translatedWords?[0] ?? "")")
-        
 
     }
+    
+
     
     //User word groups
     func getWordGroups(userInfo: UserInfoModel?) async throws -> [String] {
@@ -331,10 +333,11 @@ class FirestoreService: FirestoreInterface {
 
 
         let documentIDs = snapshot.documents.map { $0.documentID }
-        debugPrint(documentIDs)
+        debugPrint("Kelime listeleri:", documentIDs)
         return documentIDs
     }
-    
+    ///Kelime listelerini en son seçilenin order değişekinin değerini 0 diğerlerini ise 1 olarak düzenler.
+    ///Böylece kişinin en son seçtiğini sonraki açılışta seçili olarak gösterir.
     func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws {
         guard let userId = userInfo?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -356,12 +359,10 @@ class FirestoreService: FirestoreInterface {
 
             batch.setData([
                 "order": orderValue
-            ], forDocument: ref, merge: true) // merge: true → mevcut alanları silmez
+            ], forDocument: ref, merge: true)
         }
 
-        // 3️⃣ Toplu işlemi gönder
         try await batch.commit()
-        debugPrint("çalıştı")
     }
     
     //User word groups
@@ -382,7 +383,7 @@ class FirestoreService: FirestoreInterface {
             "order": 1
         ])
         
-        let subCollectionRef = parentDocRef.collection(languageListName)
+        let subCollectionRef = parentDocRef.collection("userWords")
         let newDoc = subCollectionRef.document()
         
         let newWord = Word(word: "First Word")

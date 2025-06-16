@@ -9,13 +9,13 @@ import SwiftUI
 
 class AddNewWordViewModel: ObservableObject {
     let keychainEncrypter = KeychainEncrpyter()
+    private let addNewWordService = AddNewWordService()
 
     @Published var enteredWord: String = ""
     @Published var translatedText: String = ""
     @Published var errorMessage: String?
     @Published var savedAzureK: String = ""
     
-    private let addNewWordService = AddNewWordService()
     
     @Published var mainLanguage: Language?
     @Published var targetLanguage: Language?
@@ -110,9 +110,9 @@ class AddNewWordViewModel: ObservableObject {
                         
                         if let matchedLanguage = supportedLanguages.first(where: { $0.id == detected.language }) {
                             self.detectedLanguage = matchedLanguage.name
-                            print("Bulunan dil: \(matchedLanguage.name)")
+                            debugPrint("Bulunan dil: \(matchedLanguage.name)")
                         } else {
-                            print("Dil bulunamadı.")
+                            debugPrint("Dil bulunamadı.")
                         }
                         self.detectedLanguageId = detected.language
                     }
@@ -240,7 +240,7 @@ class AddNewWordViewModel: ObservableObject {
         newWord.sourceLanguageId = mainLanguage?.id ?? ""
         newWord.translateLanguageId = targetLanguage?.id ?? ""
         do {
-            try await addNewWordService.addNewWord(for: newWord, for: UserSessionManager.shared.userInfoModel)
+            try await addNewWordService.addNewWord(word: newWord, userInfo: UserSessionManager.shared.userInfoModel, selectedUserWordList: selectedUserWordGroup )
             debugPrint("kelime ekleme başarılı")
         }catch{
             debugPrint("kelime ekleme başarısız")
@@ -269,6 +269,10 @@ class AddNewWordViewModel: ObservableObject {
                     self.selectedUserWordGroup = userWordGroups.first ?? "UserWordList"
                 }
             }
+        }
+        
+        if (userWordGroupDb!.isEmpty) {
+           try await createWordGroup(languageListName: "wordLists")
         }
     }
     

@@ -26,9 +26,7 @@ struct AddNewWordView: View {
                 GeometryReader { geometry in
                     VStack {
                         
-                        //Geçerli dil listesi
-                        //TODO: burada seçilen eski seçilen ile aynı değilse listedeki sıralamada en başa gelsin
-                        
+                        //Kaydedilen listeyi en son seçileni en üste gelecek şekilde gösterir.
                         if(!showNewWordGroupWidget) {
                             HStack {
                                 
@@ -101,6 +99,7 @@ struct AddNewWordView: View {
                                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                                     .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
                                     .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                                    .padding(.trailing, 10)
                                     .frame(minHeight: 40, maxHeight: 70)
                                     .limitTextEditorCharacters($addNewWordVM.newWordGroupName, limit: 15)
                                 
@@ -130,17 +129,31 @@ struct AddNewWordView: View {
                                         .background(.white)
                                         .clipShape(Circle())
                                 }
-                                .padding(.trailing, 16)
+                                .padding(.trailing, 8)
+                               
+                                Button( action:  {
+                                            
+
+                                            showNewWordGroupWidget = false
+                                        
+                                        
+                                    }) {
+                                        Image(systemName: Constants.IconTextConstants.wrongButtonCircleFill)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 32, height: 32) // doğrudan ikon boyutu
+                                            .foregroundColor(.red)
+                                            .background(.white)
+                                            .clipShape(Circle())
+
+                                    }
+                                    .padding(.trailing, 16)
+                                    
                                 
                             }
-                        }
+                            }
+                            
 
-
-                        
-                        
-
-                        
-                        
                         
                         Text("Hedef dil seçiniz")
                             .font(.largeTitle)
@@ -242,8 +255,8 @@ struct AddNewWordView: View {
 
         //TODO: taşınacak mümkünse
         struct LanguagePicker: View {
-            @State  var selectedLanguage: Language? //= supportedLanguages[0]
-            @State  var targetLanguage: Language? //= supportedLanguages[0]
+            @State  var selectedLanguage: Language?
+            @State  var targetLanguage: Language?
             
             @ObservedObject var addNewWordVM: AddNewWordViewModel
 

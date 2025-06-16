@@ -19,8 +19,9 @@ protocol FirestoreInterface {
     func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func saveFavoriteLanguages(for languages: LanguageListWrapper,for userInfo: UserInfoModel?) async throws
     func getFavoriteLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper
-    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws
-    func getWordGroups(userInfo: UserInfoModel?) async throws -> [String] 
+//    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws
+    func addNewWord(word: Word, userInfo: UserInfoModel?, selectedUserWordList: String?) async throws
+    func getWordGroups(userInfo: UserInfoModel?) async throws -> [String]
     func deleteWordGroup(named languageListName: String,userInfo: UserInfoModel?) async throws
     func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
     func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws
