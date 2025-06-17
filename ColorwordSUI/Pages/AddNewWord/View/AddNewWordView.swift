@@ -23,148 +23,160 @@ struct AddNewWordView: View {
             ZStack {
                 Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                 
-                GeometryReader { geometry in
-                    VStack {
-                        
-                        //Kaydedilen listeyi en son seçileni en üste gelecek şekilde gösterir.
-                        if(!showNewWordGroupWidget) {
-                            HStack {
+                
+                if(addNewWordVM.userWordGroups.count == 0){
+                    
+                    ProgressView("loading")
+                        .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
+                        .task {
+                            Task{
+                                try await addNewWordVM.createWordGroup(languageListName: "wordLists")
+                            }
+                        }
+                    
+                }else {
+                    GeometryReader { geometry in
+                        VStack {
+                            
+                            //Kaydedilen listeyi en son seçileni en üste gelecek şekilde gösterir.
+                            if(!showNewWordGroupWidget) {
+                                HStack {
+                                    
+                                    Text("Seçili Dil Listeniz:")
+                                        .font(.system(size: 20))
+                                        .fontWeight(.bold)
+                                        .foregroundStyle(.white)
+                                    
+                                    Picker("Selection", selection: Binding<String>(
+                                        get: { addNewWordVM.selectedUserWordGroup },
+                                        set: { addNewWordVM.selectedUserWordGroup = $0 }
+                                    )) {
+                                        ForEach(addNewWordVM.userWordGroups, id: \.self) { userWordGroup in
+                                            Text(userWordGroup)
+                                                .tag(userWordGroup)
+                                                .font(.subheadline)
+                                                .fontWeight(.bold)
+                                                .foregroundStyle(.white)
+                                        }
+                                    }
+                                    .background(.pickerButton)
+                                    .accentColor(.pickerButtonText)
+                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+                                    .font(.subheadline)
+                                    .foregroundStyle(.white)
+                                    .padding(.trailing, 10)
+                                    .onChange(of: addNewWordVM.selectedUserWordGroup) { oldValue, newValue in
+                                        Task {
+                                            try await  addNewWordVM.orderWordGroup(languageListName: newValue)
+                                        }
+                                        debugPrint("değiştiii")
+                                    }
+                                    
+                                    
+                                    //Tıklanınca bir alan açılsın text girilsin aşağıdaki metoda verilsin.
+                                    Button( action:  {
+                                        showNewWordGroupWidget = true
+                                    }) {
+                                        Image(systemName: Constants.IconTextConstants.addButtonRectangle)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 16, height: 16)
+                                            .foregroundColor(.white)
+                                            .padding(8)
+                                            .background(.green.opacity(1))
+                                            .clipShape(Circle())
+                                    }
+                                    
+                                }
+                            }else {
+                                //TODO: Bu alan yeni liste ekleye tıklanınca gelecek. belki hatta liste seçiminin yerine gelebilir
                                 
-                                Text("Seçili Dil Listeniz:")
+                                Text("Yeni Kelime Listenizin Adını Giriniz")
                                     .font(.system(size: 20))
                                     .fontWeight(.bold)
                                     .foregroundStyle(.white)
                                 
-                                Picker("Selection", selection: Binding<String>(
-                                    get: { addNewWordVM.selectedUserWordGroup },
-                                    set: { addNewWordVM.selectedUserWordGroup = $0 }
-                                )) {
-                                    ForEach(addNewWordVM.userWordGroups, id: \.self) { userWordGroup in
-                                        Text(userWordGroup)
-                                            .tag(userWordGroup)
-                                            .font(.subheadline)
-                                            .fontWeight(.bold)
-                                            .foregroundStyle(.white)
-                                    }
-                                }
-                                .background(.pickerButton)
-                                .accentColor(.pickerButtonText)
-                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                                .font(.subheadline)
-                                .foregroundStyle(.white)
-                                .onChange(of: addNewWordVM.selectedUserWordGroup) { oldValue, newValue in
-                                    Task {
-                                      try await  addNewWordVM.orderWordGroup(languageListName: newValue)
-                                    }
-                                    debugPrint("değiştiii")
-                                }
-                                
-                                
-                                //Tıklanınca bir alan açılsın text girilsin aşağıdaki metoda verilsin.
-                                Button( action:  {
-                                    showNewWordGroupWidget = true
-                                }) {
-                                    Image(systemName: Constants.IconTextConstants.addButtonRectangle)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 16, height: 16) // doğrudan ikon boyutu
-                                        .foregroundColor(.white)
-                                        .padding(8)
-                                        .background(.green.opacity(1))
-                                        .clipShape(Circle())
-                                }
-
-                            }
-                        }else {
-                            //TODO: Bu alan yeni liste ekleye tıklanınca gelecek. belki hatta liste seçiminin yerine gelebilir
-                            
-                            Text("Yeni Kelime Listenizin Adını Giriniz")
-                                .font(.system(size: 20))
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-                            
-                            HStack{
-                                
-                                
-                                //TODO: bu text editorler common widgeta eklenecek
-                                
-                                TextEditor(text: $addNewWordVM.newWordGroupName)
-                                    .fontWeight(.bold)
-                                    .font(.system(size: Constants.FontSizeConstants.large))
-                                    .foregroundStyle(Color.textColorWhite)
-                                    .padding(16)
-                                    .scrollContentBackground(.hidden)
-                                    .background(Color.white.opacity(0.05).blur(radius: 50))
-                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
-                                    .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
-                                    .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
-                                    .padding(.trailing, 10)
-                                    .frame(minHeight: 40, maxHeight: 70)
-                                    .limitTextEditorCharacters($addNewWordVM.newWordGroupName, limit: 15)
-                                
-                                
-                                
-                                Button( action:  {
-                                    if(!addNewWordVM.newWordGroupName.isEmpty){
-                                        
-                                        do {
-                                            Task{
-                                                try await addNewWordVM.createWordGroup(languageListName: addNewWordVM.newWordGroupName)
+                                HStack{
+                                    
+                                    
+                                    //TODO: bu text editorler common widgeta eklenecek
+                                    
+                                    TextEditor(text: $addNewWordVM.newWordGroupName)
+                                        .fontWeight(.bold)
+                                        .font(.system(size: Constants.FontSizeConstants.large))
+                                        .foregroundStyle(Color.textColorWhite)
+                                        .padding(16)
+                                        .scrollContentBackground(.hidden)
+                                        .background(Color.white.opacity(0.05).blur(radius: 50))
+                                        .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
+                                        .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
+                                        .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                                        .padding(.trailing, 10)
+                                        .frame(minHeight: 40, maxHeight: 70)
+                                        .limitTextEditorCharacters($addNewWordVM.newWordGroupName, limit: 15)
+                                    
+                                    
+                                    
+                                    Button( action:  {
+                                        if(!addNewWordVM.newWordGroupName.isEmpty){
+                                            
+                                            do {
+                                                Task{
+                                                    try await addNewWordVM.createWordGroup(languageListName: addNewWordVM.newWordGroupName)
+                                                }
+                                            }catch {
+                                                debugPrint("Yeni kelime grubu eklenemedi")
                                             }
-                                        }catch {
-                                            debugPrint("Yeni kelime grubu eklenemedi")
+                                            
+                                            showNewWordGroupWidget = false
                                         }
                                         
-                                        showNewWordGroupWidget = false
+                                    }) {
+                                        Image(systemName: Constants.IconTextConstants.correctFillButton)
+                                            .resizable()
+                                            .scaledToFit()
+                                            .frame(width: 32, height: 32)
+                                            .foregroundColor(.green)
+                                            .background(.white)
+                                            .clipShape(Circle())
                                     }
+                                    .padding(.trailing, 8)
                                     
-                                }) {
-                                    Image(systemName: Constants.IconTextConstants.correctFillButton)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 32, height: 32) // doğrudan ikon boyutu
-                                        .foregroundColor(.green)
-    //                                    .padding(8)
-                                        .background(.white)
-                                        .clipShape(Circle())
-                                }
-                                .padding(.trailing, 8)
-                               
-                                Button( action:  {
-                                            
-
-                                            showNewWordGroupWidget = false
+                                    Button( action:  {
+                                        
+                                        
+                                        showNewWordGroupWidget = false
                                         
                                         
                                     }) {
                                         Image(systemName: Constants.IconTextConstants.wrongButtonCircleFill)
                                             .resizable()
                                             .scaledToFit()
-                                            .frame(width: 32, height: 32) // doğrudan ikon boyutu
+                                            .frame(width: 32, height: 32)
                                             .foregroundColor(.red)
                                             .background(.white)
                                             .clipShape(Circle())
-
+                                        
                                     }
                                     .padding(.trailing, 16)
                                     
-                                
-                            }
+                                    
+                                }
                             }
                             
-
-                        
-                        Text("Hedef dil seçiniz")
-                            .font(.largeTitle)
-                            .fontWeight(.bold)
-                            .padding(.top, 50)
-                            .foregroundStyle(.white)
-                        
-                        LanguagePicker(selectedLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[46], targetLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[117], addNewWordVM: addNewWordVM)
-                            .padding(10)
-                        
-
+                            
+                            
+                            Text("Hedef dil seçiniz")
+                                .font(.largeTitle)
+                                .fontWeight(.bold)
+                                .padding(.top, 50)
+                                .foregroundStyle(.white)
+                            
+                            LanguagePicker(selectedLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[46], targetLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[117], addNewWordVM: addNewWordVM)
+                                .padding(10)
+                            
+                            
                             TextEditor(text: $addNewWordVM.enteredWord)
                                 .fontWeight(.bold)
                                 .font(.system(size: Constants.FontSizeConstants.x2Large))
@@ -182,7 +194,7 @@ struct AddNewWordView: View {
                                     //TODO: en son kullanılan hangisiyse onu al. fav listten
                                     await addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
                                 }
-
+                                
                             }) {
                                 Text("Çevir")
                                 
@@ -199,7 +211,7 @@ struct AddNewWordView: View {
                             } else {
                                 
                                 DetectedLangText(addNewWordVM: addNewWordVM)
-
+                                
                                 Text(addNewWordVM.translatedText)
                                     .fontWeight(.bold)
                                     .font(.system(size: Constants.FontSizeConstants.x4Large))
@@ -210,20 +222,22 @@ struct AddNewWordView: View {
                             }
                             
                             Spacer()
-                        FabButton(action: {
-                            
-                            Task {
-                                do{
-                                    try await addNewWordVM.addNewWord()
-                                }catch {
-                                    
+                            FabButton(action: {
+                                
+                                Task {
+                                    do{
+                                        try await addNewWordVM.addNewWord()
+                                    }catch {
+                                        
+                                    }
                                 }
-                            }
-                        }, backgroundColor: .addFabButton,
-                            foregroundColor: Constants.ColorConstants.buttonForegroundColor,
-                            cornerRadius: Constants.SizeRadiusConstants.medium,
-                            buttonImageName: Constants.IconTextConstants.addButtonRectangle)
+                            }, backgroundColor: .addFabButton,
+                                      foregroundColor: Constants.ColorConstants.buttonForegroundColor,
+                                      cornerRadius: Constants.SizeRadiusConstants.medium,
+                                      buttonImageName: Constants.IconTextConstants.addButtonRectangle)
                         }
+                    }
+                    
                     .animation(.easeInOut, value: showNewWordGroupWidget)
                     
                     .onAppear(){
@@ -241,16 +255,19 @@ struct AddNewWordView: View {
                             addNewWordVM.selectedUserWordGroup = addNewWordVM.userWordGroups.first ?? ""
                         }
                     }
-                        
-                        .environment(\.locale, .init(identifier: languageManager.currentLanguage))
-                        .preferredColorScheme(themeManager.colorScheme)
-
-                    }
+                    
+                    
+                    .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+                    .preferredColorScheme(themeManager.colorScheme)
                     
                 }
-            
             }
         }
+                    
+                
+            
+            }
+        
         
 
         //TODO: taşınacak mümkünse

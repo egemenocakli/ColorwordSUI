@@ -28,7 +28,7 @@ class AddNewWordViewModel: ObservableObject {
     @Published var favoriteLanguageList: [Language] = []
     
     @Published var selectedUserWordGroup: String = "Word List"
-    @Published var userWordGroups = ["Word List"] //Başlangıçta atadığım değer sonradan veri gelince biraz kötü görünüyor
+    @Published var userWordGroups = [] as [String] // ["Word List"] //Başlangıçta atadığım değer sonradan veri gelince biraz kötü görünüyor
     @Published var newWordGroupName: String = ""
 //    @Published var selectedLanguageGroup: String = ""
 
@@ -270,10 +270,10 @@ class AddNewWordViewModel: ObservableObject {
                 }
             }
         }
-        
-        if (userWordGroupDb!.isEmpty) {
-           try await createWordGroup(languageListName: "wordLists")
-        }
+        //TODO: gerek kalmayacak
+//        if (userWordGroupDb!.isEmpty) {
+//           try await createWordGroup(languageListName: "wordLists")
+//        }
     }
     
     func createWordGroup(languageListName: String) async throws {
@@ -281,6 +281,7 @@ class AddNewWordViewModel: ObservableObject {
         
         do {
             try await addNewWordService.createWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+            try await getWordGroups()
         }catch {
             throw error
         }

@@ -376,6 +376,12 @@ class FirestoreService: FirestoreInterface {
             .document(userId)
             .collection("wordLists")
             .document(languageListName)
+        
+        let documentSnapshot = try await parentDocRef.getDocument()
+        guard !documentSnapshot.exists else {
+            debugPrint("'\(languageListName)' adlı kelime grubu zaten mevcut, tekrar oluşturulmadı.")
+            return
+        }
 
         // En az bir alan set et (örneğin tarih veya isim)
         try await parentDocRef.setData([
