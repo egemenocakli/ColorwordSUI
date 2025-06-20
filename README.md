@@ -1,44 +1,24 @@
 <!-- Ekran Görüntüsü 1 -->
-<a href="https://ibb.co/wNQmfcXv">
-    <img src="https://i.ibb.co/Y7dsx0Mr/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-27-12.png" width="200">
-</a>
+<img src="https://github.com/user-attachments/assets/440b8ab0-f58f-4662-a6b0-edb2f48000c8" width="200">
 
 <!-- Ekran Görüntüsü 2 -->
-<a href="https://postimg.cc/GBfh1cHs">
-    <img src="https://i.postimg.cc/qRJtyqrQ/Simulator.png" width="200">
-</a>
+<img src="https://github.com/user-attachments/assets/71d3369a-97d4-4ecd-b684-8cc0603f7f11" width="200">
 
 <!-- Ekran Görüntüsü 3 -->
-<a href="https://ibb.co/qYV2ySQ2">
-    <img src="https://i.ibb.co/Zz7bLjDb/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-30-31.png" width="200">
-</a>
+<img src="https://github.com/user-attachments/assets/7f73ad2c-f736-48e7-a6b9-002ebb543833" width="200">
 
 <!-- Ekran Görüntüsü 4 -->
-<a href="https://ibb.co/5gPR4Ngf">
-    <img src="https://i.ibb.co/mV3cTLVM/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-28-28.png" width="200">
-</a>
+<img src="https://github.com/user-attachments/assets/5d69d2f1-e076-4b91-98da-ec1d5141c657" width="200">
 
 <!-- Ekran Görüntüsü 5 -->
-<a href="https://ibb.co/8QJTcNr">
-    <img src="https://i.ibb.co/RJ1ZyY3/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-26-54.png" width="200">
-</a>
-
+<img src="https://github.com/user-attachments/assets/e33f0319-9d27-4b5b-91e5-002acfc5e568" width="200">
 
 <!-- Ekran Görüntüsü 6 -->
-<a href="https://ibb.co/SXMCNYhP">
-    <img src="https://i.ibb.co/QFTw9S2f/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-03-03-59.png" width="200">
-</a>
-
+<img src="https://github.com/user-attachments/assets/2cd20dd4-feaf-4aa1-9819-41dced8819d3" width="200">
 
 <!-- Ekran Görüntüsü 7 -->
-<a href="https://ibb.co/dJWWvQsw">
-    <img src="https://i.ibb.co/Xk22Pzfr/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-20-51.png" width="200">
-</a>
-
+<img src="https://github.com/user-attachments/assets/ade3ec56-cefb-4d1e-a32a-efca8fe273e9" width="200">
 
 <!-- Ekran Görüntüsü 8 -->
-<a href="https://ibb.co/Mx02Xgmv">
-    <img src="https://i.ibb.co/xtTC42Nk/Simulator-Screenshot-i-Phone-16-Pro-2025-04-09-at-02-21-08.png" width="200">
-</a>
-
+<img src="https://github.com/user-attachments/assets/115a048b-fde4-4b68-b13e-d50f0dc574d0" width="200">
 
