@@ -46,8 +46,8 @@ final class HomeViewModel: ObservableObject {
             dailyProgressBarPoint = 0
             return
         }
-        print(userId)
-        print(UserSessionManager.shared.currentUser?.name ?? "bulamadım")
+        debugPrint(userId)
+        debugPrint(UserSessionManager.shared.currentUser?.name ?? "bulamadım")
         
         homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
             UserSessionManager.shared.updateUserInfoModel(with: userInfoModel!)
@@ -66,15 +66,15 @@ final class HomeViewModel: ObservableObject {
         
         if let lastScoreDate = userInfoModel?.dailyScoreDate,
            !Calendar.current.isDate(lastScoreDate, inSameDayAs: Date()) {
-            print("ilk defa giriş yapıldı")
+            debugPrint("ilk defa giriş yapıldı")
             
             guard let currentUser = UserSessionManager.shared.currentUser else {
-                print("UserSessionManager.shared.currentUser bulunamadı")
+                debugPrint("UserSessionManager.shared.currentUser bulunamadı")
                 return
             }
             
             guard let userInfoModel = self.userInfoModel else {
-                print("userInfoModel bulunamadı")
+                debugPrint("userInfoModel bulunamadı")
                 return
             }
             
@@ -86,11 +86,11 @@ final class HomeViewModel: ObservableObject {
                 
                 self.homeService.increaseUserInfoPoints(for: userInfo) { result in
                     if result {
-                        print("Kullanıcı puanları başarılı şekilde sıfırlandı.")
+                        debugPrint("Kullanıcı puanları başarılı şekilde sıfırlandı.")
                         self.userInfoModel?.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
                         self.dailyProgressBarPoint = Constants.ScoreConstants.dailyLoginScoreBonus
                     }else {
-                        print("Puan sıfırlama işlemi başarısız oldu.")
+                        debugPrint("Puan sıfırlama işlemi başarısız oldu.")
                     }
             }
         }
@@ -115,12 +115,12 @@ final class HomeViewModel: ObservableObject {
     func increaseUserInfoPoints(increaseBy: Int) {
         
         guard let currentUser = UserSessionManager.shared.currentUser else {
-            print("UserSessionManager.shared.currentUser bulunamadı")
+            debugPrint("UserSessionManager.shared.currentUser bulunamadı")
             return
         }
         
         guard self.userInfoModel != nil else {
-            print("userInfoModel bulunamadı")
+            debugPrint("userInfoModel bulunamadı")
             return
         }
 
@@ -130,17 +130,17 @@ final class HomeViewModel: ObservableObject {
         currentUserInfo.dailyScore += self.userInfoModel!.dailyScore + increaseBy
         currentUserInfo.totalScore += self.userInfoModel!.totalScore + increaseBy
         
-        print("Yeni dailyScore: \(currentUserInfo.dailyScore)")
-        print("Yeni totalScore: \(currentUserInfo.totalScore)")
-        print("dailyscore: \(increaseBy)")
+        debugPrint("Yeni dailyScore: \(currentUserInfo.dailyScore)")
+        debugPrint("Yeni totalScore: \(currentUserInfo.totalScore)")
+        debugPrint("dailyscore: \(increaseBy)")
         
             homeService.increaseUserInfoPoints(for: currentUserInfo) { result in
                 if result {
                     self.userInfoModel = currentUserInfo
                     self.dailyProgressBarPoint = currentUserInfo.dailyScore
-                    print("Kullanıcı puanları başarılı şekilde güncellendi.")
+                    debugPrint("Kullanıcı puanları başarılı şekilde güncellendi.")
                 }else {
-                    print("Puan güncelleme işlemi başarısız oldu.")
+                    debugPrint("Puan güncelleme işlemi başarısız oldu.")
                 }
             }
         
@@ -151,12 +151,12 @@ final class HomeViewModel: ObservableObject {
         
 
         guard let currentUser = UserSessionManager.shared.currentUser else {
-            print("UserSessionManager.shared.currentUser bulunamadı")
+            debugPrint("UserSessionManager.shared.currentUser bulunamadı")
             return
         }
         
         guard self.userInfoModel != nil else {
-            print("userInfoModel bulunamadı")
+            debugPrint("userInfoModel bulunamadı")
             return
         }
             
@@ -166,11 +166,11 @@ final class HomeViewModel: ObservableObject {
                 
         self.homeService.changeDailyTarget (for: userInfo) { result in
                     if result {
-                        print("Hedef skor güncellendi." )
+                        debugPrint("Hedef skor güncellendi." )
                         self.userInfoModel?.dailyTarget = Constants.ScoreConstants.dailyTargetScore
                         self.fetchUserDailyPoint()
                     }else {
-                        print("Hedef skor güncellenemedi.")
+                        debugPrint("Hedef skor güncellenemedi.")
                     }
             }
         }

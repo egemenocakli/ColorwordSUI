@@ -39,3 +39,14 @@
 
 //HomePage
 "daily_target" = "Daily Target";
+
+//AddNewWord
+"word_lists" = "My Words";
+"enter_new_word_list_name" = "Enter the Name of Your New Word List";
+"select_target_language" = "Select target language";
+"translate" = "Translate";
+"error" = "Error";
+"detected_language" = "Detected Language";
+
+//AddNewWord/Widgets/UserWordListPicker
+"selected_user_word_list" = "Selected Word List:";

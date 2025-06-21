@@ -40,5 +40,14 @@
 //HomePage
 "daily_target" = "Günlük Hedef";
 
+//AddNewWord
+"word_lists" = "Kelimelerim";
+"enter_new_word_list_name" = "Yeni kelime Listenizin Adını Giriniz";
+"select_target_language" = "Hedef dil seçiniz";
+"translate" = "Çevir";
+"error" = "Hata";
+"detected_language" = "Tespit Edilen Dil";
 
+//AddNewWord/Widgets/UserWordListPicker
+"selected_user_word_list" = "Seçili Dil Listeniz:";
 

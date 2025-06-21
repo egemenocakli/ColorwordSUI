@@ -1,22 +1,18 @@
 import Foundation
 import SwiftUI
 import SwiftUICore
-
 struct AddNewWordView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var addNewWordVM = AddNewWordViewModel()
     
     @State var showPicker = false
+    @State private  var showNewWordGroupWidget = false
     
-    @State private var showNewWordGroupWidget = false
-
-
-
+    
+    
     //TODO: yeni kelime eklenirken çekilen dil listeleri gösterilceki kelime seçilenin altına eklenece
     //TODO: Yeni liste ekle yeri olacak bu metod oraya çağırılacak
-    
-    //TODO: localization eklenecek
     //widgetlar dağıtılacak ve temizlenecek.
     var body: some View {
         NavigationStack {
@@ -38,68 +34,18 @@ struct AddNewWordView: View {
                     GeometryReader { geometry in
                         VStack {
                             
-                            //Kaydedilen listeyi en son seçileni en üste gelecek şekilde gösterir.
+                            ///Kaydedilen listeyi en son seçileni en üste gelecek şekilde gösterir.
                             if(!showNewWordGroupWidget) {
-                                HStack {
-                                    
-                                    Text("Seçili Dil Listeniz:")
-                                        .font(.system(size: 20))
-                                        .fontWeight(.bold)
-                                        .foregroundStyle(.white)
-                                    
-                                    Picker("Selection", selection: Binding<String>(
-                                        get: { addNewWordVM.selectedUserWordGroup },
-                                        set: { addNewWordVM.selectedUserWordGroup = $0 }
-                                    )) {
-                                        ForEach(addNewWordVM.userWordGroups, id: \.self) { userWordGroup in
-                                            Text(userWordGroup)
-                                                .tag(userWordGroup)
-                                                .font(.subheadline)
-                                                .fontWeight(.bold)
-                                                .foregroundStyle(.white)
-                                        }
-                                    }
-                                    .background(.pickerButton)
-                                    .accentColor(.pickerButtonText)
-                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                                    .font(.subheadline)
-                                    .foregroundStyle(.white)
-                                    .padding(.trailing, 10)
-                                    .onChange(of: addNewWordVM.selectedUserWordGroup) { oldValue, newValue in
-                                        Task {
-                                            try await  addNewWordVM.orderWordGroup(languageListName: newValue)
-                                        }
-                                        debugPrint("değiştiii")
-                                    }
-                                    
-                                    
-                                    //Tıklanınca bir alan açılsın text girilsin aşağıdaki metoda verilsin.
-                                    Button( action:  {
-                                        showNewWordGroupWidget = true
-                                    }) {
-                                        Image(systemName: Constants.IconTextConstants.addButtonRectangle)
-                                            .resizable()
-                                            .scaledToFit()
-                                            .frame(width: 16, height: 16)
-                                            .foregroundColor(.white)
-                                            .padding(8)
-                                            .background(.green.opacity(1))
-                                            .clipShape(Circle())
-                                    }
-                                    
-                                }
-                            }else {
-                                //TODO: Bu alan yeni liste ekleye tıklanınca gelecek. belki hatta liste seçiminin yerine gelebilir
+                                UserWordListPicker(addNewWordVM: addNewWordVM,showNewWordGroupWidget: $showNewWordGroupWidget)
                                 
-                                Text("Yeni Kelime Listenizin Adını Giriniz")
+                            }else {
+                                
+                                Text("enter_new_word_list_name")
                                     .font(.system(size: 20))
                                     .fontWeight(.bold)
                                     .foregroundStyle(.white)
                                 
                                 HStack{
-                                    
-                                    
                                     //TODO: bu text editorler common widgeta eklenecek
                                     
                                     TextEditor(text: $addNewWordVM.newWordGroupName)
@@ -121,15 +67,18 @@ struct AddNewWordView: View {
                                     Button( action:  {
                                         if(!addNewWordVM.newWordGroupName.isEmpty){
                                             
-                                            do {
-                                                Task{
+                                            Task{
+                                                do {
                                                     try await addNewWordVM.createWordGroup(languageListName: addNewWordVM.newWordGroupName)
+                                                    addNewWordVM.newWordGroupName = ""
+                                                    
+                                                }catch {
+                                                    debugPrint("Yeni kelime grubu eklenemedi")
+                                                    addNewWordVM.newWordGroupName = ""
                                                 }
-                                            }catch {
-                                                debugPrint("Yeni kelime grubu eklenemedi")
+                                                
+                                                showNewWordGroupWidget = false
                                             }
-                                            
-                                            showNewWordGroupWidget = false
                                         }
                                         
                                     }) {
@@ -144,11 +93,7 @@ struct AddNewWordView: View {
                                     .padding(.trailing, 8)
                                     
                                     Button( action:  {
-                                        
-                                        
                                         showNewWordGroupWidget = false
-                                        
-                                        
                                     }) {
                                         Image(systemName: Constants.IconTextConstants.wrongButtonCircleFill)
                                             .resizable()
@@ -167,7 +112,7 @@ struct AddNewWordView: View {
                             
                             
                             
-                            Text("Hedef dil seçiniz")
+                            Text("select_target_language")
                                 .font(.largeTitle)
                                 .fontWeight(.bold)
                                 .padding(.top, 50)
@@ -191,12 +136,11 @@ struct AddNewWordView: View {
                                 .limitTextEditorCharacters($addNewWordVM.enteredWord, limit: 40)
                             Button(action: {
                                 Task{
-                                    //TODO: en son kullanılan hangisiyse onu al. fav listten
                                     await addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
                                 }
                                 
                             }) {
-                                Text("Çevir")
+                                Text("translate")
                                 
                             }
                             .foregroundStyle(Constants.ColorConstants.whiteColor)
@@ -206,11 +150,11 @@ struct AddNewWordView: View {
                             Spacer()
                             
                             if let errorMessage = addNewWordVM.errorMessage {
-                                Text("Hata: \(errorMessage)")
+                                Text("error" + ": \(errorMessage)")
                                     .foregroundColor(.red)
                             } else {
                                 
-                                DetectedLangText(addNewWordVM: addNewWordVM)
+                                DetectLangText(addNewWordVM: addNewWordVM)
                                 
                                 Text(addNewWordVM.translatedText)
                                     .fontWeight(.bold)
@@ -263,106 +207,11 @@ struct AddNewWordView: View {
                 }
             }
         }
-                    
-                
-            
-            }
         
-        
-
-        //TODO: taşınacak mümkünse
-        struct LanguagePicker: View {
-            @State  var selectedLanguage: Language?
-            @State  var targetLanguage: Language?
-            
-            @ObservedObject var addNewWordVM: AddNewWordViewModel
-
-            
-            
-            var body: some View {
-                
-                HStack {
-                    
-                    
-                    Picker("Selection", selection: $selectedLanguage) {
-                        ForEach(addNewWordVM.mainLangList, id: \.id) { language in
-                            Text(language.name)
-                                .tag(language)
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    .background(.pickerButton)
-                    .accentColor(.pickerButtonText)
-                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                    .font(.subheadline)
-                    .foregroundStyle(.white)
-                    .onChange(of: selectedLanguage) { oldValue, newValue in
-                        addNewWordVM.mainLanguage = selectedLanguage ?? supportedLanguages[46]
-                        debugPrint("değiştirdim", selectedLanguage?.id as Any)
-                    }
-                    
-                    Button{
-                        //TODO: başlangıçta içeriklerinin nill olması sıkıntı. cacheten son seçilen olarak gelecek.
-                        selectedLanguage = addNewWordVM.targetLanguage ?? supportedLanguages[117]
-                        targetLanguage = addNewWordVM.mainLanguage ?? supportedLanguages[46]
-                        addNewWordVM.mainLanguage = targetLanguage
-                        addNewWordVM.targetLanguage = selectedLanguage
-                    }label: {
-                        Image(systemName: "arrow.left.arrow.right")
-                            .frame(width: 60,height: 60)
-                            .foregroundStyle(.white.opacity(0.8))
-                    }
-                    
-                    //TODO: fav list eklencek veritabanına
-                    Picker("Selection", selection: $targetLanguage) {
-                        ForEach(addNewWordVM.targetLangList, id: \.id) { language in
-                            Text(language.name)
-                                .tag(language)
-                                .font(.subheadline)
-                                .fontWeight(.bold)
-                                .foregroundStyle(.white)
-                        }
-                    }
-                    
-                    .background(.pickerButton)
-                    .accentColor(.pickerButtonText)
-                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-                    .font(.subheadline)
-                    .foregroundStyle(.white)
-                    .onChange(of: targetLanguage) { oldValue, newValue in
-                        addNewWordVM.targetLanguage = targetLanguage ?? supportedLanguages[117]
-                        debugPrint("değiştirdim", targetLanguage?.id as Any)
-
-                    }
-                }
-            }
-        }
-    
-    //Gelen güven değerini de ekleyeceğim.
-    struct DetectedLangText: View {
-        @ObservedObject var addNewWordVM: AddNewWordViewModel
-
-        
-        var body: some View {
-
-            if (addNewWordVM.detectedLanguageId != nil && addNewWordVM.mainLanguage?.id == "") {
-                Text("Detected Language: " + "\(addNewWordVM.detectedLanguage ?? "")")
-                    .font(.system(size: Constants.FontSizeConstants.x2Large))
-                    .foregroundStyle(Color.textColorWhite)
-                    .padding()
-
-            }else {
-                EmptyView()
-            }
-            
-        }
     }
 }
-
-#Preview {
-    AddNewWordView()
-}
+   
+//
+//#Preview {
+//    AddNewWordView()
+//}

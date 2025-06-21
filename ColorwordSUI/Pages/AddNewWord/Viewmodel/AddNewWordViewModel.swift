@@ -10,6 +10,7 @@ import SwiftUI
 class AddNewWordViewModel: ObservableObject {
     let keychainEncrypter = KeychainEncrpyter()
     private let addNewWordService = AddNewWordService()
+    @EnvironmentObject var languageManager: LanguageManager
 
     @Published var enteredWord: String = ""
     @Published var translatedText: String = ""
@@ -30,7 +31,6 @@ class AddNewWordViewModel: ObservableObject {
     @Published var selectedUserWordGroup: String = "Word List"
     @Published var userWordGroups = [] as [String] // ["Word List"] //Başlangıçta atadığım değer sonradan veri gelince biraz kötü görünüyor
     @Published var newWordGroupName: String = ""
-//    @Published var selectedLanguageGroup: String = ""
 
     
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
@@ -109,7 +109,7 @@ class AddNewWordViewModel: ObservableObject {
                     if let detected = detectLang.detectedLanguage {
                         
                         if let matchedLanguage = supportedLanguages.first(where: { $0.id == detected.language }) {
-                            self.detectedLanguage = matchedLanguage.name
+                            self.detectedLanguage = LanguageManager.init().currentLanguage == "tr" ? matchedLanguage.name : matchedLanguage.nameEn
                             debugPrint("Bulunan dil: \(matchedLanguage.name)")
                         } else {
                             debugPrint("Dil bulunamadı.")
