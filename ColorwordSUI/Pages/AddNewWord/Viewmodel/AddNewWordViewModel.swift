@@ -23,6 +23,8 @@ class AddNewWordViewModel: ObservableObject {
     
     @Published var detectedLanguageId: String?
     @Published var detectedLanguage: String?
+    @Published var detectedLanguageTrustScore: Int?
+    
     
     @Published var mainLangList: [Language] = Array(supportedLanguages)
     @Published var targetLangList = Array(supportedLanguages)
@@ -107,13 +109,14 @@ class AddNewWordViewModel: ObservableObject {
                 let decodedResponse = try JSONDecoder().decode([TranslationResponse].self, from: data)
                 if let detectLang = decodedResponse.first {
                     if let detected = detectLang.detectedLanguage {
-                        
+                        self.detectedLanguageTrustScore = Int(detectLang.detectedLanguage!.score*100)
                         if let matchedLanguage = supportedLanguages.first(where: { $0.id == detected.language }) {
                             self.detectedLanguage = LanguageManager.init().currentLanguage == "tr" ? matchedLanguage.name : matchedLanguage.nameEn
                             debugPrint("Bulunan dil: \(matchedLanguage.name)")
                         } else {
                             debugPrint("Dil bulunamadı.")
                         }
+                        
                         self.detectedLanguageId = detected.language
                     }
                 }

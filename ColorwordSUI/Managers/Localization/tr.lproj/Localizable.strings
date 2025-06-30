@@ -47,6 +47,8 @@
 "translate" = "Çevir";
 "error" = "Hata";
 "detected_language" = "Tespit Edilen Dil";
+"detected_language_score" = "Algılanan Dilin Güven Değeri";
+
 
 //AddNewWord/Widgets/UserWordListPicker
 "selected_user_word_list" = "Seçili Dil Listeniz:";

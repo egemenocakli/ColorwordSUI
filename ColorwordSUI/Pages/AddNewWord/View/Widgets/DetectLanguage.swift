@@ -17,7 +17,12 @@ struct DetectLangText: View {
 
         
         if (addNewWordVM.detectedLanguageId != nil && addNewWordVM.mainLanguage?.id == "") {
+            
             Text("\(Text("detected_language")): \(addNewWordVM.detectedLanguage ?? "")")
+                .font(.system(size: Constants.FontSizeConstants.x2Large))
+                .foregroundStyle(Color.textColorWhite)
+                .padding()
+            Text("\(Text("detected_language_score")): %\(addNewWordVM.detectedLanguageTrustScore ?? 0)")
                 .font(.system(size: Constants.FontSizeConstants.x2Large))
                 .foregroundStyle(Color.textColorWhite)
                 .padding()

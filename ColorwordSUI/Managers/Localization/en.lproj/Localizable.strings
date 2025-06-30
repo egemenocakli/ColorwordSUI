@@ -47,6 +47,7 @@
 "translate" = "Translate";
 "error" = "Error";
 "detected_language" = "Detected Language";
+"detected_language_score" = "Confidence Score of Detected Language";
 
 //AddNewWord/Widgets/UserWordListPicker
 "selected_user_word_list" = "Selected Word List:";

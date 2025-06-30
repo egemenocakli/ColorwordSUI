@@ -50,31 +50,10 @@ struct AddNewWordView: View {
                                 .padding(10)
                             
                             //TODO: widgetları düzenle
-                            TextEditor(text: $addNewWordVM.enteredWord)
-                                .fontWeight(.bold)
-                                .font(.system(size: Constants.FontSizeConstants.x2Large))
-                                .foregroundStyle(Color.textColorWhite)
-                                .padding(12)
-                                .scrollContentBackground(.hidden)
-                                .background(Color.white.opacity(0.05).blur(radius: 50))
-                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
-                                .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
-                                .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
-                                .frame(minHeight: 60, maxHeight: 110)
-                                .limitTextEditorCharacters($addNewWordVM.enteredWord, limit: 40)
-                            Button(action: {
-                                Task{
-                                    await addNewWordVM.translate(text: addNewWordVM.enteredWord, from: addNewWordVM.mainLanguage ?? supportedLanguages[46], to: addNewWordVM.targetLanguage ?? supportedLanguages[117])
-                                }
-                                
-                            }) {
-                                Text("translate")
-                                
-                            }
-                            .foregroundStyle(Constants.ColorConstants.whiteColor)
-                            .frame(width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight)
-                            .background(.translateButton)
-                            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
+                            
+                            TranslateTextEditorWidget(addNewWordVM: addNewWordVM)
+                            
+                            TranslateButton(addNewWordVM: addNewWordVM)
                             Spacer()
                             
                             if let errorMessage = addNewWordVM.errorMessage {
