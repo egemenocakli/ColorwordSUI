@@ -47,14 +47,13 @@ struct AddNewWordView: View {
 
                             
                             LanguagePicker(selectedLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[46], targetLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[117], addNewWordVM: addNewWordVM)
-                                .padding(10)
+                                .padding(Constants.PaddingSizeConstants.xSmallSize)
                             
                             //TODO: widgetları düzenle
                             
                             TranslateTextEditorWidget(addNewWordVM: addNewWordVM)
                             
                             TranslateButton(addNewWordVM: addNewWordVM)
-                            Spacer()
                             
                             if let errorMessage = addNewWordVM.errorMessage {
                                 Text("error" + ": \(errorMessage)")
@@ -67,7 +66,7 @@ struct AddNewWordView: View {
                                     .fontWeight(.bold)
                                     .font(.system(size: Constants.FontSizeConstants.x4Large))
                                     .foregroundStyle(Color.textColorWhite)
-                                    .padding(10)
+                                    .padding(Constants.PaddingSizeConstants.xSmallSize)
                                 
                                 
                             }

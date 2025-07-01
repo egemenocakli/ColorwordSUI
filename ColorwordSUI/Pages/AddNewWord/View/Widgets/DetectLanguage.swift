@@ -20,12 +20,12 @@ struct DetectLangText: View {
             
             Text("\(Text("detected_language")): \(addNewWordVM.detectedLanguage ?? "")")
                 .font(.system(size: Constants.FontSizeConstants.x2Large))
+                .fontWeight(.bold)
                 .foregroundStyle(Color.textColorWhite)
-                .padding()
-            Text("\(Text("detected_language_score")): %\(addNewWordVM.detectedLanguageTrustScore ?? 0)")
-                .font(.system(size: Constants.FontSizeConstants.x2Large))
+                .padding(.top, Constants.PaddingSizeConstants.xSmallSize)
+            Text("(\(Text("detected_language_score")): %\(addNewWordVM.detectedLanguageTrustScore ?? 0))")
+                .font(.system(size: Constants.FontSizeConstants.medium))
                 .foregroundStyle(Color.textColorWhite)
-                .padding()
 
         }else {
             EmptyView()
