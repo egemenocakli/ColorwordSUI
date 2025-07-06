@@ -9,10 +9,6 @@ struct AddNewWordView: View {
     @State var showPicker = false
     @State private  var showNewWordGroupWidget = false
     
-    
-    
- 
-    
     var body: some View {
         NavigationStack {
             ZStack {
@@ -47,7 +43,7 @@ struct AddNewWordView: View {
 
                             
                             LanguagePicker(selectedLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[46], targetLanguage: addNewWordVM.mainLanguage ?? supportedLanguages[117], addNewWordVM: addNewWordVM)
-                                .padding(Constants.PaddingSizeConstants.xSmallSize)
+                                .padding(Constants.PaddingSizeConstants.xxSmallSize)
                             
                             //TODO: widgetları düzenle
                             
@@ -66,7 +62,7 @@ struct AddNewWordView: View {
                                     .fontWeight(.bold)
                                     .font(.system(size: Constants.FontSizeConstants.x4Large))
                                     .foregroundStyle(Color.textColorWhite)
-                                    .padding(Constants.PaddingSizeConstants.xSmallSize)
+                                    .padding(Constants.PaddingSizeConstants.xxSmallSize)
                                 
                                 
                             }

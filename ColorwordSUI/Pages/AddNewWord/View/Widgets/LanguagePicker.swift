@@ -24,7 +24,7 @@ struct LanguagePicker: View {
                     Text(LanguageManager.init().currentLanguage == "tr" ? language.name : language.nameEn)
                         .font(.subheadline)
                         .tag(language)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Constants.ColorConstants.whiteTextColor)
                        
                 }
             }
@@ -32,7 +32,7 @@ struct LanguagePicker: View {
             .accentColor(.pickerButtonText)
             .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
             .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-            .foregroundStyle(.white)
+            .foregroundStyle(Constants.ColorConstants.whiteTextColor)
             .onChange(of: selectedLanguage) { oldValue, newValue in
                 addNewWordVM.mainLanguage = selectedLanguage ?? supportedLanguages[46]
                 debugPrint("mainLanguage seçilimi yapıldı.", selectedLanguage?.id as Any)
@@ -48,7 +48,7 @@ struct LanguagePicker: View {
                 addNewWordVM.targetLanguage = selectedLanguage
             }label: {
                 Image(systemName: "arrow.left.arrow.right")
-                    .frame(width: 30,height: 30)
+                    .frame(width: Constants.FrameSizeConstants.mSize,height: Constants.FrameSizeConstants.mSize)
                     .foregroundStyle(.white.opacity(0.8))
             }
             .layoutPriority(0)
@@ -61,7 +61,7 @@ struct LanguagePicker: View {
                     Text(LanguageManager.init().currentLanguage == "tr" ? language.name : language.nameEn)
                         .font(.subheadline)
                         .tag(language)
-                        .foregroundStyle(.white)
+                        .foregroundStyle(Constants.ColorConstants.whiteTextColor)
 
                 }
             }
@@ -69,7 +69,7 @@ struct LanguagePicker: View {
             .accentColor(.pickerButtonText)
             .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
             .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-            .foregroundStyle(.white)
+            .foregroundStyle(Constants.ColorConstants.whiteTextColor)
             .onChange(of: targetLanguage) { oldValue, newValue in
                 addNewWordVM.targetLanguage = targetLanguage ?? supportedLanguages[117]
                 debugPrint("TargetLanguage seçimi yapıldı.", targetLanguage?.id as Any)
@@ -78,6 +78,6 @@ struct LanguagePicker: View {
             .layoutPriority(1)
 
         }
-        .padding(.horizontal, 20)
+        .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
     }
 }

@@ -22,7 +22,7 @@ struct DetectLangText: View {
                 .font(.system(size: Constants.FontSizeConstants.x2Large))
                 .fontWeight(.bold)
                 .foregroundStyle(Color.textColorWhite)
-                .padding(.top, Constants.PaddingSizeConstants.xSmallSize)
+                .padding(.top, Constants.PaddingSizeConstants.xxSmallSize)
             Text("(\(Text("detected_language_score")): %\(addNewWordVM.detectedLanguageTrustScore ?? 0))")
                 .font(.system(size: Constants.FontSizeConstants.medium))
                 .foregroundStyle(Color.textColorWhite)

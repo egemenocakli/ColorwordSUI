@@ -15,7 +15,7 @@ struct CreateNewWordGroup: View {
     var body: some View {
         
         Text("enter_new_word_list_name")
-            .font(.system(size: 20))
+            .font(.system(size: Constants.FontSizeConstants.xLarge))
             .fontWeight(.bold)
             .foregroundStyle(.white)
         
@@ -26,13 +26,13 @@ struct CreateNewWordGroup: View {
                 .fontWeight(.bold)
                 .font(.system(size: Constants.FontSizeConstants.large))
                 .foregroundStyle(Color.textColorWhite)
-                .padding(16)
+                .padding(Constants.PaddingSizeConstants.xsmallSize)
                 .scrollContentBackground(.hidden)
-                .background(Color.white.opacity(0.05).blur(radius: 50))
+                .background(Color.white.opacity(0.05).blur(radius: Constants.SizeRadiusConstants.textEditorRadius))
                 .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                 .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
-                .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
-                .padding(.trailing, 10)
+                .padding(.all, Constants.PaddingSizeConstants.xxSmallSize)
+                .padding(.trailing, Constants.PaddingSizeConstants.xxSmallSize)
                 .frame(minHeight: 40, maxHeight: 70)
                 .limitTextEditorCharacters($addNewWordVM.newWordGroupName, limit: 15)
             
@@ -59,12 +59,12 @@ struct CreateNewWordGroup: View {
                 Image(systemName: Constants.IconTextConstants.correctFillButton)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 32, height: 32)
-                    .foregroundColor(.green)
-                    .background(.white)
+                    .frame(width: Constants.IconSizeConstants.mSize, height: Constants.IconSizeConstants.mSize)
+                    .foregroundColor(.addFabButton)
+                    .background(Constants.ColorConstants.buttonForegroundColor)
                     .clipShape(Circle())
             }
-            .padding(.trailing, 8)
+            .padding(.trailing, Constants.PaddingSizeConstants.xxxSmallSize)
             
             Button( action:  {
                 showNewWordGroupWidget = false
@@ -72,13 +72,13 @@ struct CreateNewWordGroup: View {
                 Image(systemName: Constants.IconTextConstants.wrongButtonCircleFill)
                     .resizable()
                     .scaledToFit()
-                    .frame(width: 32, height: 32)
-                    .foregroundColor(.red)
-                    .background(.white)
+                    .frame(width: Constants.IconSizeConstants.mSize, height: Constants.IconSizeConstants.mSize)
+                    .foregroundColor(.deleteFabButton)
+                    .background(Constants.ColorConstants.buttonForegroundColor)
                     .clipShape(Circle())
                 
             }
-            .padding(.trailing, 16)
+            .padding(.trailing, Constants.PaddingSizeConstants.xsmallSize)
             
             
         }

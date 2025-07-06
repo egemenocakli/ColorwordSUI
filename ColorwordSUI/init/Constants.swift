@@ -87,7 +87,9 @@ class Constants {
     }
     /// **xSmallSize: 10, smallSize: 20, mSize: 30, lmSize: 40, lSize: 50, xlSize: 100, xxlSize: 150, xxxlSize: 200**
     class PaddingSizeConstants {
-        static let xSmallSize: CGFloat = 10
+        static let xxxSmallSize: CGFloat = 8
+        static let xxSmallSize: CGFloat = 10
+        static let xsmallSize: CGFloat = 15
         static let smallSize: CGFloat = 20
         static let mSize: CGFloat = 30
         static let lmSize: CGFloat = 40
@@ -99,6 +101,16 @@ class Constants {
         static let fabButtonBottom: CGFloat = 5
     }
     
+    class IconSizeConstants {
+        static let xxSmallSize: CGFloat = 10
+        static let xSmallSize: CGFloat = 16
+        static let smallSize: CGFloat = 20
+        static let mSize: CGFloat = 32
+        static let lmSize: CGFloat = 40
+        static let lSize: CGFloat = 50
+        static let xlSize: CGFloat = 100
+    }
+    
     /// **xxSmall: 8, xSmall: 10, small: 12, medium: 15, large: 20, xLarge: 30**
     class SizeRadiusConstants {
         static let buttonShadowRadius: CGFloat = 4
@@ -108,6 +120,7 @@ class Constants {
         static let medium: CGFloat = 15
         static let large: CGFloat = 20
         static let xLarge: CGFloat = 30
+        static let textEditorRadius: CGFloat = 50
     }
     /// **buttonWidth: 150, buttonHeight: 50**
     class ButtonSizeConstants {
@@ -139,6 +152,8 @@ class Constants {
         static let okButtonRectangle = "checkmark.rectangle.fill"
         static let addButtonRectangle = "plus"
         static let deleteButtonRectangle = "trash"
+        static let addMoreRectangle = "plus.square.on.square"
+        
     }
     /// **tooShortTimer: 0.2, standardSpringAnimation: 0.5, shortTimer: 0.7, normalTimer: 1**
     class TimerTypeConstants {
