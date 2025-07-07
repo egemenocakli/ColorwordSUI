@@ -21,7 +21,7 @@ struct TextfieldWidget: View {
                     .background(Color.white.opacity(0.05).blur(radius: 50))
                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                     .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
-                    .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                    .padding(.all, Constants.PaddingSizeConstants.xxSmallSize)
                     .foregroundColor(.white.opacity(0.8))
                 
             }

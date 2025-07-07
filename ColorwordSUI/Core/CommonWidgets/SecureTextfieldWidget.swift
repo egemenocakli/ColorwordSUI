@@ -23,7 +23,7 @@ struct SecureTextfieldWidget: View {
                     .padding(12)
                     .background(Color.white.opacity(0.05).blur(radius: 50))
                     .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
-                    .padding(.all, Constants.PaddingSizeConstants.xSmallSize)
+                    .padding(.all, Constants.PaddingSizeConstants.xxSmallSize)
                     .foregroundColor(.white.opacity(0.8))
             }
         }

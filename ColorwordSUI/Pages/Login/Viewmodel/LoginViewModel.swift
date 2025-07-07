@@ -94,6 +94,7 @@ class LoginViewModel: ObservableObject {
         
         print(userPreferences.savedEmail)
         print(userPreferences.savedTheme)
+        print(userPreferences.savedAzureK)
     }
 
 }

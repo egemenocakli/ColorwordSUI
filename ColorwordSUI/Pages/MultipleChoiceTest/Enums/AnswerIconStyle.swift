@@ -16,7 +16,7 @@ enum AnswerIconStyle {
     var systemImageName: String {
         switch self {
         case .correct: return Constants.IconTextConstants.correctButton
-        case .wrong: return Constants.IconTextConstants.wrongButton
+        case .wrong: return Constants.IconTextConstants.wrongButtonCircle
         }
     }
 }

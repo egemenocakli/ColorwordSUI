@@ -8,9 +8,13 @@
 protocol SignupInterface {
     func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (ServiceResponse<String>) -> Void)
     func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void)
+    func getAzureK() async throws -> String?
 }
 
 class SignupService: FirebaseAuthService, SignupInterface {
+
+    
+
 
     private let firebaseAuthService = FirebaseAuthService()
     private let firestoreService = FirestoreService()
@@ -53,6 +57,18 @@ class SignupService: FirebaseAuthService, SignupInterface {
         }
     }
 
+    
+    
+    func getAzureK() async throws -> String? {
+        do {
+            // Firestore'dan azureK bilgisini çekiyoruz
+            let azureK = try await firestoreService.getAzureK()
+            return azureK
+        } catch {
+            // Hata durumunda exception fırlatıyoruz
+            throw error
+        }
+    }
 }
 
 

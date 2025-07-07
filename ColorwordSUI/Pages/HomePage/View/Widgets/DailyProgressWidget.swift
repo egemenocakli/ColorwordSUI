@@ -57,7 +57,7 @@ struct DailyProgressView: View {
             showPicker.toggle()
         }
         .sheet(isPresented: $showPicker, content: {
-            ContentView(showPicker: $showPicker, homeVM: homeVM)
+            BottomSheet(showPicker: $showPicker, homeVM: homeVM)
                 .presentationDetents([.fraction(0.1)])
                 .presentationCornerRadius(Constants.SizeRadiusConstants.large)
 
@@ -67,7 +67,7 @@ struct DailyProgressView: View {
         
     }
     //Daily target score picker. Bottom sheet
-    struct ContentView: View {
+    struct BottomSheet: View {
         @State private var selectedValue = 100
         @Binding var showPicker: Bool
         @ObservedObject var homeVM: HomeViewModel
