@@ -8,9 +8,13 @@
 protocol SignupInterface {
     func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (ServiceResponse<String>) -> Void)
     func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void)
+    func getAzureK() async throws -> String?
 }
 
 class SignupService: FirebaseAuthService, SignupInterface {
+
+    
+
 
     private let firebaseAuthService = FirebaseAuthService()
     private let firestoreService = FirestoreService()
@@ -39,10 +43,10 @@ class SignupService: FirebaseAuthService, SignupInterface {
         }
     }
 
-    /// **Kullanıcı bilgilerini Firestore’a ekler**
+    /// **Kullanıcı bilgilerini Firestore’a ekler. UserInfo bilgisi olarak bir model daha tutuluyor, bu bilgileri burada model içeriğini dolduruyoruz**
     func createUserInfo(email: String, name: String, lastName: String, userId: String, completion: @escaping (ServiceResponse<Bool>) -> Void) {
         
-        firestoreService.createUserInfo(email: email, name: name, lastName: lastName, userUid: userId) { success in
+        firestoreService.createOrUpdateUserInfo(user: UserInfoModel(userId: userId, email: email, name: name, lastname: lastName, dailyTarget: 100)) { success in
             if success {
                 print("✅ Firestore'da kullanıcı bilgileri başarıyla kaydedildi.")
                 completion(.success(true))
@@ -52,20 +56,19 @@ class SignupService: FirebaseAuthService, SignupInterface {
             }
         }
     }
+
+    
+    
+    func getAzureK() async throws -> String? {
+        do {
+            // Firestore'dan azureK bilgisini çekiyoruz
+            let azureK = try await firestoreService.getAzureK()
+            return azureK
+        } catch {
+            // Hata durumunda exception fırlatıyoruz
+            throw error
+        }
+    }
 }
 
 
-
-//    func signUp(email: String, password: String, name: String, lastName: String, completion: @escaping (Bool, String?) -> Void) {
-//
-//        firebaseAuthService.signUpDb(email: email, password: password, name: name, lastName: lastName) { result,uid  in
-//
-//            if result {
-//                completion(true, uid)
-//            } else {
-//                completion(false, "Something went wrong")
-//            }
-//        }
-//
-//    }
-//

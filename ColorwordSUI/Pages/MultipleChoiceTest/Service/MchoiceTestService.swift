@@ -11,6 +11,8 @@ protocol MchoiceTestServiceInterface {
     func getWordList() async throws -> [Word]
     func increaseWordScore(word: Word, points: Int) async throws
     func decreaseWordScore(word: Word, points: Int) async throws
+    func increaseUserInfoPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
+
 }
 
 class MchoiceTestService: MchoiceTestServiceInterface {
@@ -41,6 +43,13 @@ class MchoiceTestService: MchoiceTestServiceInterface {
             try await firestoreService.decreaseWordScore(word: word, points: points)
         }catch{
             print(error)
+        }
+    }
+    
+    func increaseUserInfoPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void) {
+        
+        firestoreService.increaseDailyPoints(for: userInfo) { result in
+            completion(result)
         }
     }
 }

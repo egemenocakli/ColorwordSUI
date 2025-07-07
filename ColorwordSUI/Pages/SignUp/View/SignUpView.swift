@@ -40,6 +40,7 @@ struct SignUpView: View {
                         })
                         .padding(.bottom, geometry.size.height * 0.1)
                         .frame(height: geometry.size.height * 0.3)
+                        
                     }
                     .padding(.top, geometry.size.height * 0.05)
                     

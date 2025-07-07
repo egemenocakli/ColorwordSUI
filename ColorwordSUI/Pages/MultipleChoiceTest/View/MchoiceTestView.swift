@@ -312,7 +312,8 @@ struct MchoiceTestView: View {
             .padding()
             .foregroundColor(.red)
         }
-        .presentationDetents([.medium, .large])
+        .presentationDetents([.fraction(0.35)])
+        .presentationCornerRadius(Constants.SizeRadiusConstants.large)
         .presentationDragIndicator(.visible)
     }
     

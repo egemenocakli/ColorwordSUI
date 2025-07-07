@@ -24,6 +24,8 @@ class LoginViewModel: ObservableObject {
     let userPreferences = UserPreferences()
     let keychainEncrpyter = KeychainEncrpyter()
 
+
+
     
     
         
@@ -49,10 +51,12 @@ class LoginViewModel: ObservableObject {
                 case .success(let user):
                     print("✅ Kullanıcı giriş yaptı: \(user.email)")
                     UserSessionManager.shared.updateUser(with: user)
+                    HomeViewModel.shared.changeLoginSuccesState()
                     self?.loginResultMessage = Bundle.main.localizedString(forKey: "login_success", value: nil, table: nil)
                     self?.loginSuccess = true
                     self?.showToastMessage()
                     self?.saveUserData()
+                    
                     
                 case .failure(let error):
                     print("❌ Giriş başarısız: \(error.localizedDescription)")
@@ -90,6 +94,7 @@ class LoginViewModel: ObservableObject {
         
         print(userPreferences.savedEmail)
         print(userPreferences.savedTheme)
+        print(userPreferences.savedAzureK)
     }
 
 }

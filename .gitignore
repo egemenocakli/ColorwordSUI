@@ -62,3 +62,4 @@ fastlane/Preview.html
 fastlane/screenshots/**/*.png
 fastlane/test_output
 ColorwordSUI/GoogleService-Info.plist
+ColorwordSUI/init/Secrets.plist

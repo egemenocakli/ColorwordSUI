@@ -1,0 +1,85 @@
+//
+//  AddNewWordService.swift
+//  ColorwordSUI
+//
+//  Created by Emre Ocaklı on 7.05.2025.
+//
+
+protocol AddNewWordServiceProtocol {
+    func getAzureK() async throws -> String?
+    func saveFavLanguages(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws
+    func getFavLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper
+    func addNewWord(word: Word, userInfo: UserInfoModel?,selectedUserWordList: String?) async throws
+    func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String]
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
+    func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws
+}
+
+class AddNewWordService: AddNewWordServiceProtocol {
+    
+    private let firestoreService = FirestoreService()
+
+    
+    func getAzureK() async throws -> String? {
+        do {
+            let azureK = try await firestoreService.getAzureK()
+            return azureK
+        } catch {
+            throw error
+        }
+    }
+    
+    func saveFavLanguages(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws {
+        do{
+            try await firestoreService.saveFavoriteLanguages(for: languages, for: userInfo)
+        }catch{
+            throw error
+        }
+    }
+    
+    func getFavLanguages(for userInfo: UserInfoModel?) async throws -> LanguageListWrapper {
+        let favoriteLanguages: LanguageListWrapper
+        do{
+            favoriteLanguages = try await firestoreService.getFavoriteLanguages(for: userInfo)
+            
+        }catch{
+            throw error
+        }
+        return favoriteLanguages
+    }
+    
+    func addNewWord(word: Word, userInfo: UserInfoModel?,selectedUserWordList: String?) async throws {
+        do{
+            try await firestoreService.addNewWord(word: word, userInfo: userInfo, selectedUserWordList: selectedUserWordList)
+        }catch{
+            throw error
+        }
+    }
+    func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String] {
+        let wordGroups: [String]
+        do{
+          wordGroups = try await firestoreService.getWordGroups(userInfo: userInfo)
+        }catch{
+            throw error
+        }
+        return wordGroups
+    }
+    
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws {
+        
+        do {
+            try await firestoreService.createWordGroup(languageListName: languageListName, userInfo: userInfo)
+        }catch {
+            throw error
+        }
+    }
+    
+    func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws {
+        do{
+            try await firestoreService.orderWordGroup(languageListName: languageListName, userInfo: userInfo)
+        }catch {
+            throw error
+        }
+    }
+    
+}

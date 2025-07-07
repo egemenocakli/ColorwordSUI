@@ -8,6 +8,10 @@
 import Foundation
 import SwiftUI
 
+//Service methods:
+//      -> getWordList
+//      -> getUserAnswer
+//      -> increaseDailyAndTotalScore
 
 class MchoiceTestViewModel: ObservableObject {
     @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
@@ -131,6 +135,11 @@ class MchoiceTestViewModel: ObservableObject {
     func getUserAnswer(word: Word, pageIndex: Int) async {
         var updatedWord = word
         
+        guard UserSessionManager.shared.userInfoModel != nil else {
+            print("userInfoModel bulunamadı")
+            return
+        }
+        
         if answerList == nil {
             DispatchQueue.main.async {
                 self.answerList = Array(repeating: .empty, count: self.wordList.count)
@@ -138,15 +147,17 @@ class MchoiceTestViewModel: ObservableObject {
         }
         
         if (isAnswerCorrect == true) {
-            updatedWord.score = (updatedWord.score ?? 0) + 2
+            updatedWord.score = (updatedWord.score ?? 0) + 5
             DispatchQueue.main.async {
                 self.isCorrectCheckForIcon = true
                 self.answerList?[pageIndex] = .correct
                 
                 print(pageIndex)
             }
+            
             do{
-                try await mChoiceTestService.increaseWordScore(word: updatedWord, points: 2)
+                try await mChoiceTestService.increaseWordScore(word: updatedWord, points: 5)
+                increaseDailyAndTotalScore()
             }catch {
                 print("getUserAnswer error")
             }
@@ -167,6 +178,32 @@ class MchoiceTestViewModel: ObservableObject {
             }
             
         }
+    }
+    
+    func increaseDailyAndTotalScore() {
+        
+        guard UserSessionManager.shared.userInfoModel != nil else {
+            print("userInfoModel bulunamadı")
+            return
+        }
+        
+        
+        if var userInfoModel = UserSessionManager.shared.userInfoModel {
+            userInfoModel.dailyScore = UserSessionManager.shared.userInfoModel!.dailyScore + Constants.ScoreConstants.multipleChoiceQuestionScore
+            userInfoModel.totalScore = UserSessionManager.shared.userInfoModel!.totalScore + Constants.ScoreConstants.multipleChoiceQuestionScore
+            
+            UserSessionManager.shared.updateUserInfoModel(with: userInfoModel)
+            
+            mChoiceTestService.increaseUserInfoPoints(for: userInfoModel) { result in
+                if result {
+                    print("Kullanıcı puanları başarılı şekilde güncellendi.")
+                }else {
+                    print("Puan güncelleme işlemi başarısız oldu.")
+                }
+            }
+        }
+
+        
     }
     
     ///Get word color then change background Color.
@@ -236,6 +273,7 @@ class MchoiceTestViewModel: ObservableObject {
         """
     }
 
+        
 }
 
 

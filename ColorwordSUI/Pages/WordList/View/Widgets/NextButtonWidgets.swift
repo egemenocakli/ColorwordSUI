@@ -24,7 +24,7 @@ struct NextButtonWidgets: View {
                                .resizable()
                                .scaledToFit()
                                .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
-                               .padding(.leading, Constants.PaddingSizeConstants.xSmallSize)
+                               .padding(.leading, Constants.PaddingSizeConstants.xxSmallSize)
                                .foregroundColor(selectedTabIndex == 0 ? .gray : .white.opacity(0.7))
                        }
                        .disabled(selectedTabIndex == 0)
@@ -41,7 +41,7 @@ struct NextButtonWidgets: View {
                                .resizable()
                                .scaledToFit()
                                .frame(width: Constants.FrameSizeConstants.smallSize, height: Constants.FrameSizeConstants.lSize)
-                               .padding(.trailing, Constants.PaddingSizeConstants.xSmallSize)
+                               .padding(.trailing, Constants.PaddingSizeConstants.xxSmallSize)
                                .foregroundColor(selectedTabIndex == wordListVM.wordList.count - 1 ? .gray : .white.opacity(0.7))
                        }
                        .disabled(selectedTabIndex == self.wordListVM.wordList.count - 1)

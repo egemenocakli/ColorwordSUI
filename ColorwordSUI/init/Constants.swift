@@ -54,7 +54,9 @@ class Constants {
         
         //Main
         static let blackColor: Color = Color.black
+        static let blackTextColor: Color = Color.black
         static let whiteColor: Color = Color.white
+        static let whiteTextColor: Color = Color.white
         static let gray: Color = Color.gray
         static let placeHolderTextColor: Color = Color.white.opacity(0.40)
         static let borderColor: Color = Color.white.opacity(0.50)
@@ -69,8 +71,10 @@ class Constants {
         static let wrongButtonColor: Color = Color(hex: "C62828")!
         
         static let toastMessageBackgroundColor: Color = Color.black.opacity(0.7)
-        static let optionButtonBackgroundColor: Color = Color.black.opacity(0.12)
+        static let optionButtonBackgroundColor: Color = Color.mChoiceButtonBackground
         static let grayButtonColor: Color = Color.white.opacity(0.6)
+        static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
+        static let buttonForegroundColor: Color = Color.white
         
     }
     /// **xSmallSize: 10, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
@@ -83,7 +87,9 @@ class Constants {
     }
     /// **xSmallSize: 10, smallSize: 20, mSize: 30, lmSize: 40, lSize: 50, xlSize: 100, xxlSize: 150, xxxlSize: 200**
     class PaddingSizeConstants {
-        static let xSmallSize: CGFloat = 10
+        static let xxxSmallSize: CGFloat = 8
+        static let xxSmallSize: CGFloat = 10
+        static let xsmallSize: CGFloat = 15
         static let smallSize: CGFloat = 20
         static let mSize: CGFloat = 30
         static let lmSize: CGFloat = 40
@@ -91,16 +97,30 @@ class Constants {
         static let xlSize: CGFloat = 100
         static let xxlSize: CGFloat = 150
         static let xxxlSize: CGFloat = 200
+        static let fabButtonTrailing: CGFloat = 20
+        static let fabButtonBottom: CGFloat = 5
+    }
+    
+    class IconSizeConstants {
+        static let xxSmallSize: CGFloat = 10
+        static let xSmallSize: CGFloat = 16
+        static let smallSize: CGFloat = 20
+        static let mSize: CGFloat = 32
+        static let lmSize: CGFloat = 40
+        static let lSize: CGFloat = 50
+        static let xlSize: CGFloat = 100
     }
     
     /// **xxSmall: 8, xSmall: 10, small: 12, medium: 15, large: 20, xLarge: 30**
     class SizeRadiusConstants {
+        static let buttonShadowRadius: CGFloat = 4
         static let xxSmall: CGFloat = 8
         static let xSmall: CGFloat = 10
         static let small: CGFloat = 12
         static let medium: CGFloat = 15
         static let large: CGFloat = 20
         static let xLarge: CGFloat = 30
+        static let textEditorRadius: CGFloat = 50
     }
     /// **buttonWidth: 150, buttonHeight: 50**
     class ButtonSizeConstants {
@@ -124,9 +144,16 @@ class Constants {
         static let leftButton = "chevron.left"
         static let rightButton = "chevron.right"
         static let correctButton = "checkmark.circle"
-        static let wrongButton = "xmark.circle"
+        static let correctFillButton = "checkmark.circle.fill"
+        static let wrongButtonCircle = "xmark.circle"
+        static let wrongButtonCircleFill = "xmark.circle.fill"
         static let settingsButton = "gearshape.fill"
         static let logOutButton = "rectangle.portrait.and.arrow.right"
+        static let okButtonRectangle = "checkmark.rectangle.fill"
+        static let addButtonRectangle = "plus"
+        static let deleteButtonRectangle = "trash"
+        static let addMoreRectangle = "plus.square.on.square"
+        
     }
     /// **tooShortTimer: 0.2, standardSpringAnimation: 0.5, shortTimer: 0.7, normalTimer: 1**
     class TimerTypeConstants {
@@ -134,6 +161,13 @@ class Constants {
         static let standardSpringAnimation: TimeInterval = 0.5
         static let shortTimer: TimeInterval = 0.7
         static let normalTimer: TimeInterval = 1
+    }
+    
+    class ScoreConstants {
+        static let dailyLoginScoreBonus: Int = 10
+        static let dailyTargetScore: Int = 100
+        static let multipleChoiceQuestionScore: Int = 5
+        
     }
 }
 

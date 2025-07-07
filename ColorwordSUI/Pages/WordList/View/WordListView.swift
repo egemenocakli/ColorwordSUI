@@ -13,8 +13,10 @@ struct WordListView: View {
     @EnvironmentObject var themeManager: ThemeManager
 
     @State private var selectedTabIndex = 0
-    @State private var navigateToLogin = false 
+    @State private var navigateToLogin = false
     @State private var selectedTab = 0
+    
+    @State private var showAddWordView = false
 
     var body: some View {
         NavigationView {
@@ -41,7 +43,7 @@ struct WordListView: View {
                             }
                     }
 
-                    
+
                 }
                 .background(
                     Color(Color(hex: wordListVM.wordBackgroundColor)!)
@@ -49,6 +51,70 @@ struct WordListView: View {
                 )                .edgesIgnoringSafeArea(.all)
                 .task {
                     await wordListVM.getWordList()
+                }
+                
+                //TODO: constants vs düzenlenecek.
+                //button genel bir fab buton olarak common widgets için eklenebilir.
+                VStack {
+                    
+                    Spacer()
+                    FabButton(action: {
+                        showAddWordView = true
+
+                    }, backgroundColor: .addFabButton,
+                        foregroundColor: Constants.ColorConstants.buttonForegroundColor,
+                        cornerRadius: Constants.SizeRadiusConstants.medium,
+                        buttonImageName: Constants.IconTextConstants.addButtonRectangle)
+                    
+//                        HStack {
+//                            Spacer()
+//                            // FAB button
+//                            Button(action: {
+//                                showAddWordView = true
+//                            }) {
+//                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
+//                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
+//                                    .padding()
+//                                    .background(.addFabButton)
+//                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+//                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+//                            }
+//                            .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
+//                            .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+//                        }
+                        .navigationDestination(isPresented: $showAddWordView) {
+                            if #available(iOS 18.0, *) {
+                                AddNewWordView()
+                            } else {
+
+                            }
+                        }
+                    
+//                    HStack {
+//                        Spacer()
+//                        //TODO: kelime silme eklenecek ve silmeden önce alert ile sorulacak.
+//                        //Hatta belki tüm listeyi silme eklenecek ve silmeden önce yine sorulacak.
+//                        Button(action: {
+//                            // FAB'a tıklanınca olacaklar
+//                        }) {
+//                            Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
+//                                .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
+//                                .padding()
+//                                .background(.deleteFabButton)
+//                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
+//                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
+//                        }
+//                        .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
+//                        .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
+//                    }
+
+                    FabButton(action: {
+                        //TODO: silme eklenecek. alert ile silmeden önce sorulacak.
+                    }, backgroundColor: .deleteFabButton,
+                        foregroundColor: Constants.ColorConstants.buttonForegroundColor,
+                        cornerRadius: Constants.SizeRadiusConstants.medium,
+                        buttonImageName: Constants.IconTextConstants.deleteButtonRectangle)
+                    
                 }
                 
                 NextButtonWidgets(selectedTabIndex: $selectedTabIndex, wordListVM: wordListVM)
@@ -64,7 +130,7 @@ struct WordListView: View {
 }
 
 //#Preview {
-//    
+//
 //    HomeView().environmentObject(LanguageManager())
 //
 //}
