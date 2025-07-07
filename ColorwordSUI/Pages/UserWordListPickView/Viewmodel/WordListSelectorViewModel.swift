@@ -15,6 +15,8 @@ class WordListSelectorViewModel: ObservableObject {
     @Published var userWordGroups: [String] = []
     @Published var sharedWordGroups: [String] = []
     
+    
+    //TODO: burada kullanıcının oluşturduğu kelime listelerini silme ve hazır listelerden de yukarıya eklemek için butonlar eklenecek.
     func getWordGroupList() async {
         
         do {
@@ -35,7 +37,7 @@ class WordListSelectorViewModel: ObservableObject {
                 self.sharedWordGroups = groups
             
         }catch{
-            debugPrint("Kelime Listeleri Alınamadı.")
+            debugPrint("Hazır Kelime Listeleri Alınamadı.")
         }
         
     }
