@@ -316,7 +316,18 @@ class FirestoreService: FirestoreInterface {
 
     }
     
+    //User word groups
+    func getSharedWordGroups(userInfo: UserInfoModel?) async throws -> [String] {
+        
+        
+        let snapshot = try await db.collection("sharedWordLists")
+            .getDocuments()
 
+
+        let documentIDs = snapshot.documents.map { $0.documentID }
+        debugPrint("Hazır Kelime listeleri:", documentIDs)
+        return documentIDs
+    }
     
     //User word groups
     func getWordGroups(userInfo: UserInfoModel?) async throws -> [String] {

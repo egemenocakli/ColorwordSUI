@@ -25,4 +25,5 @@ protocol FirestoreInterface {
     func deleteWordGroup(named languageListName: String,userInfo: UserInfoModel?) async throws
     func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
     func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws
+    func getSharedWordGroups(userInfo: UserInfoModel?) async throws -> [String]
 }
