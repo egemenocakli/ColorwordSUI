@@ -14,6 +14,8 @@ class WordListSelectorViewModel: ObservableObject {
     
     @Published var userWordGroups: [String] = []
     @Published var sharedWordGroups: [String] = []
+    @Published var newWordGroupName: String = ""
+
     
     
     //TODO: burada kullanıcının oluşturduğu kelime listelerini silme ve hazır listelerden de yukarıya eklemek için butonlar eklenecek.
@@ -41,4 +43,16 @@ class WordListSelectorViewModel: ObservableObject {
         }
         
     }
+    
+    func createWordGroup(languageListName: String) async throws {
+        
+        
+        do {
+            try await wordListSelectorService.createWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+            await getWordGroupList()
+        }catch {
+            throw error
+        }
+    }
+    
 }

@@ -77,9 +77,10 @@ class Constants {
         static let buttonForegroundColor: Color = Color.white
         
     }
-    /// **xSmallSize: 10, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
+    /// **xxSmallSize: 10, xsmallSize:16, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
     class FrameSizeConstants {
-        static let xSmallSize: CGFloat = 10
+        static let xxSmallSize: CGFloat = 10
+        static let xSmallSize: CGFloat = 16
         static let smallSize: CGFloat = 20
         static let mSize: CGFloat = 30
         static let lSize: CGFloat = 40
@@ -145,6 +146,8 @@ class Constants {
         static let rightButton = "chevron.right"
         static let correctButton = "checkmark.circle"
         static let correctFillButton = "checkmark.circle.fill"
+        static let correctBasicButton = "checkmark"
+        static let xmarkBasicButton = "xmark"
         static let wrongButtonCircle = "xmark.circle"
         static let wrongButtonCircleFill = "xmark.circle.fill"
         static let settingsButton = "gearshape.fill"

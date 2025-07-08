@@ -55,30 +55,32 @@ struct CreateNewWordGroup: View {
                     }
                 }
                 
-            }) {
-                Image(systemName: Constants.IconTextConstants.correctFillButton)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.IconSizeConstants.mSize, height: Constants.IconSizeConstants.mSize)
-                    .foregroundColor(.addFabButton)
-                    .background(Constants.ColorConstants.buttonForegroundColor)
-                    .clipShape(Circle())
+            } ) {
+                Image(systemName: Constants.IconTextConstants.correctBasicButton)
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.IconSizeConstants.xSmallSize, height: Constants.IconSizeConstants.xSmallSize)                .padding(Constants.PaddingSizeConstants.xxxSmallSize)
             }
-            .padding(.trailing, Constants.PaddingSizeConstants.xxxSmallSize)
+            .foregroundStyle(Constants.ColorConstants.buttonForegroundColor)
+            .background(.addFabButton)
+            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xSmall))
+            .shadow(radius: Constants.SizeRadiusConstants.xSmall)
+            
             
             Button( action:  {
                 showNewWordGroupWidget = false
-            }) {
-                Image(systemName: Constants.IconTextConstants.wrongButtonCircleFill)
-                    .resizable()
-                    .scaledToFit()
-                    .frame(width: Constants.IconSizeConstants.mSize, height: Constants.IconSizeConstants.mSize)
-                    .foregroundColor(.deleteFabButton)
-                    .background(Constants.ColorConstants.buttonForegroundColor)
-                    .clipShape(Circle())
-                
+            } ) {
+                Image(systemName: Constants.IconTextConstants.xmarkBasicButton)
+                .resizable()
+                .scaledToFit()
+                .frame(width: Constants.IconSizeConstants.xSmallSize, height: Constants.IconSizeConstants.xSmallSize)
+                .padding(Constants.PaddingSizeConstants.xxxSmallSize)
             }
-            .padding(.trailing, Constants.PaddingSizeConstants.xsmallSize)
+            .foregroundStyle(Constants.ColorConstants.buttonForegroundColor)
+            .background(.deleteFabButton)
+            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xSmall))
+            .shadow(radius: Constants.SizeRadiusConstants.xSmall)
+            .padding(.trailing, Constants.SizeRadiusConstants.xSmall)
             
             
         }

@@ -9,6 +9,7 @@
 protocol WordListSelectorInterface{
     func getWordGroups(for userInfo: UserInfoModel?) async throws -> [String]
     func getSharedWordGroups(for userInfo: UserInfoModel?) async throws -> [String]
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
 }
 
 class WordListSelectorService: WordListSelectorInterface {
@@ -40,5 +41,13 @@ class WordListSelectorService: WordListSelectorInterface {
         return userSharedWordGroups
     }
     
+    func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws {
+        
+        do {
+            try await firestoreService.createWordGroup(languageListName: languageListName, userInfo: userInfo)
+        }catch {
+            throw error
+        }
+    }
     
 }
