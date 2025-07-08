@@ -26,6 +26,7 @@ struct WordListSelectorView: View {
                         
                         
                     //TODO: yeni kelime listesi oluşturma
+                    //TODO: şu en çok kullandığım iconButton olarak common a eklenecek.
                         
                         if(showAddNewWordGroupWidget == true) {
                             WordListCreateNewWordGroup(wordListSelectorVM: wordListSelectorVM, showNewWordGroupWidget: $showAddNewWordGroupWidget)
