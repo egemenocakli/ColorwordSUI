@@ -50,20 +50,23 @@ struct WordListSelectorView: View {
                                 
                                 
                                 if (showDeleteWordGroupWidget == true) {
-                                    Button(action: {
-                                        //Delete işlemi
-                                    } ) {
-                                        Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
-                                        .resizable()
-                                        .scaledToFit()
-                                        .frame(width: 24, height: 24)
-                                        .padding(8)
+                                    
+                                    IconButton(iconName: Constants.IconTextConstants.deleteButtonRectangle, backgroundColor: .translateButton, foregroundColor: Constants.ColorConstants.buttonForegroundColor, frameWidth: 24, frameHeight: 24, paddingEdge: .trailing, paddingValue: 8, radius: Constants.SizeRadiusConstants.xSmall) {
+                                        
+                                        Task {
+                                            do{
+                                                withAnimation {
+                                                        wordListSelectorVM.userWordGroups.removeAll { $0 == groupName }
+                                                        }
+                                                try await wordListSelectorVM.deleteWordGroup(languageListName: groupName)
+                                                await wordListSelectorVM.getWordGroupList()
+                                                
+                                            }catch{
+                                                throw error
+                                            }
+                                        }
                                     }
-                                    .foregroundStyle(Constants.ColorConstants.buttonForegroundColor)
-                                    .background(.translateButton)
-                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xSmall))
-                                    .shadow(radius: Constants.SizeRadiusConstants.xSmall)
-                                    .padding(.trailing, 8)
+                                    
                                 }else {
                                     EmptyView()
                                 }
@@ -90,7 +93,7 @@ struct WordListSelectorView: View {
                         }
                     }
                     .padding(.vertical)
-                    
+                    .animation(.easeInOut, value: wordListSelectorVM.userWordGroups)
                     
                     
                     

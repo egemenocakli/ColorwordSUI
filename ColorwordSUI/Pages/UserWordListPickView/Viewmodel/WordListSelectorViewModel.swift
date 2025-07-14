@@ -55,4 +55,12 @@ class WordListSelectorViewModel: ObservableObject {
         }
     }
     
+    func deleteWordGroup(languageListName: String) async throws {
+        
+        do {
+            try await wordListSelectorService.deleteWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+        }catch {
+            throw error
+        }
+    }
 }
