@@ -18,6 +18,7 @@ struct WordListView: View {
     
     @State private var showAddWordView = false
 
+    //TODO: geometry eklenecek
     var body: some View {
         NavigationView {
             ZStack (alignment: .center){

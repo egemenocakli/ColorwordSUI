@@ -76,6 +76,8 @@ class Constants {
         static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
         static let buttonForegroundColor: Color = Color.white
         
+
+        
     }
     /// **xxSmallSize: 10, xsmallSize:16, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
     class FrameSizeConstants {
