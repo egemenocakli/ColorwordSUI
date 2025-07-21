@@ -46,13 +46,12 @@ struct WordListSelectorView: View {
                                 }
                                 
                                 ForEach(wordListSelectorVM.userWordGroups, id: \.self) { groupName in
-                                    
+                                    let displayText: LocalizedStringKey = groupName == "wordLists" ? "word_lists" : LocalizedStringKey(groupName)
                                     HStack{
-                                        Text(groupName)
+                                        Text(displayText)
                                             .padding()
                                             .frame(maxWidth: .infinity, alignment: .leading)
-//                                            .background(Color.gray.opacity(0.2)) //dark
-//                                            .background(Constants.ColorConstants.wordListSelectorColor)
+
                                             .background(Color.wordListSelectorCardColor)
                                             .cornerRadius(8)
                                             .padding(.horizontal)
@@ -97,7 +96,6 @@ struct WordListSelectorView: View {
                                     Text(groupName)
                                         .padding()
                                         .frame(maxWidth: .infinity, alignment: .leading)
-//                                        .background(Color.blue.opacity(0.2)) //dark
                                         .background(Color.wordListSelectorSharedCardColor)
 
                                         .cornerRadius(8)
