@@ -43,7 +43,7 @@ class FirestoreService: FirestoreInterface {
     }
     
     
-    func increaseWordScore(word: Word, points: Int) async throws{
+    func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -51,7 +51,7 @@ class FirestoreService: FirestoreInterface {
         do {
             try await db.collection("users").document(userId)
                 .collection("wordLists")
-                .document("wordLists")
+                .document(selectedWordList)
                 .collection("userWords")
                 .document(word.wordId!).updateData(word.toMap())
         }
@@ -59,7 +59,7 @@ class FirestoreService: FirestoreInterface {
             debugPrint(error)
         }
     }
-    func decreaseWordScore(word: Word, points: Int) async throws{
+    func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -67,7 +67,7 @@ class FirestoreService: FirestoreInterface {
         do {
             try await db.collection("users").document(userId)
                 .collection("wordLists")
-                .document("wordLists")
+                .document(selectedWordList)
                 .collection("userWords")
                 .document(word.wordId!).updateData(word.toMap())
         }
@@ -424,28 +424,30 @@ class FirestoreService: FirestoreInterface {
     }
     
     //Kayıtlı favori dil listelerini silebilecek.
-    func deleteWordGroup(named languageListName: String,userInfo: UserInfoModel?) async throws  {
-        
+    func deleteWordGroup(named languageListName: String, userInfo: UserInfoModel?) async throws {
         guard let userId = userInfo?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
-        
+
         let documentRef = db.collection("users")
             .document(userId)
             .collection("wordLists")
             .document(languageListName)
-        
-        //Alt dizindeki bilgileri sil
-        let subCollectionRef = documentRef.collection(languageListName)
-        
+
+        // Alt koleksiyonu sil
+        let subCollectionRef = documentRef.collection("userWords") // Sabit ad gibi görünüyor
         let snapshot = try await subCollectionRef.getDocuments()
+        
         for doc in snapshot.documents {
             try await subCollectionRef.document(doc.documentID).delete()
         }
-        
+
+        // Ana dökümanı sil
         try await documentRef.delete()
-        debugPrint("'\(languageListName)' adlı kelime grubu silindi.")
+        
+        debugPrint("'\(languageListName)' adlı kelime grubu ve alt verileri silindi.")
     }
+
     
     
     

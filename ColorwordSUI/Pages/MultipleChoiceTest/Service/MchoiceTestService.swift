@@ -8,9 +8,9 @@
 import Foundation
 
 protocol MchoiceTestServiceInterface {
-    func getWordList() async throws -> [Word]
-    func increaseWordScore(word: Word, points: Int) async throws
-    func decreaseWordScore(word: Word, points: Int) async throws
+    func getWordList(selectedWordList: String) async throws -> [Word]
+    func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws
+    func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws
     func increaseUserInfoPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
 
 }
@@ -21,26 +21,26 @@ class MchoiceTestService: MchoiceTestServiceInterface {
     private let firestoreService = FirestoreService()
     var words : [Word] = []
     
-    func getWordList() async throws -> [Word] {
+    func getWordList(selectedWordList: String) async throws -> [Word] {
         //TODO: düzenlenecek
         do {
-            words = try await firestoreService.getWordList(wordListname: "wordLists")
+            words = try await firestoreService.getWordList(wordListname: selectedWordList)
         }catch {
             print(error)
         }
         return words
     }
     
-    func increaseWordScore(word: Word, points: Int) async throws {
+    func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws {
         do {
-            try await firestoreService.increaseWordScore(word: word, points: points)
+            try await firestoreService.increaseWordScore(selectedWordList: selectedWordList, word: word, points: points)
         }catch{
             print(error)
         }
     }
-    func decreaseWordScore(word: Word, points: Int) async throws {
+    func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws {
         do {
-            try await firestoreService.decreaseWordScore(word: word, points: points)
+            try await firestoreService.decreaseWordScore(selectedWordList: selectedWordList, word: word, points: points)
         }catch{
             print(error)
         }

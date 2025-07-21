@@ -11,7 +11,7 @@ struct WordListView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var wordListVM = WordListViewModel()
     @EnvironmentObject var themeManager: ThemeManager
-    let wordListName: String
+    let selectedWordListName: String
 
     @State private var selectedTabIndex = 0
     @State private var navigateToLogin = false
@@ -51,7 +51,7 @@ struct WordListView: View {
                         .animation(.easeInOut(duration: Constants.TimerTypeConstants.standardSpringAnimation), value: Color(hex: wordListVM.wordBackgroundColor))
                 )                .edgesIgnoringSafeArea(.all)
                 .task {
-                    await wordListVM.getWordList(wordListName: wordListName)
+                    await wordListVM.getWordList(wordListName: selectedWordListName)
                 }
                 
                 //TODO: constants vs düzenlenecek.

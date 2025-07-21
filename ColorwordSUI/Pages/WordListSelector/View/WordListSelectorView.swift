@@ -12,9 +12,17 @@ struct WordListSelectorView: View {
     @StateObject var wordListSelectorVM = WordListSelectorViewModel()
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var languageManager: LanguageManager
+    let selectedTargetPage: String
     
     @State private  var showAddNewWordGroupWidget = false
     @State private  var showDeleteWordGroupWidget = false
+
+//    ///HomeView sayfasında tıklanılan butonların sonraki adımlarında hangi sayfaya yönlendirileceklerini tutan değişken.
+//    enum TargetPage: String {
+//        case wordList = "wordList"
+//        case multipleChoiceTest = "multipleChoiceTest"
+//    }
+    
 
     
     //TODO: renkler constantstan alınacak ve localization eklencek.
@@ -33,7 +41,7 @@ struct WordListSelectorView: View {
                             
                         }else {
                             VStack(alignment: .leading, spacing: 24) {
-
+                                
                                 if(showAddNewWordGroupWidget == true) {
                                     WordListCreateNewWordGroup(wordListSelectorVM: wordListSelectorVM, showNewWordGroupWidget: $showAddNewWordGroupWidget)
                                         .padding(.horizontal)
@@ -47,9 +55,9 @@ struct WordListSelectorView: View {
                                 
                                 ForEach(wordListSelectorVM.userWordGroups, id: \.self) { groupName in
                                     let displayText: LocalizedStringKey = groupName == "wordLists" ? "word_lists" : LocalizedStringKey(groupName)
-                                    NavigationLink(destination: WordListView(wordListName: groupName)) {
-
-                                        HStack{
+                                    
+                                    HStack {
+                                        NavigationLink(destination: getDestinationView(groupName: groupName)) {
                                             Text(displayText)
                                                 .padding()
                                                 .frame(maxWidth: .infinity, alignment: .leading)
@@ -57,9 +65,8 @@ struct WordListSelectorView: View {
                                                 .cornerRadius(8)
                                                 .padding(.horizontal)
                                                 .foregroundStyle(Color(.textColorW))
-                                            
-                                            
                                         }
+                                        
                                         
                                         if (showDeleteWordGroupWidget == true) {
                                             
@@ -81,37 +88,40 @@ struct WordListSelectorView: View {
                                             
                                         }else {
                                             EmptyView()
+                                            }
                                         }
-                                        
-                                        
                                     }
-                                }
                                 
-                                // Hazır Kelime Listeleri
-                                Text("Hazır Kelime Listeleri")
-                                    .font(.title2).bold()
-                                    .padding(.leading)
-                                    .foregroundStyle(Color(.textColorW))
-
-                                
-                                ForEach(wordListSelectorVM.sharedWordGroups, id: \.self) { groupName in
-                                    Text(groupName)
-                                        .padding()
-                                        .frame(maxWidth: .infinity, alignment: .leading)
-                                        .background(Color.wordListSelectorSharedCardColor)
-
-                                        .cornerRadius(8)
-                                        .padding(.horizontal)
-                                        .foregroundStyle(Color(.textColorW))
-
-                                    
-                                }
                             }
                             .padding(.vertical)
                             .animation(.easeInOut, value: wordListSelectorVM.userWordGroups)
-                        }
-
-                    }
+                            
+                            // Hazır Kelime Listeleri
+                            Text("Hazır Kelime Listeleri")
+                                .font(.title2).bold()
+                                .padding(.leading)
+                                .foregroundStyle(Color(.textColorW))
+                            
+                            
+                            ForEach(wordListSelectorVM.sharedWordGroups, id: \.self) { groupName in
+                                Text(groupName)
+                                    .padding()
+                                    .frame(maxWidth: .infinity, alignment: .leading)
+                                    .background(Color.wordListSelectorSharedCardColor)
+                                
+                                    .cornerRadius(8)
+                                    .padding(.horizontal)
+                                    .foregroundStyle(Color(.textColorW))
+                                
+                            }
+                            
+                            
+                            
+                        
+                        
+                    
+                }
+            }
 
                     
                     
@@ -149,8 +159,16 @@ struct WordListSelectorView: View {
             }
         }
     }
+    private func getDestinationView(groupName: String) -> AnyView {
+        if selectedTargetPage == "wordList" {
+            return AnyView(WordListView(selectedWordListName: groupName))
+        } else if selectedTargetPage == "multipleChoiceTest" {
+            return AnyView(MchoiceTestView(selectedWordListName: groupName))
+        } else {
+            // Varsayılan view — istersen boş bir view de koyabilirsin
+            return AnyView(EmptyView())
+        }
+    }
+
 }
 
-#Preview {
-    WordListSelectorView()
-}

@@ -17,7 +17,8 @@ class Constants {
         case dark_mode = "DARK_MODE"
         case light_mode = "LIGHT_MODE"
     }
-    
+
+
     class ColorConstants {
 //        static let loginDarkThemeBackgroundGradient = LinearGradient(
 //            gradient: Gradient(colors: [
