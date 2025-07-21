@@ -22,9 +22,9 @@ class MchoiceTestService: MchoiceTestServiceInterface {
     var words : [Word] = []
     
     func getWordList() async throws -> [Word] {
-        
+        //TODO: düzenlenecek
         do {
-            words = try await firestoreService.getWordList()
+            words = try await firestoreService.getWordList(wordListname: "wordLists")
         }catch {
             print(error)
         }

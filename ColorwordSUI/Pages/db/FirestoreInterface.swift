@@ -9,7 +9,7 @@ import Foundation
 
 //TODO: genel olarak tüm isteklerin sonucunda bool dönecek şekilde yap, bu cevaplardan gerekenleri ufak bildirim olarak göster
 protocol FirestoreInterface {
-    func getWordList() async throws -> [Word]
+    func getWordList(wordListname: String) async throws -> [Word]
     func increaseWordScore(word: Word, points: Int) async throws
     func decreaseWordScore(word: Word, points: Int) async throws
     func createOrUpdateUserInfo(user: UserInfoModel, completion: @escaping (Bool) -> Void)

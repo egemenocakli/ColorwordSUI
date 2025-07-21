@@ -17,7 +17,7 @@ class FirestoreService: FirestoreInterface {
     private let db = Firestore.firestore()
     
     //TODO: Asenkron metodlara geçilecek
-    func getWordList() async throws -> [Word] {
+    func getWordList(wordListname: String) async throws -> [Word] {
         // Kullanıcı ID'si kontrolü
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -29,7 +29,7 @@ class FirestoreService: FirestoreInterface {
         let snapshot = try await db.collection("users")
             .document(userId)
             .collection("wordLists")
-            .document("wordLists")
+            .document(wordListname)
             .collection("userWords")
             .getDocuments()
         

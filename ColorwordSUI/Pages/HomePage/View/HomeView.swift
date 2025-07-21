@@ -16,8 +16,9 @@ struct HomeView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var homeVM = HomeViewModel.shared
     let categories: [CategoryItem] = [
-    CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListView())),
-    CategoryItem(title: "Multiple Choice Test", icon: "checklist", color: .purple, destination: AnyView(MchoiceTestView())),
+    CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListSelectorView())),
+//    CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListView())),
+//    CategoryItem(title: "Multiple Choice Test", icon: "checklist", color: .purple, destination: AnyView(MchoiceTestView())),
     CategoryItem(title: "Profile", icon: "person.crop.circle", color: .purple, destination: AnyView(ProfileView())),
     CategoryItem(title: "Scoreboard", icon: "list.number", color: .purple, destination: AnyView(ScoreboardView())),
     CategoryItem(title: "UserWordListPickView", icon: "list.bullet.rectangle", color: .purple, destination: AnyView(WordListSelectorView())),

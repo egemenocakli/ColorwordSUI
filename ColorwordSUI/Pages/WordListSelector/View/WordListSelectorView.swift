@@ -47,17 +47,19 @@ struct WordListSelectorView: View {
                                 
                                 ForEach(wordListSelectorVM.userWordGroups, id: \.self) { groupName in
                                     let displayText: LocalizedStringKey = groupName == "wordLists" ? "word_lists" : LocalizedStringKey(groupName)
-                                    HStack{
-                                        Text(displayText)
-                                            .padding()
-                                            .frame(maxWidth: .infinity, alignment: .leading)
+                                    NavigationLink(destination: WordListView(wordListName: groupName)) {
 
-                                            .background(Color.wordListSelectorCardColor)
-                                            .cornerRadius(8)
-                                            .padding(.horizontal)
-                                            .foregroundStyle(Color(.textColorW))
-
-                                        
+                                        HStack{
+                                            Text(displayText)
+                                                .padding()
+                                                .frame(maxWidth: .infinity, alignment: .leading)
+                                                .background(Color.wordListSelectorCardColor)
+                                                .cornerRadius(8)
+                                                .padding(.horizontal)
+                                                .foregroundStyle(Color(.textColorW))
+                                            
+                                            
+                                        }
                                         
                                         if (showDeleteWordGroupWidget == true) {
                                             
