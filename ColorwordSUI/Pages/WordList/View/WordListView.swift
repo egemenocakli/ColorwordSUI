@@ -70,7 +70,7 @@ struct WordListView: View {
 
                         .navigationDestination(isPresented: $showAddWordView) {
                             if #available(iOS 18.0, *) {
-                                AddNewWordView()
+                                AddNewWordView(selectedWordList: selectedWordListName)
                             } else {
 
                             }

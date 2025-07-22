@@ -10,9 +10,9 @@ import SwiftUI
 //TODO: sayfa ile işim bittiğinde taşınabilecek her değişkeni vm ye taşı. state ve binding durumları sorun çıkartmayacaksa
 
 struct MchoiceTestView: View {
+    let selectedWordListName: String
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
-    let selectedWordListName: String
     
     @State private var selectedTabIndex = 0
     @EnvironmentObject private var themeManager: ThemeManager
@@ -72,7 +72,7 @@ struct MchoiceTestView: View {
                             .onAppear {
                                 if let firstWord = mchoiceTestVM.wordList.first {
                                     mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
-//                                    mchoiceTestVM.selectedWordListName = selectedWordListName
+                                    mchoiceTestVM.getSelectedWordListName(takenSelectedListName: selectedWordListName)
                                 }
                             }
                             .onChange(of: selectedTabIndex) { oldIndex, newIndex in
@@ -172,12 +172,12 @@ struct MchoiceTestView: View {
         }
     }
     ///**Change the score of the word by taking the true or false status from the button selected by the user.**
-    fileprivate func getUserAnswer(selectedWordList: String,initialQuestion: Binding<QuestModel>, selectedOptionNo: Int) {
+    fileprivate func getUserAnswer(initialQuestion: Binding<QuestModel>, selectedOptionNo: Int) {
         let screenWord: Word = initialQuestion.wrappedValue.word
         
         initialQuestion.wrappedValue.options[selectedOptionNo].optionText == initialQuestion.wrappedValue.word.translatedWords![0] ? mchoiceTestVM.isAnswerCorrect = true : nil
         Task {
-            await mchoiceTestVM.getUserAnswer(selectedWordList: selectedWordListName, word: screenWord,pageIndex: selectedTabIndex)
+            await mchoiceTestVM.getUserAnswer(word: screenWord,pageIndex: selectedTabIndex)
          }
     }
     ///**The question option buttons**
@@ -205,7 +205,7 @@ struct MchoiceTestView: View {
                                        }
                                        
                                        
-                                       getUserAnswer(selectedWordList: selectedWordListName, initialQuestion: initialQuestion,selectedOptionNo: 0)
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 0)
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[0],
@@ -229,7 +229,7 @@ struct MchoiceTestView: View {
                                            mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
                                            asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
                                        }
-                                       getUserAnswer(selectedWordList: selectedWordListName, initialQuestion: initialQuestion,selectedOptionNo: 1)
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 1)
                                    },
                                    initialQuestion: initialQuestion,
                                    backgroundColor: $buttonColorList[1],
@@ -253,7 +253,7 @@ struct MchoiceTestView: View {
                                            mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
                                            asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
                                        }
-                                       getUserAnswer(selectedWordList: selectedWordListName, initialQuestion: initialQuestion,selectedOptionNo: 2)
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 2)
 
                                    },
                                    initialQuestion: initialQuestion,
@@ -278,7 +278,7 @@ struct MchoiceTestView: View {
                                            mchoiceTestVM.startProcess(with: selectedTabIndex,timerSeconds: $animamationSpeedToggle.wrappedValue.rawValue)
                                            asyncTimerCompareValues(timerSecond: $animamationSpeedToggle.wrappedValue.rawValue)
                                        }
-                                       getUserAnswer(selectedWordList: selectedWordListName, initialQuestion: initialQuestion,selectedOptionNo: 3)
+                                       getUserAnswer(initialQuestion: initialQuestion,selectedOptionNo: 3)
 
                                    },
                                    initialQuestion: initialQuestion,

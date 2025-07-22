@@ -15,6 +15,7 @@ import SwiftUI
 
 @MainActor
 class MchoiceTestViewModel: ObservableObject {
+    
     @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
     @Published var questList: [QuestModel] = []
     var wordList : [Word] = []
@@ -22,7 +23,7 @@ class MchoiceTestViewModel: ObservableObject {
     var storedValue: Int = 0
     var timerIsFinished: Bool = false
     var isAnswerCorrect: Bool = false
-
+    var selectedWordListName: String = ""
 
     enum AnswerState: String {
         case correct = "true"
@@ -32,6 +33,11 @@ class MchoiceTestViewModel: ObservableObject {
         
     var answerList: [AnswerState]? = nil
     @Published var isCorrectCheckForIcon: Bool? = nil
+    
+    
+    func getSelectedWordListName(takenSelectedListName: String) {
+        selectedWordListName = takenSelectedListName
+    }
     
     ///Returns the user's word list. #1 QuestAndOption: Order of Operations
     func getWordList(selectedWordList: String) async  -> [Word]? {
@@ -134,7 +140,7 @@ class MchoiceTestViewModel: ObservableObject {
     
     ///Update word score after user selection. #6 QuestAndOption: Order of Operations
     ///Answer counter
-    func getUserAnswer(selectedWordList: String,word: Word, pageIndex: Int) async {
+    func getUserAnswer(word: Word, pageIndex: Int) async {
         var updatedWord = word
         
         guard UserSessionManager.shared.userInfoModel != nil else {
@@ -158,7 +164,7 @@ class MchoiceTestViewModel: ObservableObject {
             }
             
             do{
-                try await mChoiceTestService.increaseWordScore(selectedWordList: selectedWordList, word: updatedWord, points: 5)
+                try await mChoiceTestService.increaseWordScore(selectedWordList: selectedWordListName, word: updatedWord, points: 5)
                 increaseDailyAndTotalScore()
             }catch {
                 print("getUserAnswer error")
@@ -174,7 +180,7 @@ class MchoiceTestViewModel: ObservableObject {
                     self.isCorrectCheckForIcon = false
                     self.answerList![pageIndex] = .wrong
                 }
-                try await mChoiceTestService.decreaseWordScore(selectedWordList: selectedWordList, word: updatedWord, points: 2)
+                try await mChoiceTestService.decreaseWordScore(selectedWordList: selectedWordListName, word: updatedWord, points: 2)
             }catch {
                 print("getUserAnswer error")
             }

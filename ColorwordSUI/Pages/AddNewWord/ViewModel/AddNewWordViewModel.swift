@@ -11,7 +11,7 @@ class AddNewWordViewModel: ObservableObject {
     let keychainEncrypter = KeychainEncrpyter()
     private let addNewWordService = AddNewWordService()
     @EnvironmentObject var languageManager: LanguageManager
-
+    
     @Published var enteredWord: String = ""
     @Published var translatedText: String = ""
     @Published var errorMessage: String?
@@ -33,7 +33,11 @@ class AddNewWordViewModel: ObservableObject {
     @Published var selectedUserWordGroup: String = "Word List"
     @Published var userWordGroups = [] as [String] // ["Word List"] //Başlangıçta atadığım değer sonradan veri gelince biraz kötü görünüyor
     @Published var newWordGroupName: String = ""
-
+    var selectedWordListName: String = ""
+    
+    func getSelectedWordListName(takenSelectedListName: String) {
+        selectedWordListName = takenSelectedListName
+    }
     
     //TODO: geri dönüş error mesajları düzeltilecek oluyorsa translate edilcek yoksa ingilizce dönecek.
     //TODO: aşağıdaki uyarı düzeltilecek
@@ -42,7 +46,7 @@ class AddNewWordViewModel: ObservableObject {
         if let loadedAzureK = keychainEncrypter.loadAzureK() {
             self.savedAzureK = loadedAzureK
             debugPrint("AzureK Keychain'den çekildi.")
-
+            
         } else {
             // Eğer Keychain'den alınamıyorsa, Firestore'dan çek ve kaydet
             Task {
@@ -60,6 +64,7 @@ class AddNewWordViewModel: ObservableObject {
             debugPrint("AzureK Keychain'den alınamadı.")
         }
     }
+    //TODO: bu işlem service de yapılmalı.
     func translate(text: String, from sourceLang: Language, to targetLang: Language) async{
         
         let translationRequest = TranslationRequest(text: text, sourceLang: sourceLang.id, targetLang: targetLang.id)
@@ -73,9 +78,9 @@ class AddNewWordViewModel: ObservableObject {
             self.mainLanguage = sourceLang
             self.targetLanguage = targetLang
         }
-
+        
         do {
-
+            
             try await self.getTranslatedLanguages(for: sourceLang, for: targetLang, for: UserSessionManager.shared.userInfoModel)
         }catch{
             self.errorMessage = "Favori Dil Kaydedilemedi."
@@ -105,7 +110,7 @@ class AddNewWordViewModel: ObservableObject {
             }
             
             do {
-
+                
                 let decodedResponse = try JSONDecoder().decode([TranslationResponse].self, from: data)
                 if let detectLang = decodedResponse.first {
                     if let detected = detectLang.detectedLanguage {
@@ -146,8 +151,8 @@ class AddNewWordViewModel: ObservableObject {
         
         var favLangSet: Set<Language> = []
         
-            favLangSet.insert(sourceLang)
-            favLangSet.insert(targetLang)
+        favLangSet.insert(sourceLang)
+        favLangSet.insert(targetLang)
         
         let favLangArray = Array(favLangSet)
         do {
@@ -157,20 +162,20 @@ class AddNewWordViewModel: ObservableObject {
             debugPrint(favLangArray)
         }catch {
             debugPrint("FavLanguage Kaydedilemedi1.")
-
+            
             self.errorMessage = error.localizedDescription
             debugPrint(error)
         }
     }
     
     func saveFavLanguage(for languages: LanguageListWrapper, for userInfo: UserInfoModel?) async throws {
-
+        
         
         do {
             try await addNewWordService.saveFavLanguages(for: languages, for: userInfo)
             debugPrint("FavLanguage Kaydedildi.2")
             
-
+            
         }catch {
             debugPrint("FavLanguage Kaydedilemedi.2")
             self.errorMessage = error.localizedDescription
@@ -181,21 +186,21 @@ class AddNewWordViewModel: ObservableObject {
         do {
             let favLanguages = try await addNewWordService.getFavLanguages(for: UserSessionManager.shared.userInfoModel)
             let detectLanguageId = ""
-
+            
             let mainList = reorderLanguagesWithFavorites(
                 favorites: favLanguages.languages,
                 in: supportedLanguages,
                 includeDetectLanguageAtTop: true,
                 detectLanguageId: detectLanguageId
             )
-
+            
             let targetList = reorderLanguagesWithFavorites(
                 favorites: favLanguages.languages,
                 in: supportedLanguages,
                 includeDetectLanguageAtTop: false,
                 detectLanguageId: detectLanguageId
             )
-
+            
             DispatchQueue.main.async {
                 self.mainLangList = mainList
                 self.targetLangList = targetList
@@ -205,28 +210,28 @@ class AddNewWordViewModel: ObservableObject {
             throw error
         }
     }
-
+    
     //Dili algıla ve favori dilleri en üstte olacak şekilde sırala.
     func reorderLanguagesWithFavorites( favorites: [Language], in fullList: [Language], includeDetectLanguageAtTop: Bool = false, detectLanguageId: String = "" ) -> [Language] {
         var favoriteIDs = Set(favorites.map { $0.id })
-
+        
         // detectLanguage'ı özel olarak başa alacağız, o yüzden diğer listelerden çıkar
         if includeDetectLanguageAtTop {
             favoriteIDs.remove(detectLanguageId)
         }
-
+        
         let reorderedFavorites = favorites.filter { $0.id != detectLanguageId }
         let remainingLanguages = fullList.filter { !favoriteIDs.contains($0.id) && $0.id != detectLanguageId }
-
+        
         var result = reorderedFavorites + remainingLanguages
-
+        
         if includeDetectLanguageAtTop, let detectLang = fullList.first(where: { $0.id == detectLanguageId }) {
             result.insert(detectLang, at: 0)
         }
-
+        
         return result
     }
-
+    
     func addNewWord() async throws {
         
         guard !enteredWord.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty,
@@ -253,50 +258,53 @@ class AddNewWordViewModel: ObservableObject {
         
     }
     
+    //Kelime listesindeki veriyi çeken metod.
     func getWordGroups() async throws {
         var userWordGroupDb: [String]?
         var selectedUserWordGroupDb: String?
+        
+        selectedUserWordGroupDb = selectedWordListName
         do {
             userWordGroupDb = try await addNewWordService.getWordGroups(for: UserSessionManager.shared.userInfoModel)
-            selectedUserWordGroupDb = userWordGroupDb?.first
         } catch {
             throw error
         }
-
+        
         DispatchQueue.main.async {
             if let userWordGroups = userWordGroupDb {
                 self.userWordGroups = userWordGroups
-                if let selected = selectedUserWordGroupDb, userWordGroups.contains(selected) {
-                    self.selectedUserWordGroup = selected
+                
+                // 1. Eğer dışarıdan gelen isim varsa ve listede varsa, onu seç
+                if let preferred = selectedUserWordGroupDb, userWordGroups.contains(preferred) {
+                    self.selectedUserWordGroup = preferred
+                    
+                    // 2. Yoksa listedeki ilk öğeyi seç
                 } else {
                     self.selectedUserWordGroup = userWordGroups.first ?? "UserWordList"
                 }
             }
         }
-        //TODO: gerek kalmayacak
-//        if (userWordGroupDb!.isEmpty) {
-//           try await createWordGroup(languageListName: "wordLists")
-//        }
     }
-    
-    func createWordGroup(languageListName: String) async throws {
         
+        func createWordGroup(languageListName: String) async throws {
+            
+            
+            do {
+                try await addNewWordService.createWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+                try await getWordGroups()
+            }catch {
+                throw error
+            }
+        }
         
-        do {
-            try await addNewWordService.createWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
-            try await getWordGroups()
-        }catch {
-            throw error
+        func orderWordGroup(languageListName: String) async throws {
+            
+            do {
+                try await addNewWordService.orderWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
+            }catch {
+                throw error
+            }
         }
     }
     
-    func orderWordGroup(languageListName: String) async throws {
-        
-        do {
-            try await addNewWordService.orderWordGroup(languageListName: languageListName, userInfo: UserSessionManager.shared.userInfoModel)
-        }catch {
-            throw error
-        }
-    }
-}
 

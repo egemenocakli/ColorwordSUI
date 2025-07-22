@@ -34,10 +34,15 @@ struct WordListSelectorView: View {
                     Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
                     ScrollView {
                         
-                        if wordListSelectorVM.isUserReady == false {
+                        if (wordListSelectorVM.isUserReady == false && wordListSelectorVM.userWordGroups.count == 0) {
                             ProgressView("loading")
                                 .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
                                 .padding(.top, geometry.size.height * 0.3)
+                                .task {
+                                    Task{
+                                        try await wordListSelectorVM.createWordGroup(languageListName: "wordLists")
+                                    }
+                                }
                             
                         }else {
                             VStack(alignment: .leading, spacing: 24) {

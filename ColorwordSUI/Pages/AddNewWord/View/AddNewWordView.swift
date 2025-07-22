@@ -8,12 +8,13 @@ struct AddNewWordView: View {
     
     @State var showPicker = false
     @State private  var showNewWordGroupWidget = false
+    var selectedWordList: String
     
+    //TODO: genel bir kontrol ve loading. onAppear için loading, bitiminde açılır. translate ve db ye bağlantı testi sonrasında açmak.
     var body: some View {
         NavigationStack {
             ZStack {
                 Constants.ColorConstants.loginLightThemeBackgroundGradient.edgesIgnoringSafeArea(.all)
-                
                 
                 if(addNewWordVM.userWordGroups.count == 0){
                     
@@ -88,6 +89,7 @@ struct AddNewWordView: View {
                     
                     .onAppear(){
                         addNewWordVM.loadAzureKFromKeychain()
+                        addNewWordVM.getSelectedWordListName(takenSelectedListName: selectedWordList)
                         
                         Task{
                             do {

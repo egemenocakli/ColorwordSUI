@@ -37,6 +37,8 @@ class WordListSelectorViewModel: ObservableObject {
         
     }
     
+
+    
     //TODO: englishA1LevelWordList diye kayıtlı şuan veri tabanında bunu daha düzgün tanımlamak lazım sadece English-> A1,A2,B1 vs. şeklinde başlangıç English olup içerisinde bunları tanımlayabilirim.
     func getSharedWordGroupList(for userInfo: UserInfoModel) async {
         
