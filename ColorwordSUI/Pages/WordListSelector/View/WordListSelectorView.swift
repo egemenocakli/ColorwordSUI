@@ -17,13 +17,6 @@ struct WordListSelectorView: View {
     @State private  var showAddNewWordGroupWidget = false
     @State private  var showDeleteWordGroupWidget = false
 
-//    ///HomeView sayfasında tıklanılan butonların sonraki adımlarında hangi sayfaya yönlendirileceklerini tutan değişken.
-//    enum TargetPage: String {
-//        case wordList = "wordList"
-//        case multipleChoiceTest = "multipleChoiceTest"
-//    }
-    
-
     
     //TODO: renkler constantstan alınacak ve localization eklencek.
     var body: some View {
@@ -45,14 +38,14 @@ struct WordListSelectorView: View {
                                 }
                             
                         }else {
-                            VStack(alignment: .leading, spacing: 24) {
+                            VStack(alignment: .leading, spacing: Constants.PaddingSizeConstants.smallSize) {
                                 
                                 if(showAddNewWordGroupWidget == true) {
                                     WordListCreateNewWordGroup(wordListSelectorVM: wordListSelectorVM, showNewWordGroupWidget: $showAddNewWordGroupWidget)
                                         .padding(.horizontal)
                                 }else {
                                     // Liste 1
-                                    Text("Sizin Oluşturduğunuz Kelime Listeleri")
+                                    Text("your_custom_word_list")
                                         .foregroundStyle(Color(.textColorW))
                                         .font(.title2).bold()
                                         .padding(.leading)
@@ -67,7 +60,7 @@ struct WordListSelectorView: View {
                                                 .padding()
                                                 .frame(maxWidth: .infinity, alignment: .leading)
                                                 .background(Color.wordListSelectorCardColor)
-                                                .cornerRadius(8)
+                                                .cornerRadius(Constants.SizeRadiusConstants.xxSmall)
                                                 .padding(.horizontal)
                                                 .foregroundStyle(Color(.textColorW))
                                         }
@@ -102,41 +95,30 @@ struct WordListSelectorView: View {
                             .animation(.easeInOut, value: wordListSelectorVM.userWordGroups)
                             
                             // Hazır Kelime Listeleri
-                            Text("Hazır Kelime Listeleri")
-                                .font(.title2).bold()
-                                .padding(.leading)
-                                .foregroundStyle(Color(.textColorW))
-                            
-                            
-                            ForEach(wordListSelectorVM.sharedWordGroups, id: \.self) { groupName in
-                                Text(groupName)
-                                    .padding()
-                                    .frame(maxWidth: .infinity, alignment: .leading)
-                                    .background(Color.wordListSelectorSharedCardColor)
-                                
-                                    .cornerRadius(8)
-                                    .padding(.horizontal)
+                            VStack(alignment: .leading, spacing: Constants.PaddingSizeConstants.smallSize) {
+                                Text("predefined_word_list")
+                                    .font(.title2).bold()
+                                    .padding(.leading)
                                     .foregroundStyle(Color(.textColorW))
-                                
+
+                                ForEach(wordListSelectorVM.sharedWordGroups, id: \.self) { groupName in
+                                    Text(groupName)
+                                        .padding()
+                                        .frame(maxWidth: .infinity, alignment: .leading)
+                                        .background(Color.wordListSelectorSharedCardColor)
+                                        .cornerRadius(Constants.SizeRadiusConstants.xxSmall)
+                                        .padding(.horizontal)
+                                        .foregroundStyle(Color(.textColorW))
+                                }
                             }
-                            
-                            
-                            
-                        
-                        
-                    
+       
                 }
             }
 
-                    
-                    
-                    
                     VStack {
                         
                         Spacer()
                         FabButton(action: {
-                            
-                            //TODO: yine aynı şekilde ekle butonuna basınca da en üstte bir alan açılacak buraya yazılan text ile yeni liste açabilecek.
                             showAddNewWordGroupWidget = !showAddNewWordGroupWidget
                             
                         }, backgroundColor: .addFabButton,
@@ -163,6 +145,8 @@ struct WordListSelectorView: View {
                 
             }
         }
+        .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+
     }
     private func getDestinationView(groupName: String) -> AnyView {
         if selectedTargetPage == "wordList" {

@@ -34,7 +34,7 @@ struct WordListCreateNewWordGroup: View {
                     .overlay(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small).stroke(Constants.ColorConstants.borderColor, lineWidth: 2))
 //                    .padding(.all, Constants.PaddingSizeConstants.xxSmallSize)
                     .padding(.trailing, Constants.PaddingSizeConstants.xxSmallSize)
-                    .frame(minHeight: 50, maxHeight: 50)
+                    .frame(minHeight: Constants.FrameSizeConstants.xLSize, maxHeight: Constants.FrameSizeConstants.xLSize)
                     .limitTextEditorCharacters($wordListSelectorVM.newWordGroupName, limit: 15)
                 
                 
