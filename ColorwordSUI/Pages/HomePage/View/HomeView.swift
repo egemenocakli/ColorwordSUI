@@ -15,13 +15,14 @@ struct HomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var homeVM = HomeViewModel.shared
+    
+    //TODO: constantstan çekilecek. ve localization eklenecek aşağıdakilere
     let categories: [CategoryItem] = [
         CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListSelectorView(selectedTargetPage: "wordList"))),
-//    CategoryItem(title: "Word List", icon: "list.bullet.rectangle", color: .blue, destination: AnyView(WordListView())),
         CategoryItem(title: "Multiple Choice Test", icon: "checklist", color: .purple, destination: AnyView(WordListSelectorView(selectedTargetPage: "multipleChoiceTest"))),
-    CategoryItem(title: "Profile", icon: "person.crop.circle", color: .purple, destination: AnyView(ProfileView())),
-    CategoryItem(title: "Scoreboard", icon: "list.number", color: .purple, destination: AnyView(ScoreboardView())),
-//    CategoryItem(title: "UserWordListPickView", icon: "list.bullet.rectangle", color: .purple, destination: AnyView(WordListSelectorView())),
+        CategoryItem(title: "Profile", icon: "person.crop.circle", color: .purple, destination: AnyView(ProfileView())),
+        CategoryItem(title: "Leaderboard", icon: "trophy", color: .purple, destination: AnyView(ScoreboardView())),
+
     ]
 
     let columns = [GridItem(.flexible()), GridItem(.flexible())]
