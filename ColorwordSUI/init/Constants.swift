@@ -76,6 +76,7 @@ class Constants {
         static let grayButtonColor: Color = Color.white.opacity(0.6)
         static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
         static let buttonForegroundColor: Color = Color.white
+        static let transparentColor: Color = Color.white.opacity(0)
         
 
         

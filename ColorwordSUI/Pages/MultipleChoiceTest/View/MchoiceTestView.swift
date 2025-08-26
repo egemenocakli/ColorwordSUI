@@ -10,7 +10,7 @@ import SwiftUI
 //TODO: sayfa ile işim bittiğinde taşınabilecek her değişkeni vm ye taşı. state ve binding durumları sorun çıkartmayacaksa
 
 struct MchoiceTestView: View {
-    let selectedWordListName: String
+    var selectedWordListName: String
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
     
@@ -70,9 +70,9 @@ struct MchoiceTestView: View {
                             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                             
                             .onAppear {
+                                mchoiceTestVM.getSelectedWordListName(takenSelectedListName: selectedWordListName)
                                 if let firstWord = mchoiceTestVM.wordList.first {
                                     mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
-                                    mchoiceTestVM.getSelectedWordListName(takenSelectedListName: selectedWordListName)
                                 }
                             }
                             .onChange(of: selectedTabIndex) { oldIndex, newIndex in

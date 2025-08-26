@@ -22,7 +22,6 @@ struct HomeView: View {
         CategoryItem(title: "Multiple Choice Test", icon: "checklist", color: .purple, destination: AnyView(WordListSelectorView(selectedTargetPage: "multipleChoiceTest"))),
         CategoryItem(title: "Profile", icon: "person.crop.circle", color: .purple, destination: AnyView(ProfileView())),
         CategoryItem(title: "Leaderboard", icon: "trophy", color: .purple, destination: AnyView(ScoreboardView())),
-
     ]
 
     let columns = [GridItem(.flexible()), GridItem(.flexible())]

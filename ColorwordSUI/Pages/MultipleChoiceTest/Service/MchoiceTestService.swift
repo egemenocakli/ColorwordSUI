@@ -40,6 +40,8 @@ class MchoiceTestService: MchoiceTestServiceInterface {
     }
     func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws {
         do {
+            debugPrint("selectedWordList")
+            debugPrint(selectedWordList)
             try await firestoreService.decreaseWordScore(selectedWordList: selectedWordList, word: word, points: points)
         }catch{
             print(error)
