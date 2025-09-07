@@ -12,6 +12,7 @@ protocol MchoiceTestServiceInterface {
     func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws
     func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws
     func increaseUserInfoPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws
 
 }
 
@@ -26,7 +27,7 @@ class MchoiceTestService: MchoiceTestServiceInterface {
         do {
             words = try await firestoreService.getWordList(wordListname: selectedWordList)
         }catch {
-            print(error)
+            debugPrint(error)
         }
         return words
     }
@@ -35,7 +36,7 @@ class MchoiceTestService: MchoiceTestServiceInterface {
         do {
             try await firestoreService.increaseWordScore(selectedWordList: selectedWordList, word: word, points: points)
         }catch{
-            print(error)
+            debugPrint(error)
         }
     }
     func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws {
@@ -44,7 +45,7 @@ class MchoiceTestService: MchoiceTestServiceInterface {
             debugPrint(selectedWordList)
             try await firestoreService.decreaseWordScore(selectedWordList: selectedWordList, word: word, points: points)
         }catch{
-            print(error)
+            debugPrint(error)
         }
     }
     
@@ -52,6 +53,15 @@ class MchoiceTestService: MchoiceTestServiceInterface {
         
         firestoreService.increaseDailyPoints(for: userInfo) { result in
             completion(result)
+        }
+    }
+    
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws {
+        do{
+            try await firestoreService.updateLeaderboardScore(by: score, userInfo: userInfo)
+            
+        }catch{
+            debugPrint(error)
         }
     }
 }

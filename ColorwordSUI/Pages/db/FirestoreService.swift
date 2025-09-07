@@ -449,6 +449,38 @@ class FirestoreService: FirestoreInterface {
     }
 
     
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws {
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1,
+                          userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+
+        let name = userInfo?.name ?? ""
+        let inc  = FieldValue.increment(Int64(score))
+        let payload: [String: Any] = [
+            "userId": userId,
+            "displayName": name,
+            "score": inc,
+            "updatedAt": FieldValue.serverTimestamp()
+        ]
+
+        let allTimeRef = db.collection("leaderboards").document("global-alltime")
+            .collection("entries").document(userId)
+
+        let weeklyRef = db.collection("leaderboards").document("global-weekly")
+            .collection("entries").document(userId)
+
+        let dailyRef = db.collection("leaderboards").document("global-daily")
+            .collection("entries").document(userId)
+
+        // Üç yazımı paralel yap
+        async let w1: Void = allTimeRef.setData(payload, merge: true)
+        async let w2: Void = weeklyRef.setData(payload, merge: true)
+        async let w3: Void = dailyRef.setData(payload, merge: true)
+        _ = try await (w1, w2, w3)
+    }
+
+    
     
     
 //    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws {
