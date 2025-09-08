@@ -8,26 +8,27 @@
 
 import SwiftUI
 
-class ScoreboardViewModel: ObservableObject {
-    @Published var scores: [ScoreEntry] = []
+final class ScoreboardViewModel: ObservableObject {
+    @Published var top: [LeaderboardEntry] = []
+    @Published var me: LeaderboardEntry?
 
-    init() {
-        fetchScores()
+    private let scoreboardService: ScoreboardServiceInterface = ScoreboardService()
+
+    func load(scope: LeaderboardScope = .alltime, limit: Int = 10) {
+        Task {
+            do {
+                let result = try await scoreboardService.fetchLeaderboard(
+                    limit: limit,
+                    scope: scope,
+                    includeCurrentUser: true
+                )
+                await MainActor.run {
+                    self.top = result.top
+                    self.me  = result.me
+                }
+            } catch {
+                print("Leaderboard yüklenemedi:", error)
+            }
+        }
     }
-
-    func fetchScores() {
-        // Örnek veriler – Firebase veya local veritabanından alınabilir
-        self.scores = [
-            ScoreEntry(username: "Emre", score: 85, date: Date()),
-            ScoreEntry(username: "Ayşe", score: 78, date: Date()),
-            ScoreEntry(username: "Mert", score: 65, date: Date())
-        ]
-    }
-}
-
-struct ScoreEntry: Identifiable {
-    let id = UUID()
-    let username: String
-    let score: Int
-    let date: Date
 }
