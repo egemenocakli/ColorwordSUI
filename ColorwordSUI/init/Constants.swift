@@ -173,7 +173,7 @@ class Constants {
     class ScoreConstants {
         static let dailyLoginScoreBonus: Int = 10
         static let dailyTargetScore: Int = 100
-        static let multipleChoiceQuestionScore: Int = 50
+        static let multipleChoiceQuestionScore: Int = 5
         
     }
 }

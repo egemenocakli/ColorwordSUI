@@ -166,7 +166,7 @@ class MchoiceTestViewModel: ObservableObject {
             do{
                 try await mChoiceTestService.increaseWordScore(selectedWordList: selectedWordListName, word: updatedWord, points: 5)
                 //Burası değişecek 100 puan kastıkca güncellemek lazım ama nasıl?
-                try await mChoiceTestService.updateLeaderboardScore(by: 100, userInfo: UserSessionManager.shared.userInfoModel)
+                try await mChoiceTestService.updateLeaderboardScore(by: 5, userInfo: UserSessionManager.shared.userInfoModel)
                 increaseDailyAndTotalScore()
             }catch {
                 print("getUserAnswer error")
