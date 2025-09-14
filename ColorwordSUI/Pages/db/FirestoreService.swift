@@ -485,48 +485,64 @@ class FirestoreService: FirestoreInterface {
 
 }
 
-extension FirestoreService {
-    /// Top N + kullanıcının kendisi (listede yoksa sona ekler).
-    func getLeaderboardScores(
-        limit: Int = 10,
-        alsoInclude userId: String?,
-        scope: LeaderboardScope = .alltime
-    ) async throws -> LeaderboardResult {
 
-        let baseRef = db.collection("leaderboards")
-            .document("global-alltime")
+extension FirestoreService {
+    /// Top-N + (varsa) kullanıcının kendi sırası.
+    /// Adımlar:
+    /// 1) scope koleksiyonundan score DESC Top-N çekilir (tek alan sıralama → kompozit index gerekmez).
+    /// 2) userId varsa, kullanıcının dokümanı doğrudan okunur (O(1) doküman okuması).
+    /// 3) meRank = count(score > myScore) + 1    (Aggregate COUNT; dökümanları indirmez, server-side hızlıdır)
+    /// Not: Top-N içinde ise meRank, top içerisindeki index+1 ile de bulunabilir.
+    func fetchLeaderboard(limit: Int,
+                          scope: LeaderboardScope,
+                          userId: String?) async throws -> LeaderboardResult {
+
+        let base = db.collection("leaderboards")
+            .document(scope.docId)
             .collection("entries")
 
-        let query = baseRef
+        // 1) Top-N
+        async let topSnapTask = base
             .order(by: "score", descending: true)
             .limit(to: limit)
+            .getDocuments()
 
-        // Paralel çekelim
-        async let topSnapshotTask = query.getDocuments()
-        async let meSnapshotTask: DocumentSnapshot? = {
+        // 2) Kullanıcı dokümanı (varsa)
+        async let meDocTask: DocumentSnapshot? = {
             guard let userId else { return nil }
-            return try? await baseRef.document(userId).getDocument()
+            return try? await base.document(userId).getDocument()
         }()
 
-        let topSnapshot = try await topSnapshotTask
-        var top = try topSnapshot.documents.map { try $0.data(as: LeaderboardEntry.self) }
+        let topSnap = try await topSnapTask
+        let top: [LeaderboardEntry] = try topSnap.documents.map { try $0.data(as: LeaderboardEntry.self) }
 
         var me: LeaderboardEntry? = nil
-        if let userId, let meSnap = try await meSnapshotTask, meSnap.exists {
-            let myEntry = try meSnap.data(as: LeaderboardEntry.self)
+        var meRank: Int? = nil
 
-            // Zaten top listede varsa tekrar ekleme
-            if top.contains(where: { $0.userId == userId }) {
-                me = top.first(where: { $0.userId == userId })
+        if let meDoc = try await meDocTask, meDoc.exists {
+            let myEntry = try meDoc.data(as: LeaderboardEntry.self)
+            me = myEntry
+
+            // Top-N içindeyse index’ten bul
+            if let idx = top.firstIndex(where: { $0.userId == myEntry.userId }) {
+                meRank = idx + 1
             } else {
-                me = myEntry
-                top.append(myEntry) // Top N + 1 (kullanıcı)
+                // 3) Aggregate COUNT: benden yüksek kaç kişi var?
+                let countSnap = try await base
+                    .whereField("score", isGreaterThan: myEntry.score)
+                    .count
+                    .getAggregation(source: .server)
+
+                // NSNumber → Int dönüşümü
+                let greaterCount = Int(truncating: countSnap.count)   // veya: countSnap.count.intValue
+                meRank = greaterCount + 1
             }
         }
 
-        return LeaderboardResult(top: top, me: me)
+        return LeaderboardResult(top: top, me: me, meRank: meRank)
     }
 }
+
     
 
 /*

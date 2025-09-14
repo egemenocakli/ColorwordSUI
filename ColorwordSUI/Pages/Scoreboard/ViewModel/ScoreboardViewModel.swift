@@ -11,27 +11,36 @@ import SwiftUI
 final class ScoreboardViewModel: ObservableObject {
     @Published var top: [LeaderboardEntry] = []
     @Published var me: LeaderboardEntry?
+    @Published var meRank: Int?
+    @Published var isMeInTop = false
+    @Published var isLoading = false
+    @Published var errorMessage: String?
 
-    private let scoreboardService: ScoreboardServiceInterface = ScoreboardService()
+    private let service = FirestoreService()
 
-    func load(scope: LeaderboardScope = .alltime, limit: Int = 10) {
+    func load(limit: Int = 5, scope: LeaderboardScope = .alltime, userId: String? = UserSessionManager.shared.userInfoModel?.userId) {
+        isLoading = true
+        errorMessage = nil
         Task {
             do {
-                let result = try await scoreboardService.fetchLeaderboard(
-                    limit: limit,
-                    scope: scope,
-                    includeCurrentUser: true
-                )
+                let res = try await service.fetchLeaderboard(limit: limit, scope: scope, userId: userId)
                 await MainActor.run {
-                    self.top = result.top
-                    self.me  = result.me
+                    self.top = res.top
+                    self.me = res.me
+                    self.meRank = res.meRank
+                    self.isMeInTop = (res.meRank ?? Int.max) <= limit
+                    self.isLoading = false
                 }
             } catch {
-                print("Leaderboard yüklenemedi:", error)
+                await MainActor.run {
+                    self.errorMessage = error.localizedDescription
+                    self.isLoading = false
+                }
             }
         }
     }
 }
+
 
 
 /*

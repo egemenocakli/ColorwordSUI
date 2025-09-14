@@ -9,21 +9,20 @@ import FirebaseFirestore
 
 
 enum LeaderboardScope: String {
-    case alltime = "global-alltime"
-    case weekly  = "global-weekly"
-    case daily   = "global-daily"
+    case alltime, weekly, daily
+    var docId: String { "global-\(rawValue)" }
 }
 
 struct LeaderboardEntry: Codable, Identifiable {
     var id: String { userId }
     let userId: String
     let displayName: String?
-    let lastName: String?
     let score: Int
-    let updatedAt: Date?
+    let updatedAt: Timestamp?
 }
 
 struct LeaderboardResult {
-    let top: [LeaderboardEntry]
-    let me: LeaderboardEntry?
+    let top: [LeaderboardEntry]   // Sadece Top-N
+    let me: LeaderboardEntry?     // Kullanıcı (varsa)
+    let meRank: Int?              // Sırası (varsa)
 }
