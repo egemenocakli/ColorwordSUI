@@ -18,6 +18,7 @@ struct LeaderboardEntry: Codable, Identifiable {
     var id: String { userId }
     let userId: String
     let displayName: String?
+    let lastName: String?
     let score: Int
     let updatedAt: Date?
 }
