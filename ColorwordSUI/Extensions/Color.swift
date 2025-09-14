@@ -25,6 +25,12 @@ extension Color {
     static var textColorWhite: Color {
         return Color("textColorW")
     }
+    static var wordListSelectorCardColor: Color {
+        return Color("wordListSelectorCardColor")
+    }
+    static var wordListSelectorSharedCardColor: Color {
+        return Color("wordListSelectorSharedCardColor")
+    }
 
     // UIColor'ı Color'a çeviren uzantı. hex->rgb
     init?(hex: String) {

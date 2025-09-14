@@ -11,13 +11,14 @@ struct WordListView: View {
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var wordListVM = WordListViewModel()
     @EnvironmentObject var themeManager: ThemeManager
+    let selectedWordListName: String
 
     @State private var selectedTabIndex = 0
     @State private var navigateToLogin = false
     @State private var selectedTab = 0
-    
     @State private var showAddWordView = false
 
+    //TODO: geometry eklenecek
     var body: some View {
         NavigationView {
             ZStack (alignment: .center){
@@ -50,7 +51,7 @@ struct WordListView: View {
                         .animation(.easeInOut(duration: Constants.TimerTypeConstants.standardSpringAnimation), value: Color(hex: wordListVM.wordBackgroundColor))
                 )                .edgesIgnoringSafeArea(.all)
                 .task {
-                    await wordListVM.getWordList()
+                    await wordListVM.getWordList(wordListName: selectedWordListName)
                 }
                 
                 //TODO: constants vs düzenlenecek.
@@ -66,47 +67,16 @@ struct WordListView: View {
                         cornerRadius: Constants.SizeRadiusConstants.medium,
                         buttonImageName: Constants.IconTextConstants.addButtonRectangle)
                     
-//                        HStack {
-//                            Spacer()
-//                            // FAB button
-//                            Button(action: {
-//                                showAddWordView = true
-//                            }) {
-//                                Image(systemName: Constants.IconTextConstants.addButtonRectangle)
-//                                    .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
-//                                    .padding()
-//                                    .background(.addFabButton)
-//                                    .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-//                                    .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-//                            }
-//                            .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
-//                            .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
-//                        }
+
                         .navigationDestination(isPresented: $showAddWordView) {
                             if #available(iOS 18.0, *) {
-                                AddNewWordView()
+                                AddNewWordView(selectedWordList: selectedWordListName)
                             } else {
 
                             }
                         }
                     
-//                    HStack {
-//                        Spacer()
-//                        //TODO: kelime silme eklenecek ve silmeden önce alert ile sorulacak.
-//                        //Hatta belki tüm listeyi silme eklenecek ve silmeden önce yine sorulacak.
-//                        Button(action: {
-//                            // FAB'a tıklanınca olacaklar
-//                        }) {
-//                            Image(systemName: Constants.IconTextConstants.deleteButtonRectangle)
-//                                .foregroundColor(Constants.ColorConstants.buttonForegroundColor)
-//                                .padding()
-//                                .background(.deleteFabButton)
-//                                .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium))
-//                                .shadow(radius: Constants.SizeRadiusConstants.buttonShadowRadius)
-//                        }
-//                        .padding(.trailing, Constants.PaddingSizeConstants.fabButtonTrailing)
-//                        .padding(.bottom, Constants.PaddingSizeConstants.fabButtonBottom)
-//                    }
+
 
                     FabButton(action: {
                         //TODO: silme eklenecek. alert ile silmeden önce sorulacak.

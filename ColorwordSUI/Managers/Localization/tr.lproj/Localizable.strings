@@ -53,3 +53,9 @@
 //AddNewWord/Widgets/UserWordListPicker
 "selected_user_word_list" = "Seçili Dil Listeniz:";
 
+//WordListSelector
+"your_custom_word_list" = "Sizin Oluşturduğunuz Kelime Listeleri";
+"predefined_word_list" = "Hazır Kelime Listeleri";
+
+//Leaderboard
+"leaderboard" = "Liderlik Sıralaması";

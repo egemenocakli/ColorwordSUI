@@ -17,7 +17,7 @@ class FirestoreService: FirestoreInterface {
     private let db = Firestore.firestore()
     
     //TODO: Asenkron metodlara geçilecek
-    func getWordList() async throws -> [Word] {
+    func getWordList(wordListname: String) async throws -> [Word] {
         // Kullanıcı ID'si kontrolü
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -29,7 +29,7 @@ class FirestoreService: FirestoreInterface {
         let snapshot = try await db.collection("users")
             .document(userId)
             .collection("wordLists")
-            .document("wordLists")
+            .document(wordListname)
             .collection("userWords")
             .getDocuments()
         
@@ -43,7 +43,7 @@ class FirestoreService: FirestoreInterface {
     }
     
     
-    func increaseWordScore(word: Word, points: Int) async throws{
+    func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -51,7 +51,7 @@ class FirestoreService: FirestoreInterface {
         do {
             try await db.collection("users").document(userId)
                 .collection("wordLists")
-                .document("wordLists")
+                .document(selectedWordList)
                 .collection("userWords")
                 .document(word.wordId!).updateData(word.toMap())
         }
@@ -59,7 +59,7 @@ class FirestoreService: FirestoreInterface {
             debugPrint(error)
         }
     }
-    func decreaseWordScore(word: Word, points: Int) async throws{
+    func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
         guard let userId = UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
@@ -67,7 +67,7 @@ class FirestoreService: FirestoreInterface {
         do {
             try await db.collection("users").document(userId)
                 .collection("wordLists")
-                .document("wordLists")
+                .document(selectedWordList)
                 .collection("userWords")
                 .document(word.wordId!).updateData(word.toMap())
         }
@@ -316,7 +316,18 @@ class FirestoreService: FirestoreInterface {
 
     }
     
+    //User word groups
+    func getSharedWordGroups(userInfo: UserInfoModel?) async throws -> [String] {
+        
+        
+        let snapshot = try await db.collection("sharedWordLists")
+            .getDocuments()
 
+
+        let documentIDs = snapshot.documents.map { $0.documentID }
+        debugPrint("Hazır Kelime listeleri:", documentIDs)
+        return documentIDs
+    }
     
     //User word groups
     func getWordGroups(userInfo: UserInfoModel?) async throws -> [String] {
@@ -413,68 +424,109 @@ class FirestoreService: FirestoreInterface {
     }
     
     //Kayıtlı favori dil listelerini silebilecek.
-    func deleteWordGroup(named languageListName: String,userInfo: UserInfoModel?) async throws  {
-        
+    func deleteWordGroup(named languageListName: String, userInfo: UserInfoModel?) async throws {
         guard let userId = userInfo?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
-        
+
         let documentRef = db.collection("users")
             .document(userId)
             .collection("wordLists")
             .document(languageListName)
-        
-        //Alt dizindeki bilgileri sil
-        let subCollectionRef = documentRef.collection(languageListName)
-        
+
+        // Alt koleksiyonu sil
+        let subCollectionRef = documentRef.collection("userWords") // Sabit ad gibi görünüyor
         let snapshot = try await subCollectionRef.getDocuments()
+        
         for doc in snapshot.documents {
             try await subCollectionRef.document(doc.documentID).delete()
         }
-        
+
+        // Ana dökümanı sil
         try await documentRef.delete()
-        debugPrint("'\(languageListName)' adlı kelime grubu silindi.")
+        
+        debugPrint("'\(languageListName)' adlı kelime grubu ve alt verileri silindi.")
     }
+
     
-    
-    
-//    func addNewWord(word: Word, userInfo: UserInfoModel?) async throws {
-//        // 1) Kullanıcı ID’si kontrolü
-//        guard let userId = userInfo?.userId else {
-//            throw NSError(
-//                domain: "FirestoreService",
-//                code: -1,
-//                userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."]
-//            )
-//        }
-//
-//        // 2) Koleksiyon referansı
-//        let collectionRef = db
-//            .collection("users")
-//            .document(userId)
-//            .collection("wordLists")
-//            .document("wordLists")
-//            .collection("userWords")
-//
-//        // 3) Yeni belge referansı (otomatik ID)
-//        let newDoc = collectionRef.document()
-//        var toSave = word
-//
-//        // 4) Modelin içinde eksik olan alanları tamamla
-//        toSave.wordId = newDoc.documentID
-//        let now = Timestamp(date: Date())
-//        toSave.addDate = now
-//        toSave.lastUpdateDate = now
-//
-//        // 5) Firestore’a yaz
-//        try await newDoc.setData(toSave.toMap())
-//
-//        print("🔥 Yeni kelime eklendi: \(toSave.wordId ?? "")")
-//    }
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws {
+        guard let userId = userInfo?.userId else {
+            throw NSError(domain: "FirestoreService", code: -1,
+                          userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
+        }
+
+        let name = userInfo?.name ?? ""
+        let lastname = userInfo?.lastname ?? ""
+        let inc  = FieldValue.increment(Int64(score))
+        let payload: [String: Any] = [
+            "userId": userId,
+            "displayName": name,
+            "lastName": lastname,
+            "score": inc,
+            "updatedAt": FieldValue.serverTimestamp()
+        ]
+
+        let allTimeRef = db.collection("leaderboards").document("global-alltime")
+            .collection("entries").document(userId)
+
+        let weeklyRef = db.collection("leaderboards").document("global-weekly")
+            .collection("entries").document(userId)
+
+        let dailyRef = db.collection("leaderboards").document("global-daily")
+            .collection("entries").document(userId)
+
+        // Üç yazımı paralel yap
+        async let w1: Void = allTimeRef.setData(payload, merge: true)
+        async let w2: Void = weeklyRef.setData(payload, merge: true)
+        async let w3: Void = dailyRef.setData(payload, merge: true)
+        _ = try await (w1, w2, w3)
+    }
+
 
 }
 
-    
+extension FirestoreService {
+    /// Top N + kullanıcının kendisi (listede yoksa sona ekler).
+    func getLeaderboardScores(
+        limit: Int = 10,
+        alsoInclude userId: String?,
+        scope: LeaderboardScope = .alltime
+    ) async throws -> LeaderboardResult {
+
+        let baseRef = db.collection("leaderboards")
+            .document("global-alltime")
+            .collection("entries")
+
+        let query = baseRef
+            .order(by: "score", descending: true)
+            .limit(to: limit)
+
+        // Paralel çekelim
+        async let topSnapshotTask = query.getDocuments()
+        async let meSnapshotTask: DocumentSnapshot? = {
+            guard let userId else { return nil }
+            return try? await baseRef.document(userId).getDocument()
+        }()
+
+        let topSnapshot = try await topSnapshotTask
+        var top = try topSnapshot.documents.map { try $0.data(as: LeaderboardEntry.self) }
+
+        var me: LeaderboardEntry? = nil
+        if let userId, let meSnap = try await meSnapshotTask, meSnap.exists {
+            let myEntry = try meSnap.data(as: LeaderboardEntry.self)
+
+            // Zaten top listede varsa tekrar ekleme
+            if top.contains(where: { $0.userId == userId }) {
+                me = top.first(where: { $0.userId == userId })
+            } else {
+                me = myEntry
+                top.append(myEntry) // Top N + 1 (kullanıcı)
+            }
+        }
+
+        return LeaderboardResult(top: top, me: me)
+    }
+}
     
 
 /*

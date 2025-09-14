@@ -17,7 +17,8 @@ class Constants {
         case dark_mode = "DARK_MODE"
         case light_mode = "LIGHT_MODE"
     }
-    
+
+
     class ColorConstants {
 //        static let loginDarkThemeBackgroundGradient = LinearGradient(
 //            gradient: Gradient(colors: [
@@ -75,11 +76,15 @@ class Constants {
         static let grayButtonColor: Color = Color.white.opacity(0.6)
         static let homeCardBackgroundColor: Color = Color.white.opacity(0.05)
         static let buttonForegroundColor: Color = Color.white
+        static let transparentColor: Color = Color.white.opacity(0)
+        
+
         
     }
-    /// **xSmallSize: 10, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
+    /// **xxSmallSize: 10, xsmallSize:16, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
     class FrameSizeConstants {
-        static let xSmallSize: CGFloat = 10
+        static let xxSmallSize: CGFloat = 10
+        static let xSmallSize: CGFloat = 16
         static let smallSize: CGFloat = 20
         static let mSize: CGFloat = 30
         static let lSize: CGFloat = 40
@@ -145,6 +150,8 @@ class Constants {
         static let rightButton = "chevron.right"
         static let correctButton = "checkmark.circle"
         static let correctFillButton = "checkmark.circle.fill"
+        static let correctBasicButton = "checkmark"
+        static let xmarkBasicButton = "xmark"
         static let wrongButtonCircle = "xmark.circle"
         static let wrongButtonCircleFill = "xmark.circle.fill"
         static let settingsButton = "gearshape.fill"

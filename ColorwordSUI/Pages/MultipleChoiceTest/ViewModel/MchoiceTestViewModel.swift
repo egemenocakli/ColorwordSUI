@@ -13,7 +13,9 @@ import SwiftUI
 //      -> getUserAnswer
 //      -> increaseDailyAndTotalScore
 
+@MainActor
 class MchoiceTestViewModel: ObservableObject {
+    
     @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
     @Published var questList: [QuestModel] = []
     var wordList : [Word] = []
@@ -21,6 +23,7 @@ class MchoiceTestViewModel: ObservableObject {
     var storedValue: Int = 0
     var timerIsFinished: Bool = false
     var isAnswerCorrect: Bool = false
+    var selectedWordListName: String = ""
 
     enum AnswerState: String {
         case correct = "true"
@@ -31,11 +34,16 @@ class MchoiceTestViewModel: ObservableObject {
     var answerList: [AnswerState]? = nil
     @Published var isCorrectCheckForIcon: Bool? = nil
     
+    
+    func getSelectedWordListName(takenSelectedListName: String) {
+        selectedWordListName = takenSelectedListName
+    }
+    
     ///Returns the user's word list. #1 QuestAndOption: Order of Operations
-    func getWordList() async  -> [Word]? {
+    func getWordList(selectedWordList: String) async  -> [Word]? {
         
         do {
-            wordList = try await mChoiceTestService.getWordList()
+            wordList = try await mChoiceTestService.getWordList(selectedWordList: selectedWordList)
 
         }catch {
             print(error)
@@ -49,10 +57,10 @@ class MchoiceTestViewModel: ObservableObject {
     
     
     ///Create all quest and options list. #2 QuestAndOption: Order of Operations
-    func createQuestList() async -> [QuestModel] {
+    func createQuestList(selectedWordList: String) async -> [QuestModel] {
         
         var questList: [QuestModel] = []
-        let createdOptionList = await createOptionList()
+        let createdOptionList = await createOptionList(selectedWordList: selectedWordList)
         
         
         wordList.forEach({ word in
@@ -76,11 +84,11 @@ class MchoiceTestViewModel: ObservableObject {
     }
     
     ///Create options from all wordlist. #3 QuestAndOption: Order of Operations
-    func createOptionList() async -> Set<String>{
+    func createOptionList(selectedWordList: String) async -> Set<String>{
         
         var optionList: Set<String> = []
         
-        self.wordList =  await getWordList() ?? []
+        self.wordList =  await getWordList(selectedWordList: selectedWordList) ?? []
       
         if wordList.isEmpty != true {
             wordList.forEach({ word in
@@ -156,7 +164,9 @@ class MchoiceTestViewModel: ObservableObject {
             }
             
             do{
-                try await mChoiceTestService.increaseWordScore(word: updatedWord, points: 5)
+                try await mChoiceTestService.increaseWordScore(selectedWordList: selectedWordListName, word: updatedWord, points: 5)
+                //Burası değişecek 100 puan kastıkca güncellemek lazım ama nasıl?
+                try await mChoiceTestService.updateLeaderboardScore(by: 5, userInfo: UserSessionManager.shared.userInfoModel)
                 increaseDailyAndTotalScore()
             }catch {
                 print("getUserAnswer error")
@@ -172,7 +182,7 @@ class MchoiceTestViewModel: ObservableObject {
                     self.isCorrectCheckForIcon = false
                     self.answerList![pageIndex] = .wrong
                 }
-                try await mChoiceTestService.decreaseWordScore(word: updatedWord, points: 2)
+                try await mChoiceTestService.decreaseWordScore(selectedWordList: selectedWordListName, word: updatedWord, points: 2)
             }catch {
                 print("getUserAnswer error")
             }

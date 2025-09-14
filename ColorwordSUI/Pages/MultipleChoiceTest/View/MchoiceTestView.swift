@@ -10,8 +10,10 @@ import SwiftUI
 //TODO: sayfa ile işim bittiğinde taşınabilecek her değişkeni vm ye taşı. state ve binding durumları sorun çıkartmayacaksa
 
 struct MchoiceTestView: View {
+    var selectedWordListName: String
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject var mchoiceTestVM = MchoiceTestViewModel()
+    
     @State private var selectedTabIndex = 0
     @EnvironmentObject private var themeManager: ThemeManager
     @State private var buttonColorList: [Color] = Array(repeating: Constants.ColorConstants.optionButtonBackgroundColor, count: 4)
@@ -68,6 +70,7 @@ struct MchoiceTestView: View {
                             .tabViewStyle(PageTabViewStyle(indexDisplayMode: .never))
                             
                             .onAppear {
+                                mchoiceTestVM.getSelectedWordListName(takenSelectedListName: selectedWordListName)
                                 if let firstWord = mchoiceTestVM.wordList.first {
                                     mchoiceTestVM.getWordColorForBackground(word: firstWord, themeManager: themeManager)
                                 }
@@ -111,7 +114,7 @@ struct MchoiceTestView: View {
                 )
                 .edgesIgnoringSafeArea(.all)
                 .task {
-                    mchoiceTestVM.questList = await mchoiceTestVM.createQuestList()
+                    mchoiceTestVM.questList = await mchoiceTestVM.createQuestList(selectedWordList: selectedWordListName)
                     isAnsweredList = Array(repeating: false, count: mchoiceTestVM.questList.count)
                     
                     if let firstWord = mchoiceTestVM.wordList.first {
@@ -122,7 +125,7 @@ struct MchoiceTestView: View {
             }
             .environment(\.locale, .init(identifier: languageManager.currentLanguage))
             .navigationDestination(isPresented: $navigateToNextScreen) {
-                WordListView()
+                WordListView(selectedWordListName: selectedWordListName)
             }
             
         }
@@ -351,9 +354,6 @@ struct MchoiceTestView: View {
 
 
 
-#Preview {
-    MchoiceTestView()
-}
 
 
 //TODO: Toplam kelime sayısı ve gösterilen sayfadaki kelimenin sırası

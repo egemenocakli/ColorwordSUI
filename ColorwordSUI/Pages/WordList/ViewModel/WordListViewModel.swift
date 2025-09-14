@@ -8,6 +8,7 @@
 import Foundation
 import SwiftUI
 
+@MainActor
 class WordListViewModel: ObservableObject {
     @Published var wordList: [Word] = []
     @Published var wordBackgroundColor: String = Constants.ColorConstants.blackHex
@@ -16,14 +17,13 @@ class WordListViewModel: ObservableObject {
 
     //TODO: öncesinde service eklenecek oradan buraya yönlenecek.
     
-    func getWordList() async {
+    func getWordList(wordListName: String) async {
         Task {
             
             do {
-                let words = try await wordListService.getWordList()
-                    DispatchQueue.main.async {
+                let words = try await wordListService.getWordList(wordListName: wordListName)
                         self.wordList = words
-                    }
+                    
                 
             }catch {
                 print(error)

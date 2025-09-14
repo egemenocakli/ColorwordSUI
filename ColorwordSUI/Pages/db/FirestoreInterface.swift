@@ -9,9 +9,9 @@ import Foundation
 
 //TODO: genel olarak tüm isteklerin sonucunda bool dönecek şekilde yap, bu cevaplardan gerekenleri ufak bildirim olarak göster
 protocol FirestoreInterface {
-    func getWordList() async throws -> [Word]
-    func increaseWordScore(word: Word, points: Int) async throws
-    func decreaseWordScore(word: Word, points: Int) async throws
+    func getWordList(wordListname: String) async throws -> [Word]
+    func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws
+    func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws
     func createOrUpdateUserInfo(user: UserInfoModel, completion: @escaping (Bool) -> Void)
     func fetchUserInfo (userId: String, completion: @escaping (UserInfoModel?) -> Void)
     func increaseDailyPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
@@ -25,4 +25,6 @@ protocol FirestoreInterface {
     func deleteWordGroup(named languageListName: String,userInfo: UserInfoModel?) async throws
     func createWordGroup(languageListName: String,userInfo: UserInfoModel?) async throws
     func orderWordGroup(languageListName: String, userInfo: UserInfoModel?) async throws
+    func getSharedWordGroups(userInfo: UserInfoModel?) async throws -> [String]
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws
 }

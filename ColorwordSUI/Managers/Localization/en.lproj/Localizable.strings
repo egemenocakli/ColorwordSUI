@@ -51,3 +51,10 @@
 
 //AddNewWord/Widgets/UserWordListPicker
 "selected_user_word_list" = "Selected Word List:";
+
+//WordListSelector
+"your_custom_word_list" = "Your Custom Word Lists";
+"predefined_word_list" = "Predefined Word Lists";
+
+//Leaderboard
+"leaderboard" = "Leaderboard";

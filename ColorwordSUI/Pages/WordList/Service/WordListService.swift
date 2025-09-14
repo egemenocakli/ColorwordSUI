@@ -8,7 +8,7 @@
 import Foundation
 
 protocol WordListServiceInterface {
-    func getWordList() async throws -> [Word]
+    func getWordList(wordListName: String) async throws -> [Word] 
 //    func signOut(completion: @escaping (Bool) -> Void)
 }
 
@@ -17,9 +17,9 @@ class WordListService: WordListServiceInterface {
     private let firestoreService = FirestoreService()
     var words : [Word] = []
     
-    func getWordList() async throws -> [Word] {
+    func getWordList(wordListName: String) async throws -> [Word] {
         do {
-            words = try await firestoreService.getWordList()
+            words = try await firestoreService.getWordList(wordListname: wordListName)
             
         } catch {
             print(error)
