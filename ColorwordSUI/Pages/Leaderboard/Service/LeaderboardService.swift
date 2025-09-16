@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ScoreboardServiceInterface {
+protocol LeaderboardServiceInterface {
     func fetchLeaderboard(
         limit: Int,
         scope: LeaderboardScope,
@@ -15,7 +15,7 @@ protocol ScoreboardServiceInterface {
     ) async throws -> LeaderboardResult
 }
 
-final class ScoreboardService: ScoreboardServiceInterface {
+final class LeaderboardService: LeaderboardServiceInterface {
     private let firestoreService = FirestoreService()
 
     func fetchLeaderboard(

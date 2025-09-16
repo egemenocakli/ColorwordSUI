@@ -8,7 +8,7 @@
 
 import SwiftUI
 
-final class ScoreboardViewModel: ObservableObject {
+final class LeaderboardViewModel: ObservableObject {
     @Published var top: [LeaderboardEntry] = []
     @Published var me: LeaderboardEntry?
     @Published var meRank: Int?
