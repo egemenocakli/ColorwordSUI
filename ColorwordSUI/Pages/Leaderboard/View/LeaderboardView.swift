@@ -18,7 +18,7 @@ struct LeaderboardView: View {
             ZStack (alignment: .topLeading){
                 Constants.ColorConstants.loginLightThemeBackgroundGradient
                     .edgesIgnoringSafeArea(.all)
-                VStack(alignment: .leading, spacing: 12){
+                VStack(alignment: .center, spacing: 12){
                     Text("leaderboard")
                         .foregroundStyle(Color(.textColorW))
                         .font(.title2).bold()
@@ -27,10 +27,10 @@ struct LeaderboardView: View {
                     
                     //LeaderboardType
                     ZStack {
-                        RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium)
+                        RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
                             .fill(Color(.backgroundColor2).opacity(0.6))
                             .overlay(
-                                RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.medium)
+                                RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
                                     .stroke(Color.white.opacity(0.2), lineWidth: 1)
                             )
 
@@ -84,24 +84,7 @@ struct LeaderboardView: View {
                     
 
                     
-                    
-                    /*
-                    if let me = scoreboardVM.me,
-                       let meRank = scoreboardVM.meRank,
-                       !scoreboardVM.isMeInTop
-                    {
-                        VStack{
-                            Spacer()
-                            MeBar(entry: me, rank: meRank)
-                                .padding(.horizontal)
-                                .padding(.bottom)
-                                
-                        }
-                        
-                        .transition(.move(edge: .bottom).combined(with: .opacity))
-                        .animation(.easeInOut, value: scoreboardVM.meRank)
-                    }
-                    */
+
 
                 }
                 .safeAreaInset(edge: .bottom) {
@@ -140,10 +123,24 @@ private struct Row: View {
 
     var body: some View {
         ZStack {
+            
+            /*
             RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
                 //.fill(Color.wordListSelectorSharedCardColor.opacity(highlightMe ? 0.9 : 1.0))
                 .fill(highlightMe ? Color.blue.opacity(0.3) : Color.wordListSelectorSharedCardColor)
+                .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
+            */
 
+            let base = highlightMe ? Color.blue.opacity(0.30)
+                                    : Color.wordListSelectorSharedCardColor
+            
+            RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
+                .fill(podiumFillStyle(rank: rank, base: base))
+                .overlay(
+                    RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
+                        .strokeBorder(Color.white.opacity(0.20), lineWidth: rank <= 3 ? 1.5 : 1)
+                )
+            
             HStack(spacing: 12) {
                 RankBadge(rank: rank)   // <-- rank burada
 
@@ -194,40 +191,51 @@ private struct MeBar: View {
         .padding(.vertical, 12)
         .padding(.horizontal, 16)
         .background(
+            
+            RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
+                .fill(Color.wordListSelectorSharedCardColor)
+                .overlay(
+                    RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
+                        .strokeBorder(Color.white.opacity(0.20), lineWidth: 1)
+                )
+            
+            /*
             RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
                 .fill(Color(.backgroundColor2).opacity(0.6))
                 .overlay(
                     RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.xxSmall)
                         .strokeBorder(Color.white.opacity(0.2), lineWidth: 1)
                 )
+            */
         )
         .shadow(radius: 6)
     }
 }
 
-/*
- import SwiftUI
-
- struct ScoreboardView: View {
-     @StateObject var viewModel = ScoreboardViewModel()
-
-     var body: some View {
-         List {
-             ForEach(viewModel.top.sorted(by: { $0.score > $1.score })) { entry in
-                 HStack {
-                     Text(entry.displayName ?? entry.userId) // username yerine displayName
-                         .font(.headline)
-                     Spacer()
-                     Text("\(entry.score)")
-                         .font(.title3).bold()
-                         .foregroundColor(.blue)
-                 }
-                 .padding(.vertical, 4)
-             }
-         }
-         .listStyle(.plain)
-         .navigationTitle("Leaderboard")
-         .task { viewModel.load() } // ekrana gelince veriyi çek
-     }
- }
- */
+func podiumFillStyle(rank: Int, base: Color) -> AnyShapeStyle {
+    switch rank {
+    case 1:
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [Color.yellow.opacity(0.45), Color.orange.opacity(0.35)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+        )
+    case 2:
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [Color.gray.opacity(0.35), Color.white.opacity(0.40)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+        )
+    case 3:
+        return AnyShapeStyle(
+            LinearGradient(
+                colors: [Color.brown.opacity(0.40), Color.orange.opacity(0.25)],
+                startPoint: .topLeading, endPoint: .bottomTrailing
+            )
+        )
+    default:
+        return AnyShapeStyle(base)
+    }
+}
