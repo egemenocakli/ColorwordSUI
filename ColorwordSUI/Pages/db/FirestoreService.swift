@@ -448,39 +448,86 @@ class FirestoreService: FirestoreInterface {
         debugPrint("'\(languageListName)' adlı kelime grubu ve alt verileri silindi.")
     }
 
-    
-    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws {
-        guard let userId = userInfo?.userId else {
+
+    /// Cihazın saat dilimine göre YARIN 00:00
+    func nextDayCutoffDate(timeZone: TimeZone = .current) -> Date {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = timeZone
+
+        let startOfToday = cal.startOfDay(for: Date())
+        return cal.date(byAdding: .day, value: 1, to: startOfToday)!
+    }
+
+    /// Cihazın saat dilimine göre bir SONRAKİ PAZARTESİ 00:00
+    func nextWeekCutoffDate(timeZone: TimeZone = .current) -> Date {
+        var cal = Calendar(identifier: .gregorian)
+        cal.timeZone = timeZone
+        cal.firstWeekday = 2 // 2 = Pazartesi
+
+        // Bu haftanın (yerel) Pazartesi 00:00'ı
+        let startOfThisWeek = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date()))!
+        // Gelecek haftanın Pazartesi 00:00'ı
+        return cal.date(byAdding: .weekOfYear, value: 1, to: startOfThisWeek)!
+    }
+
+
+    func updateLeaderboardScore(by delta: Int, userInfo: UserInfoModel?) async throws {
+        guard let u = userInfo else {
             throw NSError(domain: "FirestoreService", code: -1,
                           userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
-
-        let name = userInfo?.name ?? ""
-        let lastname = userInfo?.lastname ?? ""
-        let inc  = FieldValue.increment(Int64(score))
-        let payload: [String: Any] = [
-            "userId": userId,
-            "displayName": name,
-            "lastName": lastname,
-            "score": inc,
-            "updatedAt": FieldValue.serverTimestamp()
-        ]
+        let userId   = u.userId
+        let name     = u.name
+        let lastName = u.lastname
 
         let allTimeRef = db.collection("leaderboards").document("global-alltime")
             .collection("entries").document(userId)
-
-        let weeklyRef = db.collection("leaderboards").document("global-weekly")
+        let weeklyRef  = db.collection("leaderboards").document("global-weekly")
+            .collection("entries").document(userId)
+        let dailyRef   = db.collection("leaderboards").document("global-daily")
             .collection("entries").document(userId)
 
-        let dailyRef = db.collection("leaderboards").document("global-daily")
-            .collection("entries").document(userId)
+        // daily
+        let dailyExp  = Timestamp(date: nextDayCutoffDate(timeZone: TimeZone(identifier: "Europe/Istanbul")!))
+        // weekly
+        let weeklyExp = Timestamp(date: nextWeekCutoffDate(timeZone: TimeZone(identifier: "Europe/Istanbul")!))
 
-        // Üç yazımı paralel yap
-        async let w1: Void = allTimeRef.setData(payload, merge: true)
-        async let w2: Void = weeklyRef.setData(payload, merge: true)
-        async let w3: Void = dailyRef.setData(payload, merge: true)
-        _ = try await (w1, w2, w3)
+
+        try await withThrowingTaskGroup(of: Void.self) { group in
+            group.addTask {
+                try await allTimeRef.setData([
+                    "userId": userId,
+                    "displayName": name,
+                    "lastName": lastName,
+                    "score": FieldValue.increment(Int64(delta)),
+                    "updatedAt": FieldValue.serverTimestamp()
+                ], merge: true)
+            }
+            group.addTask {
+                try await weeklyRef.setData([
+                    "userId": userId,
+                    "displayName": name,
+                    "lastName": lastName,
+                    "score": FieldValue.increment(Int64(delta)),
+                    "updatedAt": FieldValue.serverTimestamp(),
+                    "expiresAt": weeklyExp
+                ], merge: true)
+            }
+            group.addTask {
+                try await dailyRef.setData([
+                    "userId": userId,
+                    "displayName": name,
+                    "lastName": lastName,
+                    "score": FieldValue.increment(Int64(delta)),
+                    "updatedAt": FieldValue.serverTimestamp(),
+                    "expiresAt": dailyExp
+                ], merge: true)
+            }
+            try await group.waitForAll()
+        }
     }
+
+
 
 
 }
@@ -507,14 +554,16 @@ extension FirestoreService {
             .limit(to: limit)
             .getDocuments()
 
-        // 2) Kullanıcı dokümanı (varsa)
+        // 2) Me dokümanı (opsiyonel)
         async let meDocTask: DocumentSnapshot? = {
             guard let userId else { return nil }
             return try? await base.document(userId).getDocument()
         }()
 
         let topSnap = try await topSnapTask
-        let top: [LeaderboardEntry] = try topSnap.documents.map { try $0.data(as: LeaderboardEntry.self) }
+        let top: [LeaderboardEntry] = try topSnap.documents.map {
+            try $0.data(as: LeaderboardEntry.self)
+        }
 
         var me: LeaderboardEntry? = nil
         var meRank: Int? = nil
@@ -523,24 +572,23 @@ extension FirestoreService {
             let myEntry = try meDoc.data(as: LeaderboardEntry.self)
             me = myEntry
 
-            // Top-N içindeyse index’ten bul
             if let idx = top.firstIndex(where: { $0.userId == myEntry.userId }) {
                 meRank = idx + 1
             } else {
-                // 3) Aggregate COUNT: benden yüksek kaç kişi var?
+                // 3) Benden yüksek kaç kişi var?  meRank = count + 1
                 let countSnap = try await base
                     .whereField("score", isGreaterThan: myEntry.score)
                     .count
                     .getAggregation(source: .server)
 
-                // NSNumber → Int dönüşümü
-                let greaterCount = Int(truncating: countSnap.count)   // veya: countSnap.count.intValue
+                let greaterCount = Int(truncating: countSnap.count)
                 meRank = greaterCount + 1
             }
         }
 
         return LeaderboardResult(top: top, me: me, meRank: meRank)
     }
+
 }
 
     
