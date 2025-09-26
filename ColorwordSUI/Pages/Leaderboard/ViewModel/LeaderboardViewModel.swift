@@ -18,7 +18,7 @@ final class LeaderboardViewModel: ObservableObject {
 
     private let service = FirestoreService()
 
-    func load(limit: Int = 5, scope: LeaderboardScope = .alltime, userId: String? = UserSessionManager.shared.userInfoModel?.userId) {
+    func load(limit: Int = Constants.ScoreConstants.leaderboardTopListCount, scope: LeaderboardScope = .alltime, userId: String? = UserSessionManager.shared.userInfoModel?.userId) {
         isLoading = true
         errorMessage = nil
         Task {

@@ -78,7 +78,20 @@ class Constants {
         static let buttonForegroundColor: Color = Color.white
         static let transparentColor: Color = Color.white.opacity(0)
         
-
+        //Leaderboard Card Colors
+        static let goldCardColor = LinearGradient(
+            colors: [Color.yellow.opacity(0.65), Color.orange.opacity(0.50)],
+            startPoint: .topLeading, endPoint: .bottomTrailing
+        )
+        static let silverCardColor = LinearGradient(
+            colors: [Color.gray.opacity(0.35), Color.white.opacity(0.40)],
+            startPoint: .topLeading, endPoint: .bottomTrailing
+        )
+        static let bronzeCardColor = LinearGradient(
+            colors: [Color.brown.opacity(0.40), Color.orange.opacity(0.25)],
+            startPoint: .topLeading, endPoint: .bottomTrailing
+        )
+    
         
     }
     /// **xxSmallSize: 10, xsmallSize:16, smallSize: 20, mSize: 30, lSize: 40, xLSize: 50**
@@ -174,7 +187,7 @@ class Constants {
         static let dailyLoginScoreBonus: Int = 10
         static let dailyTargetScore: Int = 100
         static let multipleChoiceQuestionScore: Int = 5
-        
+        static let leaderboardTopListCount: Int = 5
     }
 }
 

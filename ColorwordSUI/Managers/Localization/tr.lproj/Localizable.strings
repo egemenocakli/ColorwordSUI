@@ -58,4 +58,7 @@
 "predefined_word_list" = "Hazır Kelime Listeleri";
 
 //Leaderboard
-"leaderboard" = "Liderlik Sıralaması";
+"leaderboard" = "Skor Tablosu";
+"leaderboard_daily" = "Günlük";
+"leaderboard_weekly" = "Haftalık";
+"leaderboard_all_time" = "Tüm Zamanlar";
