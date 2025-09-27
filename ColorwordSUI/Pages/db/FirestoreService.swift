@@ -434,7 +434,7 @@ class FirestoreService: FirestoreInterface {
             .collection("wordLists")
             .document(languageListName)
 
-        // Alt koleksiyonu sil
+        // Delete subCollection
         let subCollectionRef = documentRef.collection("userWords") // Sabit ad gibi görünüyor
         let snapshot = try await subCollectionRef.getDocuments()
         
@@ -442,40 +442,36 @@ class FirestoreService: FirestoreInterface {
             try await subCollectionRef.document(doc.documentID).delete()
         }
 
-        // Ana dökümanı sil
+        // Delete main doc
         try await documentRef.delete()
         
         debugPrint("'\(languageListName)' adlı kelime grubu ve alt verileri silindi.")
     }
 
-
-    /// Cihazın saat dilimine göre YARIN 00:00
-    func nextDayCutoffDate(timeZone: TimeZone = .current) -> Date {
+    // Helper: Tomorrow at 00:00 (Istanbul time zone)
+    func nextDayCutoffDate(timeZone: TimeZone = TimeZone(identifier: "Europe/Istanbul")!) -> Date {
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = timeZone
-
         let startOfToday = cal.startOfDay(for: Date())
         return cal.date(byAdding: .day, value: 1, to: startOfToday)!
     }
 
-    /// Cihazın saat dilimine göre bir SONRAKİ PAZARTESİ 00:00
-    func nextWeekCutoffDate(timeZone: TimeZone = .current) -> Date {
+    // Helper: Next Monday at 00:00 (Istanbul time zone).
+    func nextWeekCutoffDate(timeZone: TimeZone = TimeZone(identifier: "Europe/Istanbul")!) -> Date {
         var cal = Calendar(identifier: .gregorian)
         cal.timeZone = timeZone
-        cal.firstWeekday = 2 // 2 = Pazartesi
-
-        // Bu haftanın (yerel) Pazartesi 00:00'ı
+        cal.firstWeekday = 2  // Pazartesi
         let startOfThisWeek = cal.date(from: cal.dateComponents([.yearForWeekOfYear, .weekOfYear], from: Date()))!
-        // Gelecek haftanın Pazartesi 00:00'ı
         return cal.date(byAdding: .weekOfYear, value: 1, to: startOfThisWeek)!
     }
 
-
+    // UPDATE Leaderboard
     func updateLeaderboardScore(by delta: Int, userInfo: UserInfoModel?) async throws {
         guard let u = userInfo else {
             throw NSError(domain: "FirestoreService", code: -1,
                           userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
+
         let userId   = u.userId
         let name     = u.name
         let lastName = u.lastname
@@ -487,59 +483,113 @@ class FirestoreService: FirestoreInterface {
         let dailyRef   = db.collection("leaderboards").document("global-daily")
             .collection("entries").document(userId)
 
-        // daily
-        let dailyExp  = Timestamp(date: nextDayCutoffDate(timeZone: TimeZone(identifier: "Europe/Istanbul")!))
-        // weekly
-        let weeklyExp = Timestamp(date: nextWeekCutoffDate(timeZone: TimeZone(identifier: "Europe/Istanbul")!))
+        let dailyExpTS  = Timestamp(date: nextDayCutoffDate())
+        let weeklyExpTS = Timestamp(date: nextWeekCutoffDate())
 
+        async let t1: () = upsertScoreTransaction(ref: allTimeRef,
+                                              delta: delta,
+                                              displayName: name,
+                                              lastName: lastName,
+                                              expiresAt: nil)                 // all-time: expiry yok
+        async let t2: () = upsertScoreTransaction(ref: weeklyRef,
+                                              delta: delta,
+                                              displayName: name,
+                                              lastName: lastName,
+                                              expiresAt: weeklyExpTS)         // weekly
+        async let t3: () = upsertScoreTransaction(ref: dailyRef,
+                                              delta: delta,
+                                              displayName: name,
+                                              lastName: lastName,
+                                              expiresAt: dailyExpTS)          // daily
+        _ = try await (t1, t2, t3)
+    }
 
-        try await withThrowingTaskGroup(of: Void.self) { group in
-            group.addTask {
-                try await allTimeRef.setData([
-                    "userId": userId,
-                    "displayName": name,
-                    "lastName": lastName,
-                    "score": FieldValue.increment(Int64(delta)),
-                    "updatedAt": FieldValue.serverTimestamp()
-                ], merge: true)
+    /// For a single scope: read the document → if expired, set the score to delta; otherwise, add to the existing score.
+    /// If expiresAt != nil, sets the (daily/weekly) field to the appropriate cutoff.
+    private func upsertScoreTransaction(ref: DocumentReference,
+                                        delta: Int,
+                                        displayName: String,
+                                        lastName: String,
+                                        expiresAt: Timestamp?) async throws {
+        try await db.runTransaction { txn, _ in
+            let now = Date()
+
+            var newScore = delta
+            var shouldSetExpiry = expiresAt != nil   // if it's a new document, make sure to set it
+
+            if let snap = try? txn.getDocument(ref), snap.exists {
+                let data = snap.data() ?? [:]
+                let oldScore = data["score"] as? Int ?? 0
+
+                if let oldExp = data["expiresAt"] as? Timestamp, let _ = expiresAt {
+                    // Daily/weekly: has it expired?
+                    if oldExp.dateValue() > now {
+                        // Not expired → add
+                        newScore = oldScore + delta
+                        shouldSetExpiry = false   // var olan geçerliyse tekrar yazmaya gerek yok
+                    } else {
+                        // Expired → reset and start with today's delta
+                        newScore = delta
+                        shouldSetExpiry = true
+                    }
+                } else {
+                    // all-time or no expiry field → include
+                    newScore = oldScore + delta
+                }
             }
-            group.addTask {
-                try await weeklyRef.setData([
-                    "userId": userId,
-                    "displayName": name,
-                    "lastName": lastName,
-                    "score": FieldValue.increment(Int64(delta)),
-                    "updatedAt": FieldValue.serverTimestamp(),
-                    "expiresAt": weeklyExp
-                ], merge: true)
+
+            var payload: [String: Any] = [
+                "userId": ref.documentID,
+                "displayName": displayName,
+                "lastName": lastName,
+                "score": newScore,
+                "updatedAt": FieldValue.serverTimestamp()
+            ]
+            if let expiresAt, shouldSetExpiry {
+                payload["expiresAt"] = expiresAt
             }
-            group.addTask {
-                try await dailyRef.setData([
-                    "userId": userId,
-                    "displayName": name,
-                    "lastName": lastName,
-                    "score": FieldValue.increment(Int64(delta)),
-                    "updatedAt": FieldValue.serverTimestamp(),
-                    "expiresAt": dailyExp
-                ], merge: true)
-            }
-            try await group.waitForAll()
+
+            txn.setData(payload, forDocument: ref, merge: true)
+            return nil
         }
     }
 
 
 
 
+
+
+}
+
+@inline(__always)
+func isExpired(_ ts: Timestamp?, now: Date = Date()) -> Bool {
+    guard let ts else { return false }
+    return ts.dateValue() <= now
 }
 
 
 extension FirestoreService {
-    /// Top-N + (varsa) kullanıcının kendi sırası.
-    /// Adımlar:
-    /// 1) scope koleksiyonundan score DESC Top-N çekilir (tek alan sıralama → kompozit index gerekmez).
-    /// 2) userId varsa, kullanıcının dokümanı doğrudan okunur (O(1) doküman okuması).
-    /// 3) meRank = count(score > myScore) + 1    (Aggregate COUNT; dökümanları indirmez, server-side hızlıdır)
-    /// Not: Top-N içinde ise meRank, top içerisindeki index+1 ile de bulunabilir.
+    /// Top-N plus (if present) the user's own rank.
+    /// Steps:
+    /// 1) Fetch Top-N by score DESC from the scope collection (single-field sort → no composite index required).
+    /// 2) If userId exists, read the user's document directly (O(1) document read).
+    /// 3) meRank = count(score > myScore) + 1    (Aggregate COUNT; does not download documents, fast server-side)
+    /// Note: If within Top-N, meRank can also be computed as index+1 within the top list.
+    /// Delete expired documents in a single batch (keep it small so it doesn't block the UI).
+    private func pruneExpired(in base: CollectionReference,
+                              maxBatch: Int = 200) async throws {
+        // All-time için expire yok → skip
+        let snap = try await base
+            .whereField("expiresAt", isLessThan: Timestamp(date: Date()))
+            .limit(to: maxBatch)
+            .getDocuments()
+
+        guard !snap.isEmpty else { return }
+        let batch = db.batch()
+        for d in snap.documents { batch.deleteDocument(d.reference) }
+        try await batch.commit()
+    }
+
     func fetchLeaderboard(limit: Int,
                           scope: LeaderboardScope,
                           userId: String?) async throws -> LeaderboardResult {
@@ -548,46 +598,68 @@ extension FirestoreService {
             .document(scope.docId)
             .collection("entries")
 
+        let now = Date()
+
         // 1) Top-N
         async let topSnapTask = base
             .order(by: "score", descending: true)
             .limit(to: limit)
             .getDocuments()
 
-        // 2) Me dokümanı (opsiyonel)
+        // 2) My record (optional)
         async let meDocTask: DocumentSnapshot? = {
             guard let userId else { return nil }
             return try? await base.document(userId).getDocument()
         }()
 
         let topSnap = try await topSnapTask
-        let top: [LeaderboardEntry] = try topSnap.documents.map {
-            try $0.data(as: LeaderboardEntry.self)
+
+        // Do not include expired (daily/weekly) entries in the list; optionally delete them
+        var top: [LeaderboardEntry] = []
+        var expiredRefs: [DocumentReference] = []
+
+        for doc in topSnap.documents {
+            let entry = try doc.data(as: LeaderboardEntry.self)
+            if scope != .alltime, isExpired(entry.expiresAt, now: now) {
+                expiredRefs.append(doc.reference)  // optional: delete later in a batch
+                continue
+            }
+            top.append(entry)
         }
 
+        if !expiredRefs.isEmpty {
+            let batch = db.batch()
+            expiredRefs.forEach { batch.deleteDocument($0) }
+            try? await batch.commit()
+        }
+
+        // My entry and rank
         var me: LeaderboardEntry? = nil
         var meRank: Int? = nil
 
         if let meDoc = try await meDocTask, meDoc.exists {
             let myEntry = try meDoc.data(as: LeaderboardEntry.self)
-            me = myEntry
 
-            if let idx = top.firstIndex(where: { $0.userId == myEntry.userId }) {
-                meRank = idx + 1
+            if scope != .alltime, isExpired(myEntry.expiresAt, now: now) {
+                try? await meDoc.reference.delete() // remove if expired
             } else {
-                // 3) Benden yüksek kaç kişi var?  meRank = count + 1
-                let countSnap = try await base
-                    .whereField("score", isGreaterThan: myEntry.score)
-                    .count
-                    .getAggregation(source: .server)
-
-                let greaterCount = Int(truncating: countSnap.count)
-                meRank = greaterCount + 1
+                me = myEntry
+                if let idx = top.firstIndex(where: { $0.userId == myEntry.userId }) {
+                    meRank = idx + 1
+                } else {
+                    let countSnap = try await base
+                        .whereField("score", isGreaterThan: myEntry.score)
+                        .count
+                        .getAggregation(source: .server)
+                    meRank = Int(truncating: countSnap.count) + 1
+                }
             }
         }
 
         return LeaderboardResult(top: top, me: me, meRank: meRank)
     }
+
+
 
 }
 

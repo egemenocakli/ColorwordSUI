@@ -19,6 +19,7 @@ struct LeaderboardEntry: Codable, Identifiable {
     let displayName: String?
     let score: Int
     let updatedAt: Timestamp?
+    let expiresAt: Timestamp?
 }
 
 struct LeaderboardResult {

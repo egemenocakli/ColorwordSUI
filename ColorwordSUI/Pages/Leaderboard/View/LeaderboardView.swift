@@ -89,11 +89,8 @@ struct LeaderboardView: View {
                 leaderboardVM.load(scope: selectedType.dbScope)
                     
             }
-
         }
-        
     }
-    
 }
 
 #Preview {
