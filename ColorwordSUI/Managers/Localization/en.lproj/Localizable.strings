@@ -58,3 +58,6 @@
 
 //Leaderboard
 "leaderboard" = "Leaderboard";
+"leaderboard_daily" = "Daily";
+"leaderboard_weekly" = "Weekly";
+"leaderboard_all_time" = "All Time";

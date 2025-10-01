@@ -7,7 +7,7 @@
 
 import Foundation
 
-protocol ScoreboardServiceInterface {
+protocol LeaderboardServiceInterface {
     func fetchLeaderboard(
         limit: Int,
         scope: LeaderboardScope,
@@ -15,11 +15,11 @@ protocol ScoreboardServiceInterface {
     ) async throws -> LeaderboardResult
 }
 
-final class ScoreboardService: ScoreboardServiceInterface {
+final class LeaderboardService: LeaderboardServiceInterface {
     private let firestoreService = FirestoreService()
 
     func fetchLeaderboard(
-        limit: Int = 10,
+        limit: Int = 5,
         scope: LeaderboardScope = .alltime,
         includeCurrentUser: Bool = true
     ) async throws -> LeaderboardResult {
@@ -28,10 +28,6 @@ final class ScoreboardService: ScoreboardServiceInterface {
         ? UserSessionManager.shared.userInfoModel?.userId
         : nil
 
-        return try await firestoreService.getLeaderboardScores(
-            limit: limit,
-            alsoInclude: uid,
-            scope: scope
-        )
+        return try await firestoreService.fetchLeaderboard(limit: limit, scope: .alltime, userId: uid)
     }
 }
