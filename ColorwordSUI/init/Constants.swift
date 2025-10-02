@@ -66,6 +66,7 @@ class Constants {
         
         static let loginButtonColor: Color = Color(hex: "376193")!
         static let signUpButtonColor: Color = Color(hex: "535F70")!
+        static let googleButtonColor: Color = Color(hex: "f2f2f2")!
         
 
         static let correctButtonColor: Color = Color(hex: "008b00")!
@@ -105,6 +106,8 @@ class Constants {
     }
     /// **xSmallSize: 10, smallSize: 20, mSize: 30, lmSize: 40, lSize: 50, xlSize: 100, xxlSize: 150, xxxlSize: 200**
     class PaddingSizeConstants {
+        
+        static let xxxxSmallSize: CGFloat = 4
         static let xxxSmallSize: CGFloat = 8
         static let xxSmallSize: CGFloat = 10
         static let xsmallSize: CGFloat = 15
@@ -142,8 +145,11 @@ class Constants {
     }
     /// **buttonWidth: 150, buttonHeight: 50**
     class ButtonSizeConstants {
-        static let buttonWidth: CGFloat = 150
+        static let buttonWidth: CGFloat = 200
         static let buttonHeight: CGFloat = 50
+        
+        static let googleButtonWidth: CGFloat = 200
+        static let googleButtonHeight: CGFloat = 60
     }
     /// **xSmall: 12, small: 14, medium: 16, large: 18, xLarge: 20, x2Large: 22, x3Large: 30, x4Large: 40, hugeSize: 60**
     class FontSizeConstants {

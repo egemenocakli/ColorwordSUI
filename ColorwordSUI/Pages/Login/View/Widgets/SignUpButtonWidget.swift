@@ -26,7 +26,7 @@ struct SignUpButtonWidget: View{
                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                 }
             .contentShape(Rectangle())
-            .padding(.top, Constants.PaddingSizeConstants.xxSmallSize)
+            .padding(.top, Constants.PaddingSizeConstants.xxxxSmallSize)
             }
         }
 }

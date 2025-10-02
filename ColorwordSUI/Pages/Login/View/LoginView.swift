@@ -69,7 +69,9 @@ struct LoginView: View {
                                         }
                                     
                                     
-                                    SignUpButtonWidget(action: signupButton)
+                                    SignUpButtonWidget(action: signupAction)
+                                    
+                                    
                                     
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
@@ -99,13 +101,23 @@ struct LoginView: View {
                 .padding(.bottom, 50) // Toast konumlandırma
             )
             }
+        .safeAreaInset(edge: .bottom) {
+            VStack(spacing: 8){
+                GoogleLoginButton()
+
+            }
+            .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
+            .padding(.vertical, 50)
+        }
             
 
 
     }
     
-    func signupButton() {
+    func signupAction() {
     }
+    
+
     
     /// **Toast mesajını gösteren metod**
     fileprivate func showResultToastMessage(message: String) -> some View {
