@@ -11,6 +11,7 @@
 "login_button" = "Login";
 "sign_up_button" = "Sign Up";
 "email" = "Email";
+"login_google" = "Sign in with Google";
 
 //Signup
 "name" = "Name";

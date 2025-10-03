@@ -17,6 +17,7 @@ struct LoginView: View {
     let userPreferences = UserPreferences()
     let keychainEncryption = KeychainEncrpyter()
 
+    @State private var goSignUp = false
     @State private var isAutoLoginInProgress = true
 
 
@@ -52,34 +53,41 @@ struct LoginView: View {
                                 
                                 LanguagePickerWidget()
                             }.preferredColorScheme(themeManager.colorScheme)
-                                .padding(10)
+                                .padding(Constants.PaddingSizeConstants.xxSmallSize)
                             
                             
                             AppNameWidget(geometry: geometry)
+                                .padding(.vertical, Constants.PaddingSizeConstants.smallSize)
                             
                             GeometryReader { geometry in
                                 VStack {
                                     TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
                                         
                                     
-                                    LoginButtonWidget(action: loginVM.authLogin)
+                                    ButtonWidget(titleKey: "login_button",width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight, backgroundColor: Constants.ColorConstants.loginButtonColor,fontWeight: .semibold, action: loginVM.authLogin)
                                         .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                            
                                             HomeView().navigationBarBackButtonHidden(true)
                                         }
                                     
+
+                                        
+                                        ButtonWidget(titleKey: "sign_up_button",width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight, backgroundColor: Constants.ColorConstants.signUpButtonColor,fontWeight: .semibold, action: signupAction)
+                                        .navigationDestination(isPresented: $goSignUp) {
+                                            SignUpView().navigationBarBackButtonHidden(false)
+                                        }
                                     
-                                    SignUpButtonWidget(action: signupAction)
                                     
+                                    LabeledDivider("OR",labelBackground: Constants.ColorConstants.transparentColor)
+                                        .padding(.top, Constants.PaddingSizeConstants.mSize)
                                     
                                     
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
-                                .frame(height: geometry.size.height * 0.6)
+                                .frame(height: geometry.size.height * 0.85)
                             }
                         }
                         
-                    }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
+                    }
 
                 }
             }.onAppear(){
@@ -98,23 +106,32 @@ struct LoginView: View {
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                .padding(.bottom, 50) // Toast konumlandırma
+                .padding(.bottom, Constants.PaddingSizeConstants.lSize) // Toast konumlandırma
             )
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 8){
+
+                    GoogleLoginButton(action: googleLoginAction)
+
+                }
+                .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
+                .padding(.vertical, Constants.PaddingSizeConstants.mSize)
             }
-        .safeAreaInset(edge: .bottom) {
-            VStack(spacing: 8){
-                GoogleLoginButton()
 
             }
-            .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
-            .padding(.vertical, 50)
-        }
+        .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+        .animation(.easeInOut(duration: 0.25), value: languageManager.currentLanguage)
+
+
             
 
 
     }
     
     func signupAction() {
+        goSignUp = true
+    }
+    func googleLoginAction() {
     }
     
 

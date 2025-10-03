@@ -26,7 +26,12 @@ struct SignUpButtonWidget: View{
                     .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
                 }
             .contentShape(Rectangle())
-            .padding(.top, Constants.PaddingSizeConstants.xxxxSmallSize)
             }
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.black.opacity(0.12), lineWidth: 1)
+        )
+        .shadow(Constants.AppShadows.button)
+
         }
 }

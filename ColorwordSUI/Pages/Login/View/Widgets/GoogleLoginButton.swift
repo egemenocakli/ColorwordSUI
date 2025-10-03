@@ -5,6 +5,55 @@
 //  Created by Emre Ocaklı on 2.10.2025.
 //
 
+import Foundation
+import SwiftUI
+
+struct GoogleLoginButton: View{
+    
+    let action: () -> Void
+    
+    var body: some View{
+        googleLoginButton()
+    }
+    
+    func googleLoginButton() -> some View {
+        Button(action: action) {
+            HStack{
+                Image("googleIconTransparent")
+                    .resizable()
+                    .renderingMode(.original) // renkleri bozmamak için
+                    .frame(width: 24, height: 24)
+
+                Text("login_google")
+                    .font(.system(size: 13, weight: .bold))
+                    .foregroundStyle(Constants.ColorConstants.googleLoginFontColor)
+                    .padding(.trailing, 8)
+
+            }
+            .frame(width: 200, height: 50)
+            .background(Constants.ColorConstants.whiteColor)
+            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
+        }
+        .overlay(
+            RoundedRectangle(cornerRadius: 14, style: .continuous)
+                .stroke(Color.black.opacity(0.12), lineWidth: 1)
+        )
+            .contentShape(Rectangle())
+            .padding(.top, Constants.PaddingSizeConstants.xxxxSmallSize)
+            .shadow(Constants.AppShadows.button)
+
+            }
+        
+}
+
+
+
+
+
+
+
+
+
 import SwiftUI
 import UIKit
 import GoogleSignIn
@@ -26,7 +75,7 @@ struct PresenterControllerReader: UIViewControllerRepresentable {
 
 
 
-struct GoogleLoginButton: View {
+struct Google_LoginButton: View {
     @State private var presenter: UIViewController?
 
     var body: some View {
@@ -61,41 +110,3 @@ struct GoogleLoginButton: View {
     }
 }
 
-
-/*
-import Foundation
-import SwiftUI
-
-struct GoogleLoginButton: View{
-    
-    let action: () -> Void
-    
-    var body: some View{
-        googleLoginButton()
-    }
-    
-    func googleLoginButton() -> some View {
-        Button(action: action) {
-            HStack{
-                Image("googleIcon")
-                    .resizable()
-                    .renderingMode(.original) // renkleri bozmamak için
-                    .frame(width: 40, height: 40)
-
-                Text("Google ile giriş")
-                    .font(.system(size: 16, weight: .semibold))
-                    .foregroundStyle(Constants.ColorConstants.blackTextColor)
-                    .padding(.trailing, 8)
-
-            }
-            .frame(width: 200, height: 50)
-            .background(Constants.ColorConstants.googleButtonColor)
-            .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
-        }
-            .contentShape(Rectangle())
-            .padding(.top, Constants.PaddingSizeConstants.xxxxSmallSize)
-            }
-        
-}
-
-*/
