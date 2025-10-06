@@ -10,7 +10,7 @@
 import Foundation
 import FirebaseFirestore
 
-struct UserInfoModel: Identifiable {
+struct UserInfoModel: Identifiable, Decodable {
     var id: String = "userInfo"
     var userId: String
     var email: String

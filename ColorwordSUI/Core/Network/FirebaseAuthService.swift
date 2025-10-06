@@ -7,12 +7,20 @@
 
 import Foundation
 import FirebaseAuth
-//import GoogleSignIn
+import UIKit
+import FirebaseFirestore
+import GoogleSignIn
+
 
 class FirebaseAuthService: AuthServiceInterface {
     private let firebaseAuth = Auth.auth()
     private var appUser: FirebaseUserModel?
     private var userModel: UserSessionManager?
+    private let db = Firestore.firestore()
+    
+    @Published var isSigningIn = false
+    @Published var errorMessage: String?
+
 
     func getCurrentUser() -> FirebaseUserModel? {
         guard let user = firebaseAuth.currentUser else { return nil }
@@ -88,6 +96,108 @@ class FirebaseAuthService: AuthServiceInterface {
         let lastName = nameComponents.count > 1 ? String(nameComponents[1]) : ""
         return (name, lastName)
     }
+    
+    @MainActor
+    func signInWithGoogle(presenter: UIViewController) async {
+        isSigningIn = true; defer { isSigningIn = false }
+        do {
+            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
+            guard let idToken = result.user.idToken?.tokenString else {
+                throw NSError(domain: "Auth", code: -1,
+                              userInfo: [NSLocalizedDescriptionKey: "ID token alınamadı"])
+            }
+            let credential = GoogleAuthProvider.credential(
+                withIDToken: idToken,
+                accessToken: result.user.accessToken.tokenString
+            )
+
+            let authResult = try await Auth.auth().signIn(with: credential)
+            let u = authResult.user
+
+            // Kullanıcıyı UserSessionManager'a yaz
+            let firebaseUser = FirebaseUserModel(
+                userId: u.uid,
+                email: u.email ?? "",
+                name: u.displayName ?? "",
+                lastname: "",
+            )
+            UserSessionManager.shared.updateUser(with: firebaseUser)
+
+            // /users kök dokümanını (opsiyonel) güncelle ya da oluştur
+            try await db.collection("users").document(u.uid).setData([
+                "userId": u.uid,
+                "email": u.email ?? "",
+                "displayName": u.displayName ?? "",
+                "provider": "google",
+                "updatedAt": FieldValue.serverTimestamp()
+            ], merge: true)
+
+            // 🔽 Asıl kritik kısım: userInfo’yu getir veya oluştur
+            let info = try await fetchOrCreateUserInfo(
+                userId: u.uid,
+                name: u.displayName ?? "",
+                email: u.email ?? ""
+            )
+            UserSessionManager.shared.updateUserInfoModel(with: info)
+
+        } catch {
+            self.errorMessage = error.localizedDescription
+        }
+    }
+    func fetchOrCreateUserInfo(userId: String,
+                                   name: String,
+                                   email: String) async throws -> UserInfoModel {
+            let docRef = db.collection("users")
+                .document(userId)
+                .collection("userInfo")
+                .document("userInfo")
+
+            // 1) Oku
+            let snap = try await docRef.getDocument()
+            if snap.exists {
+                // Codable ise:
+                if let info = try? snap.data(as: UserInfoModel.self) {
+                    return info
+                }
+                // Codable değilse manuel parse et:
+                let data = snap.data() ?? [:]
+                return UserInfoModel(
+                    userId: userId,
+                    email: data["email"] as? String ?? email,
+                    name: data["name"] as? String ?? name,
+                    lastname: data["lastname"] as? String ?? "",
+                    dailyTarget: data["dailyTarget"] as? Int ?? Constants.ScoreConstants.dailyTargetScore,
+                    dailyScore: data["dailyScore"] as? Int ?? 0
+                )
+            }
+
+            // 2) Yoksa oluştur (varsayılan dailyTarget ile)
+            let newInfo = UserInfoModel(
+                userId: userId,
+                email: email,
+                name: name,
+                lastname: "",
+                dailyTarget: Constants.ScoreConstants.dailyTargetScore,
+                dailyScore: 0
+            )
+
+            // Codable ise:
+            // try await docRef.setData(from: newInfo, merge: true)
+
+            // Codable değilse:
+            try await docRef.setData([
+                "userId": newInfo.userId,
+                "email": newInfo.email,
+                "name": newInfo.name,
+                "lastname": newInfo.lastname,
+                "dailyTarget": newInfo.dailyTarget,
+                "dailyScore": newInfo.dailyScore,
+                "createdAt": FieldValue.serverTimestamp(),
+                "updatedAt": FieldValue.serverTimestamp()
+            ], merge: true)
+
+            return newInfo
+        }
 
     
 //    

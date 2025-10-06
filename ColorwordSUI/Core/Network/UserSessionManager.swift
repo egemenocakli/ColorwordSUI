@@ -1,14 +1,13 @@
-import Foundation
+import SwiftUI
+import FirebaseAuth
 
-final class UserSessionManager {
+final class UserSessionManager: ObservableObject {
     static let shared = UserSessionManager()
 
-    private(set) var currentUser: FirebaseUserModel?
-    private(set) var userInfoModel: UserInfoModel?
-    
-    var phoneNumber: String? // Sonradan doldurulacak telefon numarası gibi ek bir alan
+    @Published private(set) var currentUser: FirebaseUserModel? //TODO: ne demek bu? private set
+    @Published private(set) var userInfoModel: UserInfoModel?
+    @Published var phoneNumber: String?
 
-    
     private init() {}
 
     func updateUser(with user: FirebaseUserModel) {
@@ -17,18 +16,14 @@ final class UserSessionManager {
     func updateUserInfoModel(with user: UserInfoModel) {
         self.userInfoModel = user
     }
-
     func updatePhoneNumber(_ phone: String) {
         self.phoneNumber = phone
     }
 
     func logout() {
         self.currentUser = nil
-        self.phoneNumber = nil
         self.userInfoModel = nil
-        
-        // Ek alanları da sıfırlayın
-        // Otomatik çıkış işlemi veya Firebase logout çağrısı yapılabilir
+        self.phoneNumber = nil
+        try? Auth.auth().signOut()
     }
 }
-

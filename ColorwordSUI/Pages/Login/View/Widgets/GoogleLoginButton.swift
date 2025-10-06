@@ -7,6 +7,7 @@
 
 import Foundation
 import SwiftUI
+import UIKit
 
 struct GoogleLoginButton: View{
     
@@ -46,67 +47,17 @@ struct GoogleLoginButton: View{
         
 }
 
-
-
-
-
-
-
-
-
-import SwiftUI
-import UIKit
-import GoogleSignIn
-import GoogleSignInSwift
-import FirebaseAuth // Firebase kullanıyorsan
-
 struct PresenterControllerReader: UIViewControllerRepresentable {
     @Binding var controller: UIViewController?
 
     func makeUIViewController(context: Context) -> UIViewController {
         let vc = UIViewController()
+        // State uyarısı yememek için bir sonraki runloop’ta atıyoruz
         DispatchQueue.main.async { [weak vc] in
             self.controller = vc
         }
         return vc
     }
+
     func updateUIViewController(_ uiViewController: UIViewController, context: Context) {}
 }
-
-
-
-struct Google_LoginButton: View {
-    @State private var presenter: UIViewController?
-
-    var body: some View {
-        
-        GoogleSignInButton(scheme: .light, style: .wide, state: .normal) {
-            Task { await signIn() }
-        }
-        .frame(width: Constants.ButtonSizeConstants.googleButtonWidth, height: Constants.ButtonSizeConstants.googleButtonHeight)
-        .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
-        
-        .background(PresenterControllerReader(controller: $presenter)) // <-- köprü
-        .accessibilityLabel(Text("Google ile devam et"))
-    }
-    
-
-    @MainActor
-    private func signIn() async {
-        guard let presenter else { return } // SwiftUI içinden aldığımız VC
-
-        do {
-            let result = try await GIDSignIn.sharedInstance.signIn(withPresenting: presenter)
-            // Eğer Firebase ile oturum açacaksan:
-            if let idToken = result.user.idToken?.tokenString {
-                let accessToken = result.user.accessToken.tokenString
-                let credential = GoogleAuthProvider.credential(withIDToken: idToken, accessToken: accessToken)
-                _ = try await Auth.auth().signIn(with: credential)
-            }
-            // result.user.profile?.email, .name vs. erişebilirsin
-        } catch {
-            print("Google sign-in error:", error)
-        }
-    }
-}
-

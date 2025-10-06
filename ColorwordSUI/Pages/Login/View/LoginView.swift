@@ -20,6 +20,7 @@ struct LoginView: View {
     @State private var goSignUp = false
     @State private var isAutoLoginInProgress = true
 
+    @State private var presenter: UIViewController?   // köprüden gelecek
 
 
     var body: some View {
@@ -111,17 +112,33 @@ struct LoginView: View {
             .safeAreaInset(edge: .bottom) {
                 VStack(spacing: 8){
 
-                    GoogleLoginButton(action: googleLoginAction)
+                    //GoogleLoginButton(action: googleLoginAction)
+                    
+                    //Viewmodelden çekmeli signInwithGoogle ı
+                    GoogleLoginButton {
+                        Task { await loginVM.signInWithGoogle(presenter: presenter) }
+                    }
+                    .disabled(presenter == nil || loginVM.isLoading)
+                    .opacity(loginVM.isLoading ? 0.7 : 1)
+                    .background(PresenterControllerReader(controller: $presenter))
+
 
                 }
                 .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
                 .padding(.vertical, Constants.PaddingSizeConstants.mSize)
+                
             }
 
             }
         .environment(\.locale, .init(identifier: languageManager.currentLanguage))
         .animation(.easeInOut(duration: 0.25), value: languageManager.currentLanguage)
+        .navigationDestination(isPresented: $loginVM.loginSuccess) {
+            HomeView().navigationBarBackButtonHidden(true)
+        }
 
+        if let err = loginVM.errorMessage {
+            Text(err).foregroundStyle(.red).font(.footnote)
+        }
 
             
 
@@ -173,7 +190,6 @@ struct LoginView: View {
     LoginView()
         .environmentObject(LanguageManager())
 }
-
 
 
 
