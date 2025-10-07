@@ -166,6 +166,7 @@ struct LoginView: View {
         }
     }
     
+    //autoLogin
     @discardableResult
     fileprivate func autoLoginCheck () -> Bool {
         guard

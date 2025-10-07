@@ -48,6 +48,7 @@ class LoginViewModel: ObservableObject {
         return true
     }
 
+    //TODO: async e çevrilecek
     /// **Firebase Authentication ile giriş yapan metod**
     func authLogin() {
         guard validateInputs() else { return }
