@@ -40,24 +40,27 @@ final class HomeViewModel: ObservableObject {
     }
     
     
-    func fetchUserDailyPoint ()  {
-       
-        guard let userId =  UserSessionManager.shared.currentUser?.userId else {
-            dailyProgressBarPoint = 0
+    func fetchUserDailyPoint() {
+        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+            DispatchQueue.main.async { // Published değişken -> ana thread
+                self.dailyProgressBarPoint = 0
+            }
             return
         }
-        debugPrint(userId)
 
-        
         homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
-            UserSessionManager.shared.updateUserInfoModel(with: userInfoModel!)
-            self.userInfoModel = userInfoModel
-            self.resetDailyScoreIfFirstTime()
-            self.dailyTarget = userInfoModel?.dailyTarget ?? Constants.ScoreConstants.dailyTargetScore
-
+            DispatchQueue.main.async {
+                guard let model = userInfoModel else {
+                    self.dailyProgressBarPoint = 10
+                    return
+                }
+                UserSessionManager.shared.updateUserInfoModel(with: model)
+                self.userInfoModel = model
+                self.resetDailyScoreIfFirstTime()
+                self.dailyTarget = model.dailyTarget
+            }
         }
     }
-    
 
     
 

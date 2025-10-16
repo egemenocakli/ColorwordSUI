@@ -14,6 +14,7 @@ protocol HomeServiceInterface {
     
 }
 
+//TODO: async e geçilecek
 class HomeService {
     private let firebaseAuthService = FirebaseAuthService()
     private let firestoreService = FirestoreService()

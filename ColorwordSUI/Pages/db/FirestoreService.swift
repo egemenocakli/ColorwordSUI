@@ -113,7 +113,7 @@ class FirestoreService: FirestoreInterface {
                     userId: UserSessionManager.shared.currentUser!.userId,
                     email: UserSessionManager.shared.currentUser!.email,
                     name: UserSessionManager.shared.currentUser!.name,
-                    lastname: UserSessionManager.shared.currentUser!.lastname,
+                    lastname: UserSessionManager.shared.currentUser?.lastname ?? "",
                     dailyTarget: Constants.ScoreConstants.dailyTargetScore, dailyScore: 10
                 )) { success in
                     completion(nil)

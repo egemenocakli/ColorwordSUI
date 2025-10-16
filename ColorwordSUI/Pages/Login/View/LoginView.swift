@@ -34,9 +34,6 @@ struct LoginView: View {
                             ProgressView("loading")
                                 .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
                                 
-                                .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                    HomeView().navigationBarBackButtonHidden(true)
-                                }
                         }
                         else {
                             
@@ -66,9 +63,6 @@ struct LoginView: View {
                                         
                                     
                                     ButtonWidget(titleKey: "login_button",width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight, backgroundColor: Constants.ColorConstants.loginButtonColor,fontWeight: .semibold, action: loginVM.authLogin)
-                                        .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                            HomeView().navigationBarBackButtonHidden(true)
-                                        }
                                     
 
                                         
@@ -91,7 +85,15 @@ struct LoginView: View {
                     }
 
                 }
-            }.onAppear(){
+            }
+            .background(
+                NavigationLink(
+                    destination: HomeView().navigationBarBackButtonHidden(true),
+                    isActive: $loginVM.loginSuccess
+                ) { EmptyView() }
+                .hidden()
+            )
+            .onAppear(){
                 isAutoLoginInProgress = true
                 Task {
                     let succes = autoLoginCheck()
@@ -100,6 +102,13 @@ struct LoginView: View {
                     }
                 }
             }
+            .overlay(
+                Group {
+                    if let err = loginVM.errorMessage {
+                        Text(err).foregroundStyle(.red).font(.footnote)
+                    }
+                }
+                )
             .overlay(
                 Group {
                     if let message = loginVM.loginResultMessage, loginVM.showToast {
@@ -130,15 +139,14 @@ struct LoginView: View {
             }
 
             }
+
         .environment(\.locale, .init(identifier: languageManager.currentLanguage))
         .animation(.easeInOut(duration: 0.25), value: languageManager.currentLanguage)
-        .navigationDestination(isPresented: $loginVM.loginSuccess) {
-            HomeView().navigationBarBackButtonHidden(true)
+        .onChange(of: loginVM.loginSuccess) { _, newVal in
+            debugPrint("loginSuccess changed:", newVal)
         }
 
-        if let err = loginVM.errorMessage {
-            Text(err).foregroundStyle(.red).font(.footnote)
-        }
+
 
             
 
@@ -174,13 +182,11 @@ struct LoginView: View {
             let password = keychainEncryption.loadPassword(),
             !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else {
-            loginVM.loginSuccess = false
             return false
         }
         loginVM.email = userPreferences.savedEmail
         loginVM.password = password
         loginVM.authLogin()
-        loginVM.loginSuccess = true
         
         return true
     }

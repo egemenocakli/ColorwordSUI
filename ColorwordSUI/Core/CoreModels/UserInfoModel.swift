@@ -5,8 +5,6 @@
 //  Created by Emre Ocaklı on 18.03.2025.
 //
 
-
-
 import Foundation
 import FirebaseFirestore
 
@@ -17,14 +15,39 @@ struct UserInfoModel: Identifiable, Decodable {
     var name: String
     var lastname: String
     var photo: String
-    var totalScore: Int       //Kullanıcının genel scoru
-    var dailyScore: Int       //Günlük kullanıcının yaptığı score
-    var dailyTarget: Int      // Günlük hedef puan
+    var totalScore: Int       // Kullanıcının genel skoru
+    var dailyScore: Int       // Günlük skor
+    var dailyTarget: Int      // Günlük hedef
     var dailyScoreDate: Date? // Sunucu zamanını Date olarak saklamak
-    
-    // Firestore’a yazarken sözlüğe dönüştürmek için
+
+    // MARK: - Yardımcı dönüştürücüler
+    private static func intFrom(_ any: Any?) -> Int? {
+        switch any {
+        case let v as Int:      return v
+        case let v as Int64:    return Int(v)
+        case let v as UInt64:   return Int(v)
+        case let v as Double:   return Int(v)
+        case let v as Float:    return Int(v)
+        case let v as NSNumber: return v.intValue
+        case let v as String:   return Int(v)
+        case is NSNull:         return nil
+        default:                return nil
+        }
+    }
+
+    private static func dateFrom(_ any: Any?) -> Date? {
+        if let ts = any as? Timestamp { return ts.dateValue() }
+        if let d  = any as? Date      { return d }
+        if let s  = any as? String {
+            let f = ISO8601DateFormatter()
+            return f.date(from: s)
+        }
+        return nil
+    }
+
+    // MARK: - Firestore’a yaz
     func toDictionary() -> [String: Any] {
-        return [
+        [
             "userId": userId,
             "email": email,
             "name": name,
@@ -36,40 +59,33 @@ struct UserInfoModel: Identifiable, Decodable {
             "dailyScoreDate": dailyScoreDate ?? FieldValue.serverTimestamp()
         ]
     }
-    
-    // Opsiyonel: Firestore’dan gelen veriyi modele dönüştürmek için init
+
+    // MARK: - Firestore’dan oku (toleranslı)
     init?(dictionary: [String: Any], docId: String = "userInfo") {
-        guard let userId = dictionary["userId"] as? String,
+        // userId eksikse docId'yi kullan; email ve name zorunlu
+        let uid = (dictionary["userId"] as? String) ?? docId
+        guard !uid.isEmpty,
               let email = dictionary["email"] as? String,
-              let name = dictionary["name"] as? String,
-              let lastname = dictionary["lastname"] as? String,
-              let photo = dictionary["photo"] as? String,
-              let totalScore = dictionary["totalScore"] as? Int,
-              let dailyTarget = dictionary["dailyTarget"] as? Int,
-              let dailyScore = dictionary["dailyScore"] as? Int
-        else {
-            return nil
-        }
-        
-        // dailyScoreDate bir Timestamp ise Date’e çevir
-        var dateValue: Date? = nil
-        if let timestamp = dictionary["dailyScoreDate"] as? Timestamp {
-            dateValue = timestamp.dateValue()
-        }
-        
+              let name  = dictionary["name"]  as? String
+        else { return nil }
+
         self.id = docId
-        self.userId = userId
+        self.userId = uid
         self.email = email
         self.name = name
-        self.lastname = lastname
-        self.photo = photo
-        self.totalScore = totalScore
-        self.dailyTarget = dailyTarget
-        self.dailyScore = dailyScore
-        self.dailyScoreDate = dateValue
+        self.lastname = (dictionary["lastname"] as? String) ?? ""
+        self.photo    = (dictionary["photo"]    as? String) ?? "empty"
+
+        // Int64/NSNumber/Double/String hepsi kabul
+        self.totalScore  = Self.intFrom(dictionary["totalScore"])  ?? 0
+        self.dailyScore  = Self.intFrom(dictionary["dailyScore"])  ?? 0
+        self.dailyTarget = Self.intFrom(dictionary["dailyTarget"]) ?? 100
+
+        // Timestamp/Date/String hepsi kabul
+        self.dailyScoreDate = Self.dateFrom(dictionary["dailyScoreDate"])
     }
-    
-    // Yeni model oluşturmak için bir convenience init
+
+    // MARK: - Convenience init (yeni kayıt oluşturma)
     init(userId: String,
          email: String,
          name: String,
@@ -80,7 +96,7 @@ struct UserInfoModel: Identifiable, Decodable {
          dailyScore: Int = 0,
          dailyScoreDate: Date? = nil,
          id: String = "userInfo") {
-        
+
         self.id = id
         self.userId = userId
         self.email = email

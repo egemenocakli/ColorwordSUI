@@ -137,6 +137,8 @@ class FirebaseAuthService: AuthServiceInterface {
                 userId: u.uid,
                 name: u.displayName ?? "",
                 email: u.email ?? ""
+    
+                
             )
             UserSessionManager.shared.updateUserInfoModel(with: info)
 
@@ -178,7 +180,7 @@ class FirebaseAuthService: AuthServiceInterface {
                 name: name,
                 lastname: "",
                 dailyTarget: Constants.ScoreConstants.dailyTargetScore,
-                dailyScore: 0
+                dailyScore: 10
             )
 
             // Codable ise:
