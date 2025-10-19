@@ -31,7 +31,7 @@ struct GoogleLoginButton: View{
                     .padding(.trailing, 8)
 
             }
-            .frame(width: 200, height: 50)
+            .frame(width: Constants.ButtonSizeConstants.googleButtonWidth, height: Constants.ButtonSizeConstants.googleButtonHeight)
             .background(Constants.ColorConstants.whiteColor)
             .clipShape(RoundedRectangle(cornerRadius: Constants.SizeRadiusConstants.small))
         }
