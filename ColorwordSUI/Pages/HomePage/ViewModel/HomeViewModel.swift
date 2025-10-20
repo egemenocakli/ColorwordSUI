@@ -6,19 +6,64 @@
 //
 
 import Foundation
+import Combine
 
+
+@MainActor
 final class HomeViewModel: ObservableObject {
+    static let shared = HomeViewModel()
+
     let homeService = HomeService()
     let userPreferences = UserPreferences()
     let keychainEncrpyter = KeychainEncrpyter()
+
     @Published var dailyProgressBarPoint: Int = 0
     @Published var dailyTarget: Int = 100
     @Published var loginSuccess: Bool = false
     @Published var userInfoModel: UserInfoModel?
-    
 
-    //Burada autologinden userId içeriği henüz dolmadan fetchUserDailyPoint çağrılıyor o sebepten signletona çevirdim.
-    static let shared = HomeViewModel()
+    private var cancellables = Set<AnyCancellable>()
+    @Published private var currentUserIdSnapshot: String?
+
+
+    private init() {
+        // 1) currentUser değişince:
+        UserSessionManager.shared.$currentUser
+            .removeDuplicates(by: { $0?.userId == $1?.userId })
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] user in
+                guard let self else { return }
+                if user != nil {
+                    // Kullanıcı geldi -> günlük puanı çek
+                    self.fetchUserDailyPoint()
+                } else {
+                    // Kullanıcı gitti -> view state'i sıfırla
+                    self.userInfoModel = nil
+                    self.dailyProgressBarPoint = 0
+                    self.dailyTarget = Constants.ScoreConstants.dailyTargetScore
+                }
+            }
+            .store(in: &cancellables)
+
+        // 2) UserSessionManager.userInfoModel güncellenince:
+        UserSessionManager.shared.$userInfoModel
+            .compactMap { $0 } // nil değilse
+            .receive(on: DispatchQueue.main)
+            .sink { [weak self] info in
+                guard let self else { return }
+                self.userInfoModel = info
+                self.dailyTarget = info.dailyTarget
+                self.dailyProgressBarPoint = info.dailyScore
+            }
+            .store(in: &cancellables)
+    }
+
+    @MainActor
+    func resetForNewUser() {
+        userInfoModel = nil
+        dailyProgressBarPoint = 0
+        dailyTarget = Constants.ScoreConstants.dailyTargetScore
+    }
     
     func changeLoginSuccesState () {
         loginSuccess = !loginSuccess
@@ -30,7 +75,9 @@ final class HomeViewModel: ObservableObject {
                 DispatchQueue.main.async {
                     self.userPreferences.savedEmail = ""
                     self.keychainEncrpyter.deletePassword()
-                    self.loginSuccess = false 
+                    self.loginSuccess = false
+                    self.dailyProgressBarPoint = 0
+
                     completion(true)
                 }
             } else {
@@ -40,69 +87,105 @@ final class HomeViewModel: ObservableObject {
     }
     
     
+    @MainActor
     func fetchUserDailyPoint() {
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
-            DispatchQueue.main.async { // Published değişken -> ana thread
-                self.dailyProgressBarPoint = 0
-            }
+        guard let uid = UserSessionManager.shared.currentUser?.userId else {
+            dailyProgressBarPoint = 0
             return
         }
 
-        homeService.fetchUserDailyPoint(userId: userId) { userInfoModel in
+        currentUserIdSnapshot = uid
+
+        homeService.fetchUserDailyPoint(userId: uid) { [weak self] model in
+            guard let self else { return }
             DispatchQueue.main.async {
-                guard let model = userInfoModel else {
-                    self.dailyProgressBarPoint = 10
-                    return
+                guard self.currentUserIdSnapshot == UserSessionManager.shared.currentUser?.userId else { return }
+
+                if let model {
+                    // Önce local state'i kur
+                    self.userInfoModel = model
+                    self.dailyTarget = model.dailyTarget
+                    // İlk giriş kontrolü mutlak set + tarih yapacak
+                    self.resetDailyScoreIfFirstTime()
+                    // İsteğe bağlı: burada global’e itebilirsin
+                    UserSessionManager.shared.updateUserInfoModel(with: self.userInfoModel!)
+                } else {
+                    // Kayıt yoksa: 10 ile başlat (mutlak set mantığına uy)
+                    var fresh = UserInfoModel(
+                        userId: uid,
+                        email: "", name: "", lastname: "",
+                        dailyTarget: Constants.ScoreConstants.dailyTargetScore
+                    )
+                    fresh.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
+                    fresh.totalScore = 0 + Constants.ScoreConstants.dailyLoginScoreBonus
+                    fresh.dailyScoreDate = Date()
+
+                    self.userInfoModel = fresh
+                    self.dailyProgressBarPoint = fresh.dailyScore
+                    self.dailyTarget = fresh.dailyTarget
+
+                    let snapshot = uid
+                    self.homeService.increaseUserInfoPoints(for: fresh) { [weak self] ok in
+                        guard let self else { return }
+                        DispatchQueue.main.async {
+                            guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
+                            if ok { UserSessionManager.shared.updateUserInfoModel(with: fresh) }
+                        }
+                    }
                 }
-                UserSessionManager.shared.updateUserInfoModel(with: model)
-                self.userInfoModel = model
-                self.resetDailyScoreIfFirstTime()
-                self.dailyTarget = model.dailyTarget
             }
         }
     }
+
 
     
 
     //Alert olacak +10 sebebi olarak bir bildirim olabilir
-    func resetDailyScoreIfFirstTime () {
-        
-        if let lastScoreDate = userInfoModel?.dailyScoreDate,
-           !Calendar.current.isDate(lastScoreDate, inSameDayAs: Date()) {
-            debugPrint("ilk defa giriş yapıldı")
-            
-            guard let currentUser = UserSessionManager.shared.currentUser else {
-                debugPrint("UserSessionManager.shared.currentUser bulunamadı")
-                return
-            }
-            
-            guard let userInfoModel = self.userInfoModel else {
-                debugPrint("userInfoModel bulunamadı")
-                return
-            }
-            
-            
-            var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname, dailyTarget: userInfoModel.dailyTarget)
-            
-            userInfo.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
-            userInfo.totalScore = userInfoModel.totalScore + Constants.ScoreConstants.dailyLoginScoreBonus
-                
-                self.homeService.increaseUserInfoPoints(for: userInfo) { result in
-                    if result {
-                        debugPrint("Kullanıcı puanları başarılı şekilde sıfırlandı.")
-                        self.userInfoModel?.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
-                        self.dailyProgressBarPoint = Constants.ScoreConstants.dailyLoginScoreBonus
-                    }else {
-                        debugPrint("Puan sıfırlama işlemi başarısız oldu.")
-                    }
-            }
+    @MainActor
+    func resetDailyScoreIfFirstTime() {
+        guard var info = self.userInfoModel else {
+            debugPrint("userInfoModel bulunamadı")
+            return
         }
-        else {
+
+        let today = Date()
+        // Bugün zaten giriş yapılmışsa sadece ekrandaki state'i eşitle
+        if let last = info.dailyScoreDate, Calendar.current.isDate(last, inSameDayAs: today) {
+            self.dailyProgressBarPoint = info.dailyScore
+            return
+        }
+
+        // İlk giriş bonusu: mutlak set (ekleme değil!)
+        let bonus = Constants.ScoreConstants.dailyLoginScoreBonus
+        let current = info.dailyScore
+        let newDaily = max(current, bonus)           // ÖNEMLİ: zaten 15 ise 15'te bırak
+        let delta = newDaily - current               // total sadece fark kadar artsın
+
+        info.dailyScore = newDaily
+        info.totalScore += delta
+        info.dailyScoreDate = today                  // ÖNEMLİ: bugüne damgala
+
+        // UI'ı anında güncelle (optimizasyon)
+        self.userInfoModel = info
+        self.dailyProgressBarPoint = newDaily
+        self.dailyTarget = info.dailyTarget
+
+        // ⚠️ Backend’e yazarken snapshot kontrolü ekle
+        let snapshot = UserSessionManager.shared.currentUser?.userId
+        homeService.increaseUserInfoPoints(for: info) { [weak self] result in
+            guard let self else { return }
             DispatchQueue.main.async {
-                self.dailyProgressBarPoint = self.userInfoModel?.dailyScore ?? 0
+                guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
+                if result {
+                    // (İsteğe bağlı) global modele de yansıt
+                    UserSessionManager.shared.updateUserInfoModel(with: info)
+                } else {
+                    debugPrint("Puan (ilk giriş) mutlak set yazılamadı.")
+                }
             }
         }
     }
+
     
     //Eğer kullanıcı o gün ilk defa giriyorsa +10 puan vericez.
     //toplamscore a da eklenecek.
@@ -115,68 +198,77 @@ final class HomeViewModel: ObservableObject {
     //
     
     //sadece daily ve totalpoints arttırıyor
+
+    @MainActor
     func increaseUserInfoPoints(increaseBy: Int) {
-        
         guard let currentUser = UserSessionManager.shared.currentUser else {
-            debugPrint("UserSessionManager.shared.currentUser bulunamadı")
-            return
+            debugPrint("currentUser yok"); return
         }
-        
-        guard self.userInfoModel != nil else {
-            debugPrint("userInfoModel bulunamadı")
+        guard var info = self.userInfoModel, info.userId == currentUser.userId else {
+            // Model hazır değilse çek; ama reset tetiklemesin diye önceki fonksiyon tarih damgalıyor
+            fetchUserDailyPoint()
             return
         }
 
-        
-        var currentUserInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname, dailyTarget: userInfoModel?.dailyTarget ?? Constants.ScoreConstants.dailyTargetScore)
-        
-        currentUserInfo.dailyScore += self.userInfoModel!.dailyScore + increaseBy
-        currentUserInfo.totalScore += self.userInfoModel!.totalScore + increaseBy
-        
-        debugPrint("Yeni dailyScore: \(currentUserInfo.dailyScore)")
-        debugPrint("Yeni totalScore: \(currentUserInfo.totalScore)")
-        debugPrint("dailyscore: \(increaseBy)")
-        
-            homeService.increaseUserInfoPoints(for: currentUserInfo) { result in
+        info.dailyScore += increaseBy
+        info.totalScore += increaseBy
+        info.dailyScoreDate = Date() // ÖNEMLİ: her artışta bugüne damgala
+
+        // UI'ı anında güncelle
+        self.userInfoModel = info
+        self.dailyProgressBarPoint = info.dailyScore
+
+        let snapshot = currentUser.userId
+        homeService.increaseUserInfoPoints(for: info) { [weak self] result in
+            guard let self else { return }
+            DispatchQueue.main.async {
+                guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
                 if result {
-                    self.userInfoModel = currentUserInfo
-                    self.dailyProgressBarPoint = currentUserInfo.dailyScore
-                    debugPrint("Kullanıcı puanları başarılı şekilde güncellendi.")
-                }else {
+                    UserSessionManager.shared.updateUserInfoModel(with: info)
+                    debugPrint("Kullanıcı puanları güncellendi.")
+                } else {
                     debugPrint("Puan güncelleme işlemi başarısız oldu.")
                 }
             }
-        
+        }
     }
-    
-    
-    func updateDailyTarget (dailyTarget: Int) {
-        
 
+    
+    
+    @MainActor
+    func updateDailyTarget(dailyTarget: Int) {
         guard let currentUser = UserSessionManager.shared.currentUser else {
-            debugPrint("UserSessionManager.shared.currentUser bulunamadı")
-            return
+            debugPrint("UserSessionManager.shared.currentUser bulunamadı"); return
         }
-        
-        guard self.userInfoModel != nil else {
-            debugPrint("userInfoModel bulunamadı")
-            return
+        // userInfoModel hazır değilse bir kez çekmeyi dene
+        if userInfoModel == nil { fetchUserDailyPoint() }
+        guard userInfoModel != nil else {
+            debugPrint("userInfoModel bulunamadı"); return
         }
-            
-        var userInfo = UserInfoModel(userId: currentUser.userId, email: currentUser.email, name: currentUser.name, lastname: currentUser.lastname, dailyTarget: Constants.ScoreConstants.dailyTargetScore)
-            
+
+        var userInfo = UserInfoModel(
+            userId: currentUser.userId,
+            email: currentUser.email,
+            name: currentUser.name,
+            lastname: currentUser.lastname,
+            dailyTarget: userInfoModel?.dailyTarget ?? Constants.ScoreConstants.dailyTargetScore
+        )
         userInfo.dailyTarget = dailyTarget
-                
-        self.homeService.changeDailyTarget (for: userInfo) { result in
-                    if result {
-                        debugPrint("Hedef skor güncellendi." )
-                        self.userInfoModel?.dailyTarget = Constants.ScoreConstants.dailyTargetScore
-                        self.fetchUserDailyPoint()
-                    }else {
-                        debugPrint("Hedef skor güncellenemedi.")
-                    }
+
+        homeService.changeDailyTarget(for: userInfo) { result in
+            if result {
+                debugPrint("Hedef skor güncellendi.")
+                DispatchQueue.main.async {
+                    self.userInfoModel?.dailyTarget = dailyTarget // seçilen değeri yaz
+                    self.dailyTarget = dailyTarget
+                    self.fetchUserDailyPoint()
+                }
+            } else {
+                debugPrint("Hedef skor güncellenemedi.")
             }
         }
+    }
+
 
     
     

@@ -15,6 +15,8 @@ struct HomeView: View {
     @EnvironmentObject var themeManager: ThemeManager
     @EnvironmentObject var languageManager: LanguageManager
     @StateObject private var homeVM = HomeViewModel.shared
+    @EnvironmentObject var session: UserSessionManager
+
     
     //TODO: constantstan çekilecek. ve localization eklenecek aşağıdakilere
     let categories: [CategoryItem] = [
@@ -66,7 +68,9 @@ struct HomeView: View {
                             Button(action: {
                                 homeVM.signOut { success in
                                         if success {
+                                            UserSessionManager.shared.logout()
                                             navigateToLogin = true
+                                            
                                         } else {
                                             
                                         }
@@ -91,17 +95,20 @@ struct HomeView: View {
             }
             
         }
-
         .onAppear {
-            if homeVM.loginSuccess {
-            homeVM.fetchUserDailyPoint()
+            if UserSessionManager.shared.currentUser != nil {
+                homeVM.fetchUserDailyPoint()
             }
         }
-        .onChange(of: homeVM.loginSuccess, initial: false) { oldValue, newValue in
-            if newValue {
-            homeVM.fetchUserDailyPoint()
-           }
+
+        .onChange(of: session.currentUser?.userId ?? "", initial: false) { _, newId in
+            if !newId.isEmpty {
+                homeVM.resetForNewUser() 
+                homeVM.fetchUserDailyPoint()
+                
+            }
         }
+
 
     }
     

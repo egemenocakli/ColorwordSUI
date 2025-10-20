@@ -20,7 +20,7 @@ class FirestoreService: FirestoreInterface {
     //TODO: Asenkron metodlara geçilecek
     func getWordList(wordListname: String) async throws -> [Word] {
         // Kullanıcı ID'si kontrolü
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+        guard let userId = await UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         
@@ -46,7 +46,7 @@ class FirestoreService: FirestoreInterface {
     
     func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+        guard let userId = await UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         do {
@@ -62,7 +62,7 @@ class FirestoreService: FirestoreInterface {
     }
     func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+        guard let userId = await UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         do {

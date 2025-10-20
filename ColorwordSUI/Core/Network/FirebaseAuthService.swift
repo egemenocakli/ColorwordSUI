@@ -22,7 +22,7 @@ class FirebaseAuthService: AuthServiceInterface {
     @Published var errorMessage: String?
 
 
-    func getCurrentUser() -> FirebaseUserModel? {
+    @MainActor func getCurrentUser() -> FirebaseUserModel? {
         guard let user = firebaseAuth.currentUser else { return nil }
         appUser = FirebaseUserModel(userId: user.uid, email: user.email ?? "", name: user.displayName ?? "", lastname: "")
         if appUser != nil {

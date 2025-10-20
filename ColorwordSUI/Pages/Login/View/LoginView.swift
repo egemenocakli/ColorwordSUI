@@ -94,13 +94,13 @@ struct LoginView: View {
                 .hidden()
             )
             .onAppear(){
-                isAutoLoginInProgress = true
-                Task {
-                    let succes = autoLoginCheck()
-                    if !succes {
-                        isAutoLoginInProgress = false
-                    }
-                }
+                isAutoLoginInProgress = false
+//                Task {
+//                    let succes = autoLoginCheck()
+//                    if !succes {
+//                        isAutoLoginInProgress = false
+//                    }
+//                }
             }
             .overlay(
                 Group {
@@ -125,8 +125,12 @@ struct LoginView: View {
                     
                     //Viewmodelden çekmeli signInwithGoogle ı
                     GoogleLoginButton {
-                        Task { await loginVM.signInWithGoogle(presenter: presenter) }
-                    }
+                        Task {
+                            if let presenter = presenter {
+                                await loginVM.signInWithGoogle(presenter: presenter)
+                                UserSessionManager.shared.clearSkipAutoLoginFlag() // çıkış sonrası kilidi kaldır
+                            }
+                        }                    }
                     .disabled(presenter == nil || loginVM.isLoading)
                     .opacity(loginVM.isLoading ? 0.7 : 1)
                     .background(PresenterControllerReader(controller: $presenter))

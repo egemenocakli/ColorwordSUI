@@ -24,7 +24,7 @@ final class LeaderboardService: LeaderboardServiceInterface {
         includeCurrentUser: Bool = true
     ) async throws -> LeaderboardResult {
 
-        let uid = includeCurrentUser
+        let uid = await includeCurrentUser
         ? UserSessionManager.shared.userInfoModel?.userId
         : nil
 
