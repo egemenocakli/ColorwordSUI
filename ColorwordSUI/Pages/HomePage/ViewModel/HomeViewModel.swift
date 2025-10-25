@@ -53,7 +53,6 @@ final class HomeViewModel: ObservableObject {
                 guard let self else { return }
                 self.userInfoModel = info
                 self.dailyTarget = info.dailyTarget
-                self.dailyProgressBarPoint = info.dailyScore
             }
             .store(in: &cancellables)
     }
@@ -98,93 +97,101 @@ final class HomeViewModel: ObservableObject {
 
         homeService.fetchUserDailyPoint(userId: uid) { [weak self] model in
             guard let self else { return }
-            DispatchQueue.main.async {
+
+            // GCD yerine Task: içeride await serbest + MainActor garantisi
+            Task { @MainActor in
+                // Geç gelen response yanlış kullanıcıya yazılmasın
                 guard self.currentUserIdSnapshot == UserSessionManager.shared.currentUser?.userId else { return }
 
                 if let model {
-                    // Önce local state'i kur
+                    // Local state'i güncelle
                     self.userInfoModel = model
                     self.dailyTarget = model.dailyTarget
-                    // İlk giriş kontrolü mutlak set + tarih yapacak
                     self.resetDailyScoreIfFirstTime()
-                    // İsteğe bağlı: burada global’e itebilirsin
-                    UserSessionManager.shared.updateUserInfoModel(with: self.userInfoModel!)
-                } else {
-                    // Kayıt yoksa: 10 ile başlat (mutlak set mantığına uy)
-                    var fresh = UserInfoModel(
-                        userId: uid,
-                        email: "", name: "", lastname: "",
-                        dailyTarget: Constants.ScoreConstants.dailyTargetScore
-                    )
-                    fresh.dailyScore = Constants.ScoreConstants.dailyLoginScoreBonus
-                    fresh.totalScore = 0 + Constants.ScoreConstants.dailyLoginScoreBonus
-                    fresh.dailyScoreDate = Date()
 
-                    self.userInfoModel = fresh
-                    self.dailyProgressBarPoint = fresh.dailyScore
-                    self.dailyTarget = fresh.dailyTarget
-
-                    let snapshot = uid
-                    self.homeService.increaseUserInfoPoints(for: fresh) { [weak self] ok in
-                        guard let self else { return }
-                        DispatchQueue.main.async {
-                            guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
-                            if ok { UserSessionManager.shared.updateUserInfoModel(with: fresh) }
-                        }
+                    // ✅ DOĞRU: reset sonrası güncel self.userInfoModel ile yaz
+                    if let updated = self.userInfoModel {
+                        UserSessionManager.shared.updateUserInfoModel(with: updated)
                     }
+
+                } else {
+
+
                 }
             }
         }
     }
 
-
-    
 
     //Alert olacak +10 sebebi olarak bir bildirim olabilir
     @MainActor
     func resetDailyScoreIfFirstTime() {
         guard var info = self.userInfoModel else {
-            debugPrint("userInfoModel bulunamadı")
-            return
+            debugPrint("userInfoModel bulunamadı"); return
         }
 
         let today = Date()
-        // Bugün zaten giriş yapılmışsa sadece ekrandaki state'i eşitle
+        let bonus = Constants.ScoreConstants.dailyLoginScoreBonus // çoğu senaryoda 10
+
+        // ---- BURAYI GÜNCELLE ----
         if let last = info.dailyScoreDate, Calendar.current.isDate(last, inSameDayAs: today) {
-            self.dailyProgressBarPoint = info.dailyScore
+            // Bugün ise ama skor bonusun altında kalmışsa minimumu uygula (idempotent)
+            if info.dailyScore < bonus {
+                let delta = bonus - info.dailyScore
+                info.dailyScore = bonus
+                info.totalScore += delta
+                info.dailyScoreDate = today
+
+                // UI
+                self.userInfoModel = info
+                self.dailyProgressBarPoint = bonus
+                self.dailyTarget = info.dailyTarget
+
+                // DB + leaderboard (yanlış kullanıcıya yazma korumasıyla)
+                let snapshot = UserSessionManager.shared.currentUser?.userId
+                homeService.increaseUserInfoPoints(for: info) { [weak self] ok in
+                    guard let self else { return }
+                    Task { @MainActor in
+                        guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
+                        if ok {
+                            UserSessionManager.shared.updateUserInfoModel(with: info)
+                            try? await self.homeService.updateLeaderboardScore(by: delta, userInfo: info)
+                        }
+                    }
+                }
+            } else {
+                // Zaten 10 veya üzeriyse sadece UI’ı eşitle
+                self.dailyProgressBarPoint = info.dailyScore
+            }
             return
         }
+        // ---- BURANIN ALTINDAKİ KISIM AYNI KALSIN ----
 
-        // İlk giriş bonusu: mutlak set (ekleme değil!)
-        let bonus = Constants.ScoreConstants.dailyLoginScoreBonus
-        let current = info.dailyScore
-        let newDaily = max(current, bonus)           // ÖNEMLİ: zaten 15 ise 15'te bırak
-        let delta = newDaily - current               // total sadece fark kadar artsın
+        // Bugün değilse: ilk giriş bonusunu uygula
+        info.dailyScore      = bonus
+        info.totalScore     += bonus
+        info.dailyScoreDate  = today
 
-        info.dailyScore = newDaily
-        info.totalScore += delta
-        info.dailyScoreDate = today                  // ÖNEMLİ: bugüne damgala
-
-        // UI'ı anında güncelle (optimizasyon)
         self.userInfoModel = info
-        self.dailyProgressBarPoint = newDaily
+        self.dailyProgressBarPoint = bonus
         self.dailyTarget = info.dailyTarget
 
-        // ⚠️ Backend’e yazarken snapshot kontrolü ekle
         let snapshot = UserSessionManager.shared.currentUser?.userId
         homeService.increaseUserInfoPoints(for: info) { [weak self] result in
             guard let self else { return }
-            DispatchQueue.main.async {
+            Task { @MainActor in
                 guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
                 if result {
-                    // (İsteğe bağlı) global modele de yansıt
                     UserSessionManager.shared.updateUserInfoModel(with: info)
+                    try? await self.homeService.updateLeaderboardScore(by: bonus, userInfo: info)
                 } else {
-                    debugPrint("Puan (ilk giriş) mutlak set yazılamadı.")
+                    debugPrint("Puan (ilk giriş) yazılamadı.")
                 }
             }
         }
     }
+
+
 
     
     //Eğer kullanıcı o gün ilk defa giriyorsa +10 puan vericez.

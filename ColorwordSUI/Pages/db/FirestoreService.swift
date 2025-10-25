@@ -10,6 +10,7 @@ import SwiftUI
 import FirebaseFirestore
 
 
+
 class FirestoreService: FirestoreInterface {
     
 
@@ -107,16 +108,22 @@ class FirestoreService: FirestoreInterface {
                 return
             }
             guard let data = snapshot?.data() else {
-                debugPrint("❌ Belge bulunamadı. Oluşturulacak metoda yönlendirildi.")
-                
-                self.createOrUpdateUserInfo(user: UserInfoModel(
-                    userId: UserSessionManager.shared.currentUser!.userId,
-                    email: UserSessionManager.shared.currentUser!.email,
-                    name: UserSessionManager.shared.currentUser!.name,
-                    lastname: UserSessionManager.shared.currentUser?.lastname ?? "",
-                    dailyTarget: Constants.ScoreConstants.dailyTargetScore, dailyScore: 10
-                )) { success in
-                    completion(nil)
+                debugPrint("❌ Belge bulunamadı. Oluşturuluyor...")
+
+                let s = UserSessionManager.shared.currentUser
+                var created = UserInfoModel(
+                    userId: s?.userId ?? userId,
+                    email: s?.email ?? "",
+                    name: s?.name ?? "",
+                    lastname: s?.lastname ?? "",
+                    dailyTarget: Constants.ScoreConstants.dailyTargetScore,
+                    dailyScore: Constants.ScoreConstants.dailyLoginScoreBonus // 10
+                )
+                created.totalScore     = Constants.ScoreConstants.dailyLoginScoreBonus // 10
+                created.dailyScoreDate = Date()
+
+                self.createOrUpdateUserInfo(user: created) { success in
+                    completion(success ? created : nil)  // ✅ nil değil, created döndür
                 }
                 return
             }

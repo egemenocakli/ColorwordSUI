@@ -40,6 +40,9 @@ struct HomeView: View {
                     VStack {
                         
                         DailyProgressView(progress: Double(homeVM.dailyProgressBarPoint),dailyTarget: Double(homeVM.dailyTarget))
+                            .onAppear {
+                                homeVM.fetchUserDailyPoint()
+                            }
 
                         
                         // Kategori Grid
@@ -96,9 +99,7 @@ struct HomeView: View {
             
         }
         .onAppear {
-            if UserSessionManager.shared.currentUser != nil {
-                homeVM.fetchUserDailyPoint()
-            }
+            homeVM.fetchUserDailyPoint()
         }
 
         .onChange(of: session.currentUser?.userId ?? "", initial: false) { _, newId in
