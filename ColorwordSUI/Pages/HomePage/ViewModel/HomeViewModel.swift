@@ -24,6 +24,10 @@ final class HomeViewModel: ObservableObject {
 
     private var cancellables = Set<AnyCancellable>()
     @Published private var currentUserIdSnapshot: String?
+    
+    @Published private var isFetching = false
+    @Published private var isResettingDaily = false
+
 
 
     private init() {
@@ -92,104 +96,94 @@ final class HomeViewModel: ObservableObject {
             dailyProgressBarPoint = 0
             return
         }
+        // ← aynı anda birden fazla fetch’i engelle
+        guard !isFetching else { return }
+        isFetching = true
 
         currentUserIdSnapshot = uid
 
         homeService.fetchUserDailyPoint(userId: uid) { [weak self] model in
             guard let self else { return }
-
-            // GCD yerine Task: içeride await serbest + MainActor garantisi
             Task { @MainActor in
-                // Geç gelen response yanlış kullanıcıya yazılmasın
+                defer { self.isFetching = false } // ← kilidi bırak
+
                 guard self.currentUserIdSnapshot == UserSessionManager.shared.currentUser?.userId else { return }
 
                 if let model {
-                    // Local state'i güncelle
                     self.userInfoModel = model
                     self.dailyTarget = model.dailyTarget
                     self.resetDailyScoreIfFirstTime()
 
-                    // ✅ DOĞRU: reset sonrası güncel self.userInfoModel ile yaz
                     if let updated = self.userInfoModel {
                         UserSessionManager.shared.updateUserInfoModel(with: updated)
                     }
-
                 } else {
-
-
+                    // no-op
                 }
             }
         }
     }
+
 
 
     //Alert olacak +10 sebebi olarak bir bildirim olabilir
     @MainActor
     func resetDailyScoreIfFirstTime() {
+        // ← aynı anda birden fazla reseti engelle
+        guard !isResettingDaily else { return }
+        isResettingDaily = true
+        defer { isResettingDaily = false }
+
         guard var info = self.userInfoModel else {
             debugPrint("userInfoModel bulunamadı"); return
         }
+        guard let uid = UserSessionManager.shared.currentUser?.userId,
+              uid == info.userId else { return }
 
         let today = Date()
-        let bonus = Constants.ScoreConstants.dailyLoginScoreBonus // çoğu senaryoda 10
+        let bonus = Constants.ScoreConstants.dailyLoginScoreBonus
 
-        // ---- BURAYI GÜNCELLE ----
-        if let last = info.dailyScoreDate, Calendar.current.isDate(last, inSameDayAs: today) {
-            // Bugün ise ama skor bonusun altında kalmışsa minimumu uygula (idempotent)
+        let isSameDay = (info.dailyScoreDate != nil) &&
+                        Calendar.current.isDate(info.dailyScoreDate!, inSameDayAs: today)
+
+        var delta = 0
+
+        if isSameDay {
             if info.dailyScore < bonus {
-                let delta = bonus - info.dailyScore
+                delta = bonus - info.dailyScore
                 info.dailyScore = bonus
                 info.totalScore += delta
-                info.dailyScoreDate = today
-
-                // UI
-                self.userInfoModel = info
-                self.dailyProgressBarPoint = bonus
-                self.dailyTarget = info.dailyTarget
-
-                // DB + leaderboard (yanlış kullanıcıya yazma korumasıyla)
-                let snapshot = UserSessionManager.shared.currentUser?.userId
-                homeService.increaseUserInfoPoints(for: info) { [weak self] ok in
-                    guard let self else { return }
-                    Task { @MainActor in
-                        guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
-                        if ok {
-                            UserSessionManager.shared.updateUserInfoModel(with: info)
-                            try? await self.homeService.updateLeaderboardScore(by: delta, userInfo: info)
-                        }
-                    }
-                }
-            } else {
-                // Zaten 10 veya üzeriyse sadece UI’ı eşitle
-                self.dailyProgressBarPoint = info.dailyScore
             }
-            return
+        } else {
+            delta = bonus
+            info.dailyScore = bonus
+            info.totalScore += bonus
         }
-        // ---- BURANIN ALTINDAKİ KISIM AYNI KALSIN ----
 
-        // Bugün değilse: ilk giriş bonusunu uygula
-        info.dailyScore      = bonus
-        info.totalScore     += bonus
-        info.dailyScoreDate  = today
+        info.dailyScoreDate = today
 
+        // UI
         self.userInfoModel = info
-        self.dailyProgressBarPoint = bonus
+        self.dailyProgressBarPoint = info.dailyScore
         self.dailyTarget = info.dailyTarget
 
-        let snapshot = UserSessionManager.shared.currentUser?.userId
-        homeService.increaseUserInfoPoints(for: info) { [weak self] result in
+        let snapshot = uid
+        homeService.increaseUserInfoPoints(for: info) { [weak self] ok in
             guard let self else { return }
             Task { @MainActor in
                 guard snapshot == UserSessionManager.shared.currentUser?.userId else { return }
-                if result {
+                if ok {
                     UserSessionManager.shared.updateUserInfoModel(with: info)
-                    try? await self.homeService.updateLeaderboardScore(by: bonus, userInfo: info)
+                    if delta > 0 {
+                        try? await self.homeService.updateLeaderboardScore(by: delta, userInfo: info)
+                    }
                 } else {
-                    debugPrint("Puan (ilk giriş) yazılamadı.")
+                    debugPrint("Puan (ilk giriş/reset) yazılamadı.")
                 }
             }
         }
     }
+
 
 
 

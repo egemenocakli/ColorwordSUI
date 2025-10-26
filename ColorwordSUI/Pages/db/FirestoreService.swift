@@ -151,7 +151,7 @@ class FirestoreService: FirestoreInterface {
         let updates : [String : Any] = [
             "dailyScore" : userInfo.dailyScore,
             "totalScore" : userInfo.totalScore,
-            "dailyScoreDate" : FieldValue.serverTimestamp()
+            "dailyScoreDate" : Timestamp(date: userInfo.dailyScoreDate ?? Date())
         ]
         docRef.updateData(updates) { error in
             

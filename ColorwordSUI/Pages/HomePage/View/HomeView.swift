@@ -98,9 +98,7 @@ struct HomeView: View {
             }
             
         }
-        .onAppear {
-            homeVM.fetchUserDailyPoint()
-        }
+
 
         .onChange(of: session.currentUser?.userId ?? "", initial: false) { _, newId in
             if !newId.isEmpty {
