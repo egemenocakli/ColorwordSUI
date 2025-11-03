@@ -7,7 +7,10 @@
 
 import Foundation
 import SwiftUI
+import GoogleSignIn
+import FirebaseAuth
 
+@MainActor
 class LoginViewModel: ObservableObject {
         
     //TODO:giriş bilgileri silinip locale kaydedilen veriler ile auto giriş vs.
@@ -16,15 +19,19 @@ class LoginViewModel: ObservableObject {
     @Published var email: String = "" //"bobafettkimlan@gmail.com"
     @Published var password: String = "" //"123456"
     @Published var loginResultMessage: String?
-    @Published var loginSuccess = false
     @Published var showToast = false
     @Published var selectedTheme : String?
     
     private let validationManager = ValidationManager()
     let userPreferences = UserPreferences()
     let keychainEncrpyter = KeychainEncrpyter()
+    
+    //@Published var presenter: UIViewController?   // Google’ın isteyeceği VC
 
-
+    @Published var isLoading = false
+    @Published var errorMessage: String?
+    @Published var currentUserEmail: String?
+    @Published var loginSuccess = false  
 
     
     
@@ -41,6 +48,7 @@ class LoginViewModel: ObservableObject {
         return true
     }
 
+    //TODO: async e çevrilecek
     /// **Firebase Authentication ile giriş yapan metod**
     func authLogin() {
         guard validateInputs() else { return }
@@ -66,6 +74,28 @@ class LoginViewModel: ObservableObject {
             }
         }
     }
+    
+    //TODO: buradaki öneriler değerlendirilcek
+    func signInWithGoogle(presenter: UIViewController?) async {
+        guard let presenter else { return }
+        isLoading = true
+        defer { isLoading = false }
+
+        do {
+            try await loginService.signInwithGoogle(presenter: presenter)
+            await MainActor.run {
+                self.loginSuccess = true
+                HomeViewModel.shared.changeLoginSuccesState()
+
+            }
+        } catch {
+            await MainActor.run {
+                self.errorMessage = error.localizedDescription
+            }
+        }
+    }
+
+
 
     /// **Hata mesajlarını döndüren yardımcı metod**
     private func getLocalizedValidationError(_ error: ValidationError) -> String {

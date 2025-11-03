@@ -11,6 +11,7 @@
 "login_button" = "Giriş Yap";
 "sign_up_button" = "Kayıt Ol";
 "email" = "Email";
+"login_google" = "Google ile oturum aç";
 
 //Signup
 "name" = "Ad";

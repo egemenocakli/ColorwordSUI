@@ -136,8 +136,9 @@ private struct Row: View {
     }
 }
 
+@MainActor
 fileprivate func LeaderboardUserRow(viewModel: LeaderboardViewModel) -> some View {
-    return ScrollView {
+    ScrollView {
         LazyVStack(spacing: 12) {
             ForEach(Array(viewModel.top.enumerated()), id: \.element.userId) { idx, entry in
                 Row(
@@ -151,9 +152,7 @@ fileprivate func LeaderboardUserRow(viewModel: LeaderboardViewModel) -> some Vie
     }
     .padding(.horizontal)
     .padding(.top, 8)
-    .frame(maxWidth: .infinity,
-           maxHeight: .infinity,
-           alignment: .topLeading)
+    .frame(maxWidth: .infinity, maxHeight: .infinity, alignment: .topLeading)
 }
 
 private struct RankBadge: View {
