@@ -9,9 +9,11 @@ import Foundation
 import SwiftUI
 import FirebaseFirestore
 
+
+
 class FirestoreService: FirestoreInterface {
     
-    
+
     
     
     private let db = Firestore.firestore()
@@ -19,7 +21,7 @@ class FirestoreService: FirestoreInterface {
     //TODO: Asenkron metodlara geçilecek
     func getWordList(wordListname: String) async throws -> [Word] {
         // Kullanıcı ID'si kontrolü
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+        guard let userId = await UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         
@@ -45,7 +47,7 @@ class FirestoreService: FirestoreInterface {
     
     func increaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+        guard let userId = await UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         do {
@@ -61,7 +63,7 @@ class FirestoreService: FirestoreInterface {
     }
     func decreaseWordScore(selectedWordList: String,word: Word, points: Int) async throws{
         
-        guard let userId = UserSessionManager.shared.currentUser?.userId else {
+        guard let userId = await UserSessionManager.shared.currentUser?.userId else {
             throw NSError(domain: "FirestoreService", code: -1, userInfo: [NSLocalizedDescriptionKey: "Geçerli bir kullanıcı bulunamadı."])
         }
         do {
@@ -106,16 +108,22 @@ class FirestoreService: FirestoreInterface {
                 return
             }
             guard let data = snapshot?.data() else {
-                debugPrint("❌ Belge bulunamadı. Oluşturulacak metoda yönlendirildi.")
-                
-                self.createOrUpdateUserInfo(user: UserInfoModel(
-                    userId: UserSessionManager.shared.currentUser!.userId,
-                    email: UserSessionManager.shared.currentUser!.email,
-                    name: UserSessionManager.shared.currentUser!.name,
-                    lastname: UserSessionManager.shared.currentUser!.lastname,
-                    dailyTarget: Constants.ScoreConstants.dailyTargetScore, dailyScore: 10
-                )) { success in
-                    completion(nil)
+                debugPrint("❌ Belge bulunamadı. Oluşturuluyor...")
+
+                let s = UserSessionManager.shared.currentUser
+                var created = UserInfoModel(
+                    userId: s?.userId ?? userId,
+                    email: s?.email ?? "",
+                    name: s?.name ?? "",
+                    lastname: s?.lastname ?? "",
+                    dailyTarget: Constants.ScoreConstants.dailyTargetScore,
+                    dailyScore: Constants.ScoreConstants.dailyLoginScoreBonus // 10
+                )
+                created.totalScore     = Constants.ScoreConstants.dailyLoginScoreBonus // 10
+                created.dailyScoreDate = Date()
+
+                self.createOrUpdateUserInfo(user: created) { success in
+                    completion(success ? created : nil)  // ✅ nil değil, created döndür
                 }
                 return
             }
@@ -143,7 +151,7 @@ class FirestoreService: FirestoreInterface {
         let updates : [String : Any] = [
             "dailyScore" : userInfo.dailyScore,
             "totalScore" : userInfo.totalScore,
-            "dailyScoreDate" : FieldValue.serverTimestamp()
+            "dailyScoreDate" : Timestamp(date: userInfo.dailyScoreDate ?? Date())
         ]
         docRef.updateData(updates) { error in
             
@@ -716,4 +724,7 @@ extension FirestoreService {
         }
         return greater + 1
     }
+    
+    
+
 }

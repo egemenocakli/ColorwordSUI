@@ -11,9 +11,11 @@ protocol HomeServiceInterface {
     func increaseUserInfoPoints(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func resetDailyScoreIfFirstTime(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
     func changeDailyTarget(for userInfo: UserInfoModel, completion: @escaping (Bool) -> Void)
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws
     
 }
 
+//TODO: async e geçilecek
 class HomeService {
     private let firebaseAuthService = FirebaseAuthService()
     private let firestoreService = FirestoreService()
@@ -49,6 +51,15 @@ class HomeService {
         
         firestoreService.changeDailyTarget(for: userInfo) { result in
             completion(result)
+        }
+    }
+    
+    func updateLeaderboardScore(by score: Int, userInfo: UserInfoModel?) async throws {
+        do{
+            try await firestoreService.updateLeaderboardScore(by: score, userInfo: userInfo)
+            
+        }catch{
+            debugPrint(error)
         }
     }
 }

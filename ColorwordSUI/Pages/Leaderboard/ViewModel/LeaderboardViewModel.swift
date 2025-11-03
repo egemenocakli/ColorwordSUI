@@ -8,6 +8,7 @@
 
 import SwiftUI
 
+@MainActor
 final class LeaderboardViewModel: ObservableObject {
     @Published var top: [LeaderboardEntry] = []
     @Published var me: LeaderboardEntry?
@@ -18,12 +19,20 @@ final class LeaderboardViewModel: ObservableObject {
 
     private let service = FirestoreService()
 
-    func load(limit: Int = Constants.ScoreConstants.leaderboardTopListCount, scope: LeaderboardScope = .alltime, userId: String? = UserSessionManager.shared.userInfoModel?.userId) {
+    func load(
+        limit: Int = Constants.ScoreConstants.leaderboardTopListCount,
+        scope: LeaderboardScope = .alltime,
+        userId: String? = nil // <-- yalnızca bu satır değişti
+    ) {
         isLoading = true
         errorMessage = nil
+
+        // MainActor içindeyiz; buradan okumak güvenli
+        let uid = userId ?? UserSessionManager.shared.userInfoModel?.userId
+
         Task {
             do {
-                let res = try await service.fetchLeaderboard(limit: limit, scope: scope, userId: userId)
+                let res = try await service.fetchLeaderboard(limit: limit, scope: scope, userId: uid)
                 await MainActor.run {
                     self.top = res.top
                     self.me = res.me

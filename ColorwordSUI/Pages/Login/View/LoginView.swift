@@ -17,8 +17,10 @@ struct LoginView: View {
     let userPreferences = UserPreferences()
     let keychainEncryption = KeychainEncrpyter()
 
+    @State private var goSignUp = false
     @State private var isAutoLoginInProgress = true
 
+    @State private var presenter: UIViewController?   // köprüden gelecek
 
 
     var body: some View {
@@ -32,9 +34,6 @@ struct LoginView: View {
                             ProgressView("loading")
                                 .progressViewStyle(CircularProgressViewStyle(tint: Constants.ColorConstants.whiteColor))
                                 
-                                .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                    HomeView().navigationBarBackButtonHidden(true)
-                                }
                         }
                         else {
                             
@@ -52,43 +51,64 @@ struct LoginView: View {
                                 
                                 LanguagePickerWidget()
                             }.preferredColorScheme(themeManager.colorScheme)
-                                .padding(10)
+                                .padding(Constants.PaddingSizeConstants.xxSmallSize)
                             
                             
                             AppNameWidget(geometry: geometry)
+                                .padding(.vertical, Constants.PaddingSizeConstants.smallSize)
                             
                             GeometryReader { geometry in
                                 VStack {
                                     TextfieldWidgets(email: $loginVM.email, password: $loginVM.password)
                                         
                                     
-                                    LoginButtonWidget(action: loginVM.authLogin)
-                                        .navigationDestination(isPresented: $loginVM.loginSuccess) {
-                                            
-                                            HomeView().navigationBarBackButtonHidden(true)
+                                    ButtonWidget(titleKey: "login_button",width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight, backgroundColor: Constants.ColorConstants.loginButtonColor,fontWeight: .semibold, action: loginVM.authLogin)
+                                    
+
+                                        
+                                        ButtonWidget(titleKey: "sign_up_button",width: Constants.ButtonSizeConstants.buttonWidth, height: Constants.ButtonSizeConstants.buttonHeight, backgroundColor: Constants.ColorConstants.signUpButtonColor,fontWeight: .semibold, action: signupAction)
+                                        .navigationDestination(isPresented: $goSignUp) {
+                                            SignUpView().navigationBarBackButtonHidden(false)
                                         }
                                     
                                     
-                                    SignUpButtonWidget(action: signupButton)
+                                    LabeledDivider("OR",labelBackground: Constants.ColorConstants.transparentColor)
+                                        .padding(.top, Constants.PaddingSizeConstants.mSize)
+                                    
                                     
                                 }
                                 .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
-                                .frame(height: geometry.size.height * 0.6)
+                                .frame(height: geometry.size.height * 0.85)
                             }
                         }
                         
-                    }.environment(\.locale, .init(identifier: languageManager.currentLanguage))
+                    }
 
                 }
-            }.onAppear(){
-                isAutoLoginInProgress = true
-                Task {
-                    let succes = autoLoginCheck()
-                    if !succes {
-                        isAutoLoginInProgress = false
+            }
+            .background(
+                NavigationLink(
+                    destination: HomeView().navigationBarBackButtonHidden(true),
+                    isActive: $loginVM.loginSuccess
+                ) { EmptyView() }
+                .hidden()
+            )
+            .onAppear(){
+                isAutoLoginInProgress = false
+//                Task {
+//                    let succes = autoLoginCheck()
+//                    if !succes {
+//                        isAutoLoginInProgress = false
+//                    }
+//                }
+            }
+            .overlay(
+                Group {
+                    if let err = loginVM.errorMessage {
+                        Text(err).foregroundStyle(.red).font(.footnote)
                     }
                 }
-            }
+                )
             .overlay(
                 Group {
                     if let message = loginVM.loginResultMessage, loginVM.showToast {
@@ -96,16 +116,54 @@ struct LoginView: View {
                     }
                 }
                 .frame(maxHeight: .infinity, alignment: .bottom)
-                .padding(.bottom, 50) // Toast konumlandırma
+                .padding(.bottom, Constants.PaddingSizeConstants.lSize) // Toast konumlandırma
             )
+            .safeAreaInset(edge: .bottom) {
+                VStack(spacing: 8){
+
+                    //GoogleLoginButton(action: googleLoginAction)
+                    
+                    //Viewmodelden çekmeli signInwithGoogle ı
+                    GoogleLoginButton {
+                        Task {
+                            if let presenter = presenter {
+                                await loginVM.signInWithGoogle(presenter: presenter)
+                                UserSessionManager.shared.clearSkipAutoLoginFlag() // çıkış sonrası kilidi kaldır
+                            }
+                        }                    }
+                    .disabled(presenter == nil || loginVM.isLoading)
+                    .opacity(loginVM.isLoading ? 0.7 : 1)
+                    .background(PresenterControllerReader(controller: $presenter))
+
+
+                }
+                .padding(.horizontal, Constants.PaddingSizeConstants.smallSize)
+                .padding(.vertical, Constants.PaddingSizeConstants.mSize)
+                
             }
+
+            }
+
+        .environment(\.locale, .init(identifier: languageManager.currentLanguage))
+        .animation(.easeInOut(duration: 0.25), value: languageManager.currentLanguage)
+        .onChange(of: loginVM.loginSuccess) { _, newVal in
+            debugPrint("loginSuccess changed:", newVal)
+        }
+
+
+
             
 
 
     }
     
-    func signupButton() {
+    func signupAction() {
+        goSignUp = true
     }
+    func googleLoginAction() {
+    }
+    
+
     
     /// **Toast mesajını gösteren metod**
     fileprivate func showResultToastMessage(message: String) -> some View {
@@ -120,6 +178,7 @@ struct LoginView: View {
         }
     }
     
+    //autoLogin
     @discardableResult
     fileprivate func autoLoginCheck () -> Bool {
         guard
@@ -127,13 +186,11 @@ struct LoginView: View {
             let password = keychainEncryption.loadPassword(),
             !password.trimmingCharacters(in: .whitespacesAndNewlines).isEmpty
         else {
-            loginVM.loginSuccess = false
             return false
         }
         loginVM.email = userPreferences.savedEmail
         loginVM.password = password
         loginVM.authLogin()
-        loginVM.loginSuccess = true
         
         return true
     }
@@ -144,7 +201,6 @@ struct LoginView: View {
     LoginView()
         .environmentObject(LanguageManager())
 }
-
 
 
 

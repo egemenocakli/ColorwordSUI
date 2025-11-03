@@ -6,12 +6,14 @@
 //
 
 import Foundation
+import UIKit
 
 
 protocol LoginServiceInterface {
     
     
     func loginWithEmailPassword(email: String, password: String, completion: @escaping (ServiceResponse<FirebaseUserModel>) -> Void)
+    
     
 }
 
@@ -32,6 +34,15 @@ class LoginService: LoginServiceInterface {
             }
         }
     }
+    //TODO: errorlar metod içinde gönderilecek.
+
+    func signInwithGoogle(presenter: UIViewController?) async {
+        guard let presenter else { return }
+        do {
+            try await firebaseAuthService.signInWithGoogle(presenter: presenter)
+        } catch {
+            debugPrint(error)
+        }    }
 }
 
 
